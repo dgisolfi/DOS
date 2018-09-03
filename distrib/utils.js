@@ -5,7 +5,7 @@
    -------- */
 var TSOS;
 (function (TSOS) {
-    var Utils = (function () {
+    var Utils = /** @class */ (function () {
         function Utils() {
         }
         Utils.trim = function (str) {
@@ -27,15 +27,15 @@ var TSOS;
                trouble explaining it in the future.  There's a lot to be said for obvious code.
             */
             var retVal = "";
-            for (var i in str) {
+            for (var i in str) { // We need to cast the string to any for use in the for...in construct.
                 var ch = str[i];
                 var code = 0;
                 if ("abcedfghijklmABCDEFGHIJKLM".indexOf(ch) >= 0) {
-                    code = str.charCodeAt(i) + 13; // It's okay to use 13.  It's not a magic number, it's called rot13.
+                    code = str.charCodeAt(Number(i)) + 13; // It's okay to use 13.  It's not a magic number, it's called rot13.
                     retVal = retVal + String.fromCharCode(code);
                 }
                 else if ("nopqrstuvwxyzNOPQRSTUVWXYZ".indexOf(ch) >= 0) {
-                    code = str.charCodeAt(i) - 13; // It's okay to use 13.  See above.
+                    code = str.charCodeAt(Number(i)) - 13; // It's okay to use 13.  See above.
                     retVal = retVal + String.fromCharCode(code);
                 }
                 else {
@@ -45,6 +45,6 @@ var TSOS;
             return retVal;
         };
         return Utils;
-    })();
+    }());
     TSOS.Utils = Utils;
 })(TSOS || (TSOS = {}));
