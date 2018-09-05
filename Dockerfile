@@ -16,3 +16,4 @@ COPY . .
 # COPY /distrib .
 
 # CMD [ "gulp" ]
+# CMD ["node index.html"]
