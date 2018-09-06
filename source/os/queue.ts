@@ -8,7 +8,7 @@
 
    ------------ */
 
-module TSOS {
+module DOS {
     export class Queue {
         constructor(public q = new Array()) {
         }

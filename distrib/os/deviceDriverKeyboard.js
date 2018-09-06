@@ -20,8 +20,8 @@ var __extends = (this && this.__extends) || (function () {
 
    The Kernel Keyboard Device Driver.
    ---------------------------------- */
-var TSOS;
-(function (TSOS) {
+var DOS;
+(function (DOS) {
     // Extends DeviceDriver
     var DeviceDriverKeyboard = /** @class */ (function (_super) {
         __extends(DeviceDriverKeyboard, _super);
@@ -68,6 +68,6 @@ var TSOS;
             }
         };
         return DeviceDriverKeyboard;
-    }(TSOS.DeviceDriver));
-    TSOS.DeviceDriverKeyboard = DeviceDriverKeyboard;
-})(TSOS || (TSOS = {}));
+    }(DOS.DeviceDriver));
+    DOS.DeviceDriverKeyboard = DeviceDriverKeyboard;
+})(DOS || (DOS = {}));

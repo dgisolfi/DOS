@@ -2,10 +2,10 @@
 <html>
 <head>
    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
-   <meta name="author"             content="Alan G. Labouseur" />
-   <link rel="stylesheet" href="tsos.css" type="text/css" media="screen" />
+   <meta name="author"             content="Daniel Nicolas Gisolfi" />
+   <link rel="stylesheet" href="DOS.css" type="text/css" media="screen" />
    <title>
-      TSOS - a browser-based virtual Operating System in TypeScript
+      DOS - a browser-based virtual Operating System in TypeScript
    </title>
 
    <!-- Globals CONSTANTS and _Variables. Must included be first. -->
@@ -31,7 +31,7 @@
    <!-- Other Routines -->
    <script type="text/javascript" src="distrib/utils.js"></script>
    <!-- Uncomment the line below to enable GLaDOS testing. -->
-   <script type="text/javascript" src="http://alanclasses.github.io/TSOS/test/glados-ip0.js"></script>
+   <script type="text/javascript" src="http://alanclasses.github.io/DOS/test/glados-ip0.js"></script>
 
    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
@@ -63,7 +63,7 @@
                     class="btn btn-info btn-sm"
                     value="Start"
                     tabindex="0"
-                    onclick="TSOS.Control.hostBtnStartOS_click(this);">
+                    onclick="DOS.Control.hostBtnStartOS_click(this);">
             </li>
             <li class="nav-item">
                     <input type="button"
@@ -73,7 +73,7 @@
                     disabled="disabled"
                     value="Halt"
                     tabindex="1"
-                    onclick="TSOS.Control.hostBtnHaltOS_click(this);">
+                    onclick="DOS.Control.hostBtnHaltOS_click(this);">
             </li>
             <li class="nav-item">
                     <input type="button"
@@ -83,7 +83,7 @@
                     disabled="disabled"
                     value="Reset"
                     tabindex="2"
-                    onclick="TSOS.Control.hostBtnReset_click(this);">
+                    onclick="DOS.Control.hostBtnReset_click(this);">
             </li>
         </ul>
      </div>
