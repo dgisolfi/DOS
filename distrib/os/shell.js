@@ -16,7 +16,7 @@ var DOS;
     var Shell = /** @class */ (function () {
         function Shell() {
             // Properties
-            this.promptStr = ">";
+            this.promptStr = ">>";
             this.commandList = [];
             this.curses = "[fuvg],[cvff],[shpx],[phag],[pbpxfhpxre],[zbgureshpxre],[gvgf]";
             this.apologies = "[sorry]";
@@ -49,8 +49,10 @@ var DOS;
             // prompt <string>
             sc = new DOS.ShellCommand(this.shellPrompt, "prompt", "<string> - Sets the prompt.");
             this.commandList[this.commandList.length] = sc;
-            // prompt <string>
+            // date
             sc = new DOS.ShellCommand(this.shellDate, "date", " - Returns the current date and time");
+            this.commandList[this.commandList.length] = sc;
+            sc = new DOS.ShellCommand(this.shellWhereAmI, "whereami", " - Returns ");
             this.commandList[this.commandList.length] = sc;
             // ps  - list the running processes and their IDs
             // kill <id> - kills the specified process id.
@@ -250,8 +252,12 @@ var DOS;
             }
         };
         Shell.prototype.shellDate = function (args) {
-            var dateTime = new Date().toLocaleDateString();
-            _StdOut.putText("Current Date: " + dateTime + "Currenttime");
+            var date = new Date().toLocaleDateString();
+            var time = new Date().toLocaleTimeString();
+            _StdOut.putText("Current Date: " + date + " Current Time: " + time);
+        };
+        Shell.prototype.shellWhereAmI = function (args) {
+            _StdOut.putText("You are");
         };
         return Shell;
     }());

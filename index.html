@@ -31,7 +31,7 @@
    <!-- Other Routines -->
    <script type="text/javascript" src="distrib/utils.js"></script>
    <!-- Uncomment the line below to enable GLaDOS testing. -->
-   <script type="text/javascript" src="http://alanclasses.github.io/DOS/test/glados-ip0.js"></script>
+   <!-- <script type="text/javascript" src="http://alanclasses.github.io/TSOS/test/glados-ip0.js"></script> -->
 
    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
@@ -85,58 +85,64 @@
                     tabindex="2"
                     onclick="DOS.Control.hostBtnReset_click(this);">
             </li>
+            <li class="nav-item">
+                <h3 style="color: #ffffff; float:right;"></h3>
+            </li>
         </ul>
      </div>
 </nav>
 
 
-<body onload="onDocumentLoad()">
-    <div class="row">
-        <div class="col-6">
-            <div class="jumbotron" style="margin:4px;">
+
+<div class="row">
+    <div class="col-6">
+        <div class="jumbotron" style="margin:4px;">
+            <body onload="onDocumentLoad()">
                 <label>
                 User Program Input
                 <br>
                 </label>
                 <div id="divConsole" >
                     <canvas id="display"
-                            width="500%"
-                            height="485%"
-                            >
+                            width="500px"
+                            height="500px"
+                            tabindex="3">
                     </canvas>
                 </div>
-            </div>
-        </div>
-        <div class="col-6" >
-            <div id="divLog" class="jumbotron" >
-                <label>
-                    Host Log
-                    <br>
-                    <textarea name="taHostLog"
-                            id  ="taHostLog"
-                            rows="21"
-                            cols="48"
-                    ></textarea>
-                </label>
-            </div>
-        </div>
-       
-        <div class="col-6">
-        </div>
-        <div class="col-6">
-            <div id="divUserProgramInput" class="jumbotron">
-                <label>
-                   User Program Input
-                   <br>
-                   <textarea name="taProgramInput"
-                        id  ="taProgramInput"
-                        rows="8"
-                        cols="48"
-                   ></textarea>
-                </label>
-            </div>
+            </body>
         </div>
     </div>
+    <div class="col-6" >
+        <div id="divLog" class="jumbotron" >
+            <label>
+                Host Log
+                <br>
+                <textarea 
+                        name="taHostLog"
+                        id  ="taHostLog"
+                        rows="21"
+                        cols="48"
+                ></textarea>
+            </label>
+        </div>
+    </div>
+    
+    <div class="col-6">
+    </div>
+    <div class="col-6">
+        <div id="divUserProgramInput" class="jumbotron">
+            <label>
+                User Program Input
+                <br>
+                <textarea name="taProgramInput"
+                    id  ="taProgramInput"
+                    rows="8"
+                    cols="48"
+                ></textarea>
+            </label>
+        </div>
+    </div>
+</div>
 
 <p class="footerText" style="clear:both;">
    <br>
@@ -146,5 +152,5 @@
    Ted Codd, Stevie Ray Vaughan, and Ian Fleming.
 </p>
 
-</body>
+
 </html>

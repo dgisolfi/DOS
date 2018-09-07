@@ -18,7 +18,7 @@
 module DOS {
     export class Shell {
         // Properties
-        public promptStr = ">";
+        public promptStr = ">>";
         public commandList = [];
         public curses = "[fuvg],[cvff],[shpx],[phag],[pbpxfhpxre],[zbgureshpxre],[gvgf]";
         public apologies = "[sorry]";
@@ -79,11 +79,17 @@ module DOS {
                                   "<string> - Sets the prompt.");
             this.commandList[this.commandList.length] = sc;
 
-            // prompt <string>
+            // date
             sc = new ShellCommand(this.shellDate,
                                   "date",
                                   " - Returns the current date and time");
             this.commandList[this.commandList.length] = sc;
+
+            sc = new ShellCommand(this.shellWhereAmI,
+                                  "whereami",
+                                  " - Returns ");
+            this.commandList[this.commandList.length] = sc;
+
 
             // ps  - list the running processes and their IDs
             // kill <id> - kills the specified process id.
@@ -294,8 +300,15 @@ module DOS {
         }
 
         public shellDate(args) {
-            var dateTime = new Date().toLocaleDateString();
-            _StdOut.putText("Current Date: " + dateTime + "Currenttime" );
+            var date = new Date().toLocaleDateString();
+            var time = new Date().toLocaleTimeString();
+            _StdOut.putText("Current Date: " + date + " Current Time: " + time );
+        }
+
+        public shellWhereAmI(args) {
+                    
+            
+            _StdOut.putText("You are" );
         }
 
     }
