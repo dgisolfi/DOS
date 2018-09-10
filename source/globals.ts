@@ -49,6 +49,9 @@ var _KernelBuffers: any[] = null;   // when clearly 'any' is not what we want. T
 var _StdIn;    // Same "to null or not to null" issue as above.
 var _StdOut;
 
+// API Calls
+var _APIReq: DOS.APIrequests;
+
 // UI
 var _Console: DOS.Console;
 var _OsShell: DOS.Shell;

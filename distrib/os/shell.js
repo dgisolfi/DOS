@@ -2,6 +2,7 @@
 ///<reference path="../utils.ts" />
 ///<reference path="shellCommand.ts" />
 ///<reference path="userCommand.ts" />
+///<reference path="apiRequests.ts" />
 /* ------------
    Shell.ts
 
@@ -57,6 +58,9 @@ var DOS;
             this.commandList[this.commandList.length] = sc;
             //sarcasm
             sc = new DOS.ShellCommand(this.shellSarcasm, "sarcasm", "<on | off> - Turns the OS sarcasm mode on or off.");
+            this.commandList[this.commandList.length] = sc;
+            //sarcasm
+            sc = new DOS.ShellCommand(this.shellGetIP, "myip", "d");
             this.commandList[this.commandList.length] = sc;
             // ps  - list the running processes and their IDs
             // kill <id> - kills the specified process id.
@@ -306,6 +310,7 @@ var DOS;
                 + APP_NAME
                 + " written in TypeScript...Python would have been better for the job");
         };
+        // A reliable way to enable Sarcasm mode.....wasn't aware cursing would do the trick at the time
         Shell.prototype.shellSarcasm = function (args) {
             if (args.length > 0) {
                 var setting = args[0];
@@ -330,6 +335,10 @@ var DOS;
             else {
                 _StdOut.putText("Usage: sarcasm <on | off>");
             }
+        };
+        Shell.prototype.shellGetIP = function (args) {
+            _APIReq.GetIP();
+            _StdOut.putText("Client IP Address: ");
         };
         return Shell;
     }());

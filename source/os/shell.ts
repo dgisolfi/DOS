@@ -2,6 +2,7 @@
 ///<reference path="../utils.ts" />
 ///<reference path="shellCommand.ts" />
 ///<reference path="userCommand.ts" />
+///<reference path="apiRequests.ts" />
 
 
 /* ------------
@@ -96,6 +97,14 @@ module DOS {
                                   "sarcasm",
                                   "<on | off> - Turns the OS sarcasm mode on or off.");
             this.commandList[this.commandList.length] = sc;
+
+            //sarcasm
+            sc = new ShellCommand(this.shellGetIP,
+                                  "myip",
+                                  "d");
+            this.commandList[this.commandList.length] = sc;
+
+            
 
 
             // ps  - list the running processes and their IDs
@@ -371,6 +380,7 @@ module DOS {
             );
         }
 
+        // A reliable way to enable Sarcasm mode.....wasn't aware cursing would do the trick at the time
         public shellSarcasm(args) {     
             if (args.length > 0) {
                 var setting = args[0];
@@ -393,6 +403,11 @@ module DOS {
             } else {
                 _StdOut.putText("Usage: sarcasm <on | off>");
             }
+        }
+
+        public shellGetIP(args) {
+            _APIReq.GetIP();
+            _StdOut.putText("Client IP Address: ");
         }
 
     }

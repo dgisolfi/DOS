@@ -1,0 +1,42 @@
+\documentclass[a4paper, 11pt]{article}
+\usepackage{comment} % enables the use of multi-line comments (\ifx \fi)  
+\usepackage{fullpage} % changes the margin
+
+\begin{document}
+%Header-Make sure you update this information!!!!
+\noindent
+\large\textbf{Post/Pre-Lab 1 Report} \hfill \textbf{Daniel Gisolfi} \\
+Prof. Labouseur \hfill Lab Date: 2018/09/11\\
+
+\section*{Post Lab Questions}
+
+\begin{enumerate}
+\item What are the advantages and disadvantages of using the same system call interface 
+for manipulating both files and devices? 
+\item Would it be possible for the user to develop a new command interpreter using the 
+system call interface provide by the operating system? How?
+\end{enumerate}
+
+\section*{Question 1}
+
+\underline{Advantages}
+\begin{itemize}
+\item All devices added can be accessed as if it is just another file within the system.
+\item Creates an interface to add new devices as drivers
+\item Creates a layer of Abstraction for developer/programing 
+\end{itemize}
+\underline{Disadvantages}
+\begin{itemize}
+\item Performance can become an issue when many files and devices are attempting to make system calls concurrently.
+\item Using file context may also result in a loss of functionality
+\end{itemize}
+
+
+
+\section*{Question 2}
+
+Yes, a user should be able to develop a new command interpreter using the system call interface.
+This can be done by creating user level programs that access system calls. 
+Using the functionality found in the operating system it would be possible for a user to create a new CLI.
+
+\end{document}
