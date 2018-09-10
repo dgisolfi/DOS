@@ -18,7 +18,7 @@
 module DOS {
     export class Shell {
         // Properties
-        public promptStr = ">>";
+        public promptStr = "=>";
         public commandList = [];
         public curses = "[fuvg],[cvff],[shpx],[phag],[pbpxfhpxre],[zbgureshpxre],[gvgf]";
         public apologies = "[sorry]";
@@ -85,9 +85,16 @@ module DOS {
                                   " - Returns the current date and time");
             this.commandList[this.commandList.length] = sc;
 
+            //whereami
             sc = new ShellCommand(this.shellWhereAmI,
                                   "whereami",
-                                  " - Returns ");
+                                  " - Returns user location");
+            this.commandList[this.commandList.length] = sc;
+
+            //sarcasm
+            sc = new ShellCommand(this.shellSarcasm,
+                                  "sarcasm",
+                                  "<on | off> - Turns the OS sarcasm mode on or off.");
             this.commandList[this.commandList.length] = sc;
 
 
@@ -246,10 +253,59 @@ module DOS {
             if (args.length > 0) {
                 var topic = args[0];
                 switch (topic) {
-                    case "help":
-                        _StdOut.putText("Help displays a list of (hopefully) valid commands.");
+                    case "ver":
+                        _StdOut.putText("Ver displays the current version and name of the OS.");
                         break;
-                    // TODO: Make descriptive MANual page entries for the the rest of the shell commands here.
+
+                    case "help":
+                        if (_SarcasticMode) {
+                            _StdOut.putText("Shouldn't you know the commands by now?");
+                        } else {
+                            _StdOut.putText("Help displays a list of (hopefully) valid commands.");
+                        } 
+                        break;
+
+                    case "shutdown":
+                        _StdOut.putText("Shutdown manually ends the current session of " + APP_NAME + ".");
+                        break;
+                    
+                    case "cls":
+                        _StdOut.putText("Cls(Clear Screen) manually resets the console display removing all previous output.");
+                        break;
+                    
+                    case "man":
+                        _StdOut.putText("Man will display the Manuel for a command given a string.");
+                        break;
+
+                    case "trace":
+                        _StdOut.putText("When activated trace will record the host logs.");
+                        break;
+                    
+                    case "rot13":
+                        _StdOut.putText("rot13 will execute a letter substitution cipher on a given string.");
+                        break;
+                    
+                    case "prompt":
+                        _StdOut.putText("Prompt gives the user the ability to change the defualt promp symbol.");
+                        break;
+                    
+                    case "date":
+                        _StdOut.putText("Date displays the current Date and Time for the user.");
+                        break;
+                    
+                    case "whereami":
+                        _StdOut.putText("Displays the users relative location...kinda.");
+                        break;
+                
+                    case "sarcasm":
+                        if (_SarcasticMode) {
+                            _StdOut.putText("Allows you to turn me off. I apologize but I cannot allow that.");
+                        } else {
+                            _StdOut.putText("Allows the user to enable or disable sarcasm mode.");
+                        } 
+                        break;
+                        
+
                     default:
                         _StdOut.putText("No manual entry for " + args[0] + ".");
                 }
@@ -305,10 +361,38 @@ module DOS {
             _StdOut.putText("Current Date: " + date + " Current Time: " + time );
         }
 
-        public shellWhereAmI(args) {
-                    
-            
-            _StdOut.putText("You are" );
+        public shellWhereAmI(args) {  
+            //TODO: Make this do something far more clever, maybe returns the users country
+            // orrrrr use a geo-locater and return the exact location.   
+            _StdOut.putText(
+                "You are in an instance of " 
+                + APP_NAME 
+                + " written in TypeScript...Python would have been better for the job"
+            );
+        }
+
+        public shellSarcasm(args) {     
+            if (args.length > 0) {
+                var setting = args[0];
+                switch (setting) {
+                    case "on":
+                        if (_SarcasticMode) {
+                            _StdOut.putText("I'm unsure how much more sarcasm you can handle, its already on.");
+                        } else {
+                            _SarcasticMode = true;
+                            _StdOut.putText("Sarcasm ON...big mistake.");
+                        }
+                        break;
+                    case "off":
+                        _SarcasticMode = false;
+                        _StdOut.putText("Sarcasm OFF...what am I to much for you?");
+                        break;
+                    default:
+                        _StdOut.putText("Invalid arguement.  Usage: sarcasm <on | off>.");
+                }
+            } else {
+                _StdOut.putText("Usage: sarcasm <on | off>");
+            }
         }
 
     }
