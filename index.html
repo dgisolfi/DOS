@@ -37,7 +37,7 @@
    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 
    <!-- Bootstrap -->
-   <link rel="stylesheet" type="text/css" href="./node_modules/bootstrap/dist/css/bootstrap.min.css">
+   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
    <!-- TODO: get this link to work -->
    <!-- <script src="../node_modules/c/dist/js/bootstrap.min.js"></script> -->
    <!-- Latest compiled and minified JavaScript -->
@@ -85,23 +85,27 @@
                     tabindex="2"
                     onclick="DOS.Control.hostBtnReset_click(this);">
             </li>
-            <li class="nav-item">
-                <h3 style="color: #ffffff; float:right;"></h3>
+        </ul>
+        <ul class="nav navbar-nav navbar-right">
+            <li class="nav-item" style="float:right;">
+                <h3 id="status" style="color: #ffffff;"  ></h3>
+            </li>
+            <li class="nav-item" style="float:right;">
+                <h3 id="datetime" style="color: #ffffff;" ></h3>
             </li>
         </ul>
+           
+       
      </div>
 </nav>
 
 
-
 <div class="row">
     <div class="col-6">
-        <div class="jumbotron" style="margin:4px;">
+        <div class=" text-center" style="margin:9px;">
             <body onload="onDocumentLoad()">
-                <label>
-                User Program Input
+            <h1> User Program Input </h1>
                 <br>
-                </label>
                 <div id="divConsole" >
                     <canvas id="display"
                             width="500px"
@@ -113,9 +117,8 @@
         </div>
     </div>
     <div class="col-6" >
-        <div id="divLog" class="jumbotron" >
-            <label>
-                Host Log
+        <div id="divLog" class="text-center" style="margin:9px;">
+            <h1> Host Log </h1>
                 <br>
                 <textarea 
                         name="taHostLog"
@@ -130,7 +133,7 @@
     <div class="col-6">
     </div>
     <div class="col-6">
-        <div id="divUserProgramInput" class="jumbotron">
+        <div id="divUserProgramInput" class="text-center">
             <label>
                 User Program Input
                 <br>
@@ -146,7 +149,7 @@
 
 <p class="footerText" style="clear:both;">
    <br>
-   Copyright &copy; 2008 - 2016 No Rights Reserved.
+   Copyright &copy; 2008 - 2018 No Rights Reserved.
    <br>
    Reproduction is inhibited without the express written consent of
    Ted Codd, Stevie Ray Vaughan, and Ian Fleming.

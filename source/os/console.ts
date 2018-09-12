@@ -117,14 +117,14 @@ module DOS {
         }
 
         public updateDateTime(): void {
-            var datetime = "";
-            // <HTMLInputElement>document.getElementById('datetime').value;
+            var datetime = _date + " | " + _time;
+            document.getElementById("datetime").innerHTML = datetime;
         }
 
         // delete given character in canvas
         private delChar(offset): void {
-            console.log(offset);
-            _DrawingContext.clearRect(this.currentXPosition, this.currentYPosition, this.currentXPosition + offset, this.currentYPosition - this.currentFontSize );
+            console.log(this.currentYPosition);
+            _DrawingContext.clearRect(this.currentXPosition, this.currentYPosition, this.currentXPosition + offset, 400);
         }
     }
  }

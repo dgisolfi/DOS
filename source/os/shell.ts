@@ -24,7 +24,7 @@ module DOS {
         public curses = "[fuvg],[cvff],[shpx],[phag],[pbpxfhpxre],[zbgureshpxre],[gvgf]";
         public apologies = "[sorry]";
 
-        constructor() {
+        constructor(public status  = "") {
         }
 
         public init() {
@@ -98,10 +98,15 @@ module DOS {
                                   "<on | off> - Turns the OS sarcasm mode on or off.");
             this.commandList[this.commandList.length] = sc;
 
-            //sarcasm
+            //get client IP
             sc = new ShellCommand(this.shellGetIP,
                                   "myip",
                                   "d");
+            this.commandList[this.commandList.length] = sc;
+
+            sc = new ShellCommand(this.shellStatus,
+                                  "status",
+                                  "- Updates the status.");
             this.commandList[this.commandList.length] = sc;
 
             
@@ -408,6 +413,12 @@ module DOS {
         public shellGetIP(args) {
             // _APIReq.GetIP();
             _StdOut.putText("Client IP Address: ");
+        }
+
+        public shellStatus(args) {
+            this.status = args[0];
+            document.getElementById("status").innerHTML = this.status;
+            _StdOut.putText("Status Updated to: " + this.status);
         }
 
     }

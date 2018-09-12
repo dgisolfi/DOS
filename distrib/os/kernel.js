@@ -71,6 +71,7 @@ var DOS;
             // Update the host time variable. TODO find a better place for this
             _date = new Date().toLocaleDateString();
             _time = new Date().toLocaleTimeString();
+            _Console.updateDateTime();
             // Check for an interrupt, are any. Page 560
             if (_KernelInterruptQueue.getSize() > 0) {
                 // Process the first interrupt on the interrupt queue.

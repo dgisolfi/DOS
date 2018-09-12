@@ -110,13 +110,13 @@ var DOS;
             // TODO: Handle scrolling. (iProject 1)
         };
         Console.prototype.updateDateTime = function () {
-            var datetime = "";
-            // <HTMLInputElement>document.getElementById('datetime').value;
+            var datetime = _date + " | " + _time;
+            document.getElementById("datetime").innerHTML = datetime;
         };
         // delete given character in canvas
         Console.prototype.delChar = function (offset) {
-            console.log(offset);
-            _DrawingContext.clearRect(this.currentXPosition, this.currentYPosition, this.currentXPosition + offset, this.currentYPosition - 10);
+            console.log(this.currentYPosition);
+            _DrawingContext.clearRect(this.currentXPosition, this.currentYPosition, this.currentXPosition + offset, 400);
         };
         return Console;
     }());

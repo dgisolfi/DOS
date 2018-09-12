@@ -15,7 +15,9 @@
 var DOS;
 (function (DOS) {
     var Shell = /** @class */ (function () {
-        function Shell() {
+        function Shell(status) {
+            if (status === void 0) { status = ""; }
+            this.status = status;
             // Properties
             this.promptStr = "=>";
             this.commandList = [];
@@ -59,8 +61,10 @@ var DOS;
             //sarcasm
             sc = new DOS.ShellCommand(this.shellSarcasm, "sarcasm", "<on | off> - Turns the OS sarcasm mode on or off.");
             this.commandList[this.commandList.length] = sc;
-            //sarcasm
+            //get client IP
             sc = new DOS.ShellCommand(this.shellGetIP, "myip", "d");
+            this.commandList[this.commandList.length] = sc;
+            sc = new DOS.ShellCommand(this.shellStatus, "status", "- Updates the status.");
             this.commandList[this.commandList.length] = sc;
             // ps  - list the running processes and their IDs
             // kill <id> - kills the specified process id.
@@ -339,6 +343,11 @@ var DOS;
         Shell.prototype.shellGetIP = function (args) {
             // _APIReq.GetIP();
             _StdOut.putText("Client IP Address: ");
+        };
+        Shell.prototype.shellStatus = function (args) {
+            this.status = args[0];
+            document.getElementById("status").innerHTML = this.status;
+            _StdOut.putText("Status Updated to: " + this.status);
         };
         return Shell;
     }());

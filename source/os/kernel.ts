@@ -83,6 +83,7 @@ module DOS {
             // Update the host time variable. TODO find a better place for this
             _date = new Date().toLocaleDateString();
             _time = new Date().toLocaleTimeString();
+            _Console.updateDateTime();
             
 
             // Check for an interrupt, are any. Page 560
