@@ -299,9 +299,9 @@ var DOS;
             }
         };
         Shell.prototype.shellDate = function (args) {
-            var date = new Date().toLocaleDateString();
-            var time = new Date().toLocaleTimeString();
-            _StdOut.putText("Current Date: " + date + " Current Time: " + time);
+            _date = new Date().toLocaleDateString();
+            _time = new Date().toLocaleTimeString();
+            _StdOut.putText("Current Date: " + _date + " Current Time: " + _time);
         };
         Shell.prototype.shellWhereAmI = function (args) {
             //TODO: Make this do something far more clever, maybe returns the users country
@@ -337,7 +337,7 @@ var DOS;
             }
         };
         Shell.prototype.shellGetIP = function (args) {
-            _APIReq.GetIP();
+            // _APIReq.GetIP();
             _StdOut.putText("Client IP Address: ");
         };
         return Shell;

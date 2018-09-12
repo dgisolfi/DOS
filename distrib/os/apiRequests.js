@@ -1,6 +1,4 @@
-"use strict";
-exports.__esModule = true;
-var request = require("request");
+// import * as request from 'request';
 var DOS;
 (function (DOS) {
     // This class is devoted to creating API Requests 
@@ -8,13 +6,13 @@ var DOS;
         function APIrequests() {
         }
         // Call a handy API I found on the web which returns the client IP in JSON
-        APIrequests.prototype.getIP = function (args) {
-            request.get('http://api.ipify.org/?format=jsonp&callback=JSONP_CALLBACK', function (error, response, body) {
-                console.log(error);
-                console.log(response);
-                console.log(body);
-                return response;
-            });
+        APIrequests.prototype.getIP = function () {
+            // request.get('http://api.ipify.org/?format=jsonp&callback=JSONP_CALLBACK', (error: any, response: any, body: any) => {
+            // console.log(error);
+            // console.log(response);
+            // console.log(body);
+            // return response;
+            // });
         };
         return APIrequests;
     }());

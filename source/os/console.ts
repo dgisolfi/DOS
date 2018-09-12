@@ -47,9 +47,8 @@ module DOS {
                     this.buffer = "";
                 // Check if the backpace key was pressed.
                 } else if (chr === String.fromCharCode(8)) {
-                    //if it was pressed pass the buffer something it can use...
-
-                    this.buffer = "-1";
+                    //if it was pressed let puttext function know to remove
+                    this.putText("del");
                 
                 } else {
                     // This is a "normal" character, so ...
@@ -71,17 +70,36 @@ module DOS {
             //
             // UPDATE: Even though we are now working in TypeScript, char and string remain undistinguished.
             //         Consider fixing that.
-            if (text !== "") {
+            
+            //buffer of all characters for each line in console
+            var cmd_characters = [];
+            console.log(this.buffer);
+            if (text === "del"){
+                // store char to be deleted, then remove from buffer
+                var lastChar = this.buffer.charAt(this.buffer.length - 1);
+                this.buffer = this.buffer.substring(0, this.buffer.length - 1);
+
+                // measure the length of the chosen prompt
+                var promptStart = _DrawingContext.measureText(this.currentFont, this.currentFontSize, _OsShell.promptStr);
+                // check if the cursor is already at the beginging of line
+                if (this.currentXPosition !<= this.currentFontSize, promptStart){
+                     // measure x-length of last entered character
+                    var offset = _DrawingContext.measureText(this.currentFont, this.currentFontSize, lastChar);
+
+                    // move the cursor and  over write the now deleted character
+                    this.currentXPosition = this.currentXPosition - offset;
+                    this.delChar(offset);
+                }
+
+            } else if (text !== "") {
                 // Draw the text at the current X and Y coordinates.
                 _DrawingContext.drawText(this.currentFont, this.currentFontSize, this.currentXPosition, this.currentYPosition, text);
                 // Move the current X position.
                 var offset = _DrawingContext.measureText(this.currentFont, this.currentFontSize, text);
-                this.currentXPosition = this.currentXPosition + offset;
-            } else if (text !== "-1"){
-                // Move the current X position.
-                var offset = _DrawingContext.measureText(this.currentFont, this.currentFontSize, text);
-
+                this.currentXPosition = this.currentXPosition + offset; 
+                // put current character into cmd list
             }
+            console.log("x:" + this.currentXPosition, "y: " + this.currentYPosition);
          }
 
         public advanceLine(): void {
@@ -96,6 +114,17 @@ module DOS {
                                      _FontHeightMargin;
 
             // TODO: Handle scrolling. (iProject 1)
+        }
+
+        public updateDateTime(): void {
+            var datetime = "";
+            // <HTMLInputElement>document.getElementById('datetime').value;
+        }
+
+        // delete given character in canvas
+        private delChar(offset): void {
+            console.log(offset);
+            _DrawingContext.clearRect(this.currentXPosition, this.currentYPosition, this.currentXPosition + offset, this.currentYPosition - this.currentFontSize );
         }
     }
  }

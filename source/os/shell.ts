@@ -365,9 +365,9 @@ module DOS {
         }
 
         public shellDate(args) {
-            var date = new Date().toLocaleDateString();
-            var time = new Date().toLocaleTimeString();
-            _StdOut.putText("Current Date: " + date + " Current Time: " + time );
+            _date = new Date().toLocaleDateString();
+            _time = new Date().toLocaleTimeString();
+            _StdOut.putText("Current Date: " + _date + " Current Time: " + _time );
         }
 
         public shellWhereAmI(args) {  
@@ -406,7 +406,7 @@ module DOS {
         }
 
         public shellGetIP(args) {
-            _APIReq.GetIP();
+            // _APIReq.GetIP();
             _StdOut.putText("Client IP Address: ");
         }
 

@@ -8,6 +8,7 @@
    Operating System Concepts 8th edition by Silberschatz, Galvin, and Gagne.  ISBN 978-0-470-12872-5
    ------------ */
 
+   
 //
 // Global CONSTANTS (TypeScript 1.5 introduced const. Very cool.)
 //
@@ -55,6 +56,9 @@ var _APIReq: DOS.APIrequests;
 // UI
 var _Console: DOS.Console;
 var _OsShell: DOS.Shell;
+
+var _date = new Date().toLocaleDateString();
+var _time = new Date().toLocaleTimeString();
 
 // At least this OS is not trying to kill you. (Yet.)
 var _SarcasticMode: boolean = false;
