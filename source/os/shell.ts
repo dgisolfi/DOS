@@ -99,14 +99,14 @@ module DOS {
             this.commandList[this.commandList.length] = sc;
 
             //get client IP
-            sc = new ShellCommand(this.shellGetIP,
-                                  "myip",
-                                  "d");
-            this.commandList[this.commandList.length] = sc;
+            // sc = new ShellCommand(this.shellGetIP,
+            //                       "myip",
+            //                       "d");
+            // this.commandList[this.commandList.length] = sc;
 
             sc = new ShellCommand(this.shellStatus,
                                   "status",
-                                  "- Updates the status.");
+                                  " <string> - Updates the status.");
             this.commandList[this.commandList.length] = sc;
 
             
@@ -318,6 +318,14 @@ module DOS {
                             _StdOut.putText("Allows the user to enable or disable sarcasm mode.");
                         } 
                         break;
+                    
+                    // case "myip":
+                    //     _StdOut.putText("Returns the Client IP address.");
+                    //     break;
+
+                    case "status":
+                        _StdOut.putText("Given a <string> the status will be assigned.");
+                        break;
                         
 
                     default:
@@ -416,7 +424,7 @@ module DOS {
         }
 
         public shellStatus(args) {
-            this.status = args[0];
+            this.status = "Status: " + args[0];
             document.getElementById("status").innerHTML = this.status;
             _StdOut.putText("Status Updated to: " + this.status);
         }

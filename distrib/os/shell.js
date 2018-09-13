@@ -62,9 +62,11 @@ var DOS;
             sc = new DOS.ShellCommand(this.shellSarcasm, "sarcasm", "<on | off> - Turns the OS sarcasm mode on or off.");
             this.commandList[this.commandList.length] = sc;
             //get client IP
-            sc = new DOS.ShellCommand(this.shellGetIP, "myip", "d");
-            this.commandList[this.commandList.length] = sc;
-            sc = new DOS.ShellCommand(this.shellStatus, "status", "- Updates the status.");
+            // sc = new ShellCommand(this.shellGetIP,
+            //                       "myip",
+            //                       "d");
+            // this.commandList[this.commandList.length] = sc;
+            sc = new DOS.ShellCommand(this.shellStatus, "status", " <string> - Updates the status.");
             this.commandList[this.commandList.length] = sc;
             // ps  - list the running processes and their IDs
             // kill <id> - kills the specified process id.
@@ -252,6 +254,12 @@ var DOS;
                             _StdOut.putText("Allows the user to enable or disable sarcasm mode.");
                         }
                         break;
+                    // case "myip":
+                    //     _StdOut.putText("Returns the Client IP address.");
+                    //     break;
+                    case "status":
+                        _StdOut.putText("Given a <string> the status will be assigned.");
+                        break;
                     default:
                         _StdOut.putText("No manual entry for " + args[0] + ".");
                 }
@@ -345,7 +353,7 @@ var DOS;
             _StdOut.putText("Client IP Address: ");
         };
         Shell.prototype.shellStatus = function (args) {
-            this.status = args[0];
+            this.status = "Status: " + args[0];
             document.getElementById("status").innerHTML = this.status;
             _StdOut.putText("Status Updated to: " + this.status);
         };

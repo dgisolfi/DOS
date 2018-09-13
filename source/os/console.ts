@@ -71,9 +71,6 @@ module DOS {
             // UPDATE: Even though we are now working in TypeScript, char and string remain undistinguished.
             //         Consider fixing that.
             
-            //buffer of all characters for each line in console
-            var cmd_characters = [];
-            console.log(this.buffer);
             if (text === "del"){
                 // store char to be deleted, then remove from buffer
                 var lastChar = this.buffer.charAt(this.buffer.length - 1);
@@ -99,7 +96,7 @@ module DOS {
                 this.currentXPosition = this.currentXPosition + offset; 
                 // put current character into cmd list
             }
-            console.log("x:" + this.currentXPosition, "y: " + this.currentYPosition);
+            // console.log("x:" + this.currentXPosition, "y: " + this.currentYPosition);
          }
 
         public advanceLine(): void {
@@ -114,6 +111,8 @@ module DOS {
                                      _FontHeightMargin;
 
             // TODO: Handle scrolling. (iProject 1)
+            
+             
         }
 
         public updateDateTime(): void {
@@ -123,8 +122,15 @@ module DOS {
 
         // delete given character in canvas
         private delChar(offset): void {
-            console.log(this.currentYPosition);
-            _DrawingContext.clearRect(this.currentXPosition, this.currentYPosition, this.currentXPosition + offset, 400);
+            // Measure the descent(do it here cuz its prettier)
+            var descent =  _DrawingContext.fontDescent(this.currentFont, this.currentFontSize);
+            // Using the current fontsize, offset and descent clear the rectangle
+            _DrawingContext.clearRect(
+                this.currentXPosition, 
+                this.currentYPosition - this.currentFontSize, 
+                this.currentXPosition + offset, 
+                this.currentYPosition + descent
+            );
         }
     }
  }

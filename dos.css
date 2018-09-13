@@ -8,14 +8,6 @@
   font-style: normal;
 } */
 
-h1 {
-  color: black;
-  font-size: 24pt;
-  font-weight: normal;
-  font-style: normal;
-  border-bottom: 1px solid black;
-}
-
 h2 {
   color: black;
   font-size: 20pt;
@@ -32,7 +24,7 @@ h3 {
 
 #display {
   background-color:#ffff;
-  border: 2px solid red;
+  border: 2px solid rgb(117, 181, 193);
   cursor: default;
 }
 
