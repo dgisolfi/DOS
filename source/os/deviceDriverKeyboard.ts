@@ -52,7 +52,10 @@ module DOS {
             } else if (((keyCode >= 48) && (keyCode <= 57)) ||   // digits
                         (keyCode == 32)                     ||   // space
                         (keyCode == 13)                     ||   // enter
-                        (keyCode == 8)){                         // Backspace       
+                        (keyCode == 8)                      ||   // Delete
+                        (keyCode == 9)                      ||   // Tab
+                        (keyCode == 38)                     ||   // Up key
+                        (keyCode == 40)){                        // Down key
                                                  
                 chr = String.fromCharCode(keyCode);
                 _KernelInputQueue.enqueue(chr);

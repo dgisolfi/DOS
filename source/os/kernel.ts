@@ -40,6 +40,9 @@ module DOS {
             _krnKeyboardDriver = new DeviceDriverKeyboard();     // Construct it.
             _krnKeyboardDriver.driverEntry();                    // Call the driverEntry() initialization routine.
             this.krnTrace(_krnKeyboardDriver.status);
+            
+            // Set the default status
+            document.getElementById("status").innerHTML = "Status: OS Online";
 
             //
             // ... more?
@@ -84,8 +87,7 @@ module DOS {
             _date = new Date().toLocaleDateString();
             _time = new Date().toLocaleTimeString();
             _Console.updateDateTime();
-            
-
+           
             // Check for an interrupt, are any. Page 560
             if (_KernelInterruptQueue.getSize() > 0) {
                 // Process the first interrupt on the interrupt queue.

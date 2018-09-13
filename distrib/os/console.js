@@ -10,17 +10,19 @@
 var DOS;
 (function (DOS) {
     var Console = /** @class */ (function () {
-        function Console(currentFont, currentFontSize, currentXPosition, currentYPosition, buffer) {
+        function Console(currentFont, currentFontSize, currentXPosition, currentYPosition, buffer, cmdHist) {
             if (currentFont === void 0) { currentFont = _DefaultFontFamily; }
             if (currentFontSize === void 0) { currentFontSize = _DefaultFontSize; }
             if (currentXPosition === void 0) { currentXPosition = 0; }
             if (currentYPosition === void 0) { currentYPosition = _DefaultFontSize; }
             if (buffer === void 0) { buffer = ""; }
+            if (cmdHist === void 0) { cmdHist = []; }
             this.currentFont = currentFont;
             this.currentFontSize = currentFontSize;
             this.currentXPosition = currentXPosition;
             this.currentYPosition = currentYPosition;
             this.buffer = buffer;
+            this.cmdHist = cmdHist;
         }
         Console.prototype.init = function () {
             this.clearScreen();
@@ -42,13 +44,38 @@ var DOS;
                     // The enter key marks the end of a console command, so ...
                     // ... tell the shell ...
                     _OsShell.handleInput(this.buffer);
+                    //... add the cmd to the history ...
+                    this.cmdHist.push(this.buffer);
                     // ... and reset our buffer.
                     this.buffer = "";
                     // Check if the backpace key was pressed.
                 }
-                else if (chr === String.fromCharCode(8)) {
-                    //if it was pressed let puttext function know to remove
-                    this.putText("del");
+                else if (chr === String.fromCharCode(8)) { // Del  Key
+                    //if it was pressed let remove previous char
+                    // this.putText("del");
+                    // store char to be deleted, then remove from buffer
+                    var lastChar = this.buffer.charAt(this.buffer.length - 1);
+                    this.buffer = this.buffer.substring(0, this.buffer.length - 1);
+                    // measure the length of the chosen prompt
+                    var promptStart = _DrawingContext.measureText(this.currentFont, this.currentFontSize, _OsShell.promptStr);
+                    // check if the cursor is already at the beginging of line
+                    if (this.currentXPosition <= this.currentFontSize, promptStart) {
+                        // measure x-length of last entered character
+                        var offset = _DrawingContext.measureText(this.currentFont, this.currentFontSize, lastChar);
+                        // move the cursor and  over write the now deleted character
+                        this.currentXPosition = this.currentXPosition - offset;
+                        this.delChar(offset);
+                        this.cmdCompletion(chr);
+                    }
+                }
+                else if (chr === String.fromCharCode(9)) {
+                    this.cmdCompletion(chr);
+                }
+                else if (chr === String.fromCharCode(38)) { // Up and down keys
+                    this.cmdHistory("down");
+                }
+                else if (chr === String.fromCharCode(40)) {
+                    this.cmdHistory("up");
                 }
                 else {
                     // This is a "normal" character, so ...
@@ -69,22 +96,7 @@ var DOS;
             //
             // UPDATE: Even though we are now working in TypeScript, char and string remain undistinguished.
             //         Consider fixing that.
-            if (text === "del") {
-                // store char to be deleted, then remove from buffer
-                var lastChar = this.buffer.charAt(this.buffer.length - 1);
-                this.buffer = this.buffer.substring(0, this.buffer.length - 1);
-                // measure the length of the chosen prompt
-                var promptStart = _DrawingContext.measureText(this.currentFont, this.currentFontSize, _OsShell.promptStr);
-                // check if the cursor is already at the beginging of line
-                if (this.currentXPosition <= this.currentFontSize, promptStart) {
-                    // measure x-length of last entered character
-                    var offset = _DrawingContext.measureText(this.currentFont, this.currentFontSize, lastChar);
-                    // move the cursor and  over write the now deleted character
-                    this.currentXPosition = this.currentXPosition - offset;
-                    this.delChar(offset);
-                }
-            }
-            else if (text !== "") {
+            if (text !== "") {
                 // Draw the text at the current X and Y coordinates.
                 _DrawingContext.drawText(this.currentFont, this.currentFontSize, this.currentXPosition, this.currentYPosition, text);
                 // Move the current X position.
@@ -92,7 +104,6 @@ var DOS;
                 this.currentXPosition = this.currentXPosition + offset;
                 // put current character into cmd list
             }
-            // console.log("x:" + this.currentXPosition, "y: " + this.currentYPosition);
         };
         Console.prototype.advanceLine = function () {
             this.currentXPosition = 0;
@@ -116,6 +127,31 @@ var DOS;
             var descent = _DrawingContext.fontDescent(this.currentFont, this.currentFontSize);
             // Using the current fontsize, offset and descent clear the rectangle
             _DrawingContext.clearRect(this.currentXPosition, this.currentYPosition - this.currentFontSize, this.currentXPosition + offset, this.currentYPosition + descent);
+        };
+        Console.prototype.cmdCompletion = function (cmd) {
+            this.clearLine();
+            console.log(cmd);
+        };
+        Console.prototype.cmdHistory = function (direc) {
+            this.clearLine();
+            // get list of commands
+            var cmds = this.cmdHist;
+            for (var i in cmds) {
+                console.log(cmds[i]);
+            }
+            if (direc === "up") {
+            }
+            else if (direc === "down") {
+            }
+        };
+        Console.prototype.clearLine = function () {
+            // Measure the descent(do it here cuz its prettier)
+            var descent = _DrawingContext.fontDescent(this.currentFont, this.currentFontSize);
+            // Clear the entire line
+            _DrawingContext.clearRect(0, this.currentYPosition - this.currentFontSize, this.currentXPosition + this.buffer.length, this.currentYPosition + descent);
+            // Whoops the prompt is gone....lets just put that back
+            this.currentXPosition = 0;
+            _OsShell.putPrompt();
         };
         return Console;
     }());

@@ -36,6 +36,8 @@ var DOS;
             _krnKeyboardDriver = new DOS.DeviceDriverKeyboard(); // Construct it.
             _krnKeyboardDriver.driverEntry(); // Call the driverEntry() initialization routine.
             this.krnTrace(_krnKeyboardDriver.status);
+            // Set the default status
+            document.getElementById("status").innerHTML = "Status: OS Online";
             //
             // ... more?
             //
