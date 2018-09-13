@@ -18,7 +18,8 @@ module DOS {
                 public currentXPosition = 0,
                 public currentYPosition = _DefaultFontSize,
                 public buffer = "",
-                public cmdHist = []
+                public cmdHist = [],                        // Keeps array of commands entered
+                public cmdIndex = 0                         // Keeps track of index of command
                 ){
         }
 
@@ -47,6 +48,7 @@ module DOS {
                     _OsShell.handleInput(this.buffer);
                     //... add the cmd to the history ...
                     this.cmdHist.push(this.buffer);
+                    this.cmdIndex += 1;
                     // ... and reset our buffer.
                     this.buffer = "";
                                         
@@ -68,18 +70,16 @@ module DOS {
                         // move the cursor and  over write the now deleted character
                         this.currentXPosition = this.currentXPosition - offset;
                         this.delChar(offset);
-                        this.cmdCompletion(chr);
                     }
                 
                 } else if (chr === String.fromCharCode(9)) {
                     this.cmdCompletion(chr);
                 
                 } else if (chr === String.fromCharCode(38)) { // Up and down keys
-                    this.cmdHistory("down");
+                    this.cmdHistory("up");
 
                 } else if (chr === String.fromCharCode(40)) {
-                    
-                    this.cmdHistory("up");
+                    this.cmdHistory("down");
 
                 }else {
                     // This is a "normal" character, so ...
@@ -147,21 +147,32 @@ module DOS {
         }
         private cmdCompletion(cmd) {
             this.clearLine();
+            console.log(_OsShell.commandList)
             
         }
 
         private cmdHistory(direc): void {
             this.clearLine();
-            // get list of commands
-            var cmds = this.cmdHist
-            for (var i in cmds){
-                console.log(cmds[i]);
-            }
             
             if (direc === "up") {
+                // check if index out of range then 
+                if (this.cmdIndex >= 0) {
+                    this.cmdIndex -= 1;
+                    this.putText(this.cmdHist[this.cmdIndex]);
+                } else {
+                    // put nothing if out of range
+                    this.putText("");
+                }
 
             } else if (direc === "down") {
-
+                // check if index out of range then 
+                if (this.cmdIndex <= this.cmdHistory.length) {
+                    this.cmdIndex += 1;
+                    this.putText(this.cmdHist[this.cmdIndex]);
+                } else {
+                    // put nothing if out of range
+                    this.putText("");
+                }
             }
         }
         

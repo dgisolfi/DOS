@@ -10,19 +10,23 @@
 var DOS;
 (function (DOS) {
     var Console = /** @class */ (function () {
-        function Console(currentFont, currentFontSize, currentXPosition, currentYPosition, buffer, cmdHist) {
+        function Console(currentFont, currentFontSize, currentXPosition, currentYPosition, buffer, cmdHist, // Keeps array of commands entered
+        cmdIndex // Keeps track of index of command
+        ) {
             if (currentFont === void 0) { currentFont = _DefaultFontFamily; }
             if (currentFontSize === void 0) { currentFontSize = _DefaultFontSize; }
             if (currentXPosition === void 0) { currentXPosition = 0; }
             if (currentYPosition === void 0) { currentYPosition = _DefaultFontSize; }
             if (buffer === void 0) { buffer = ""; }
             if (cmdHist === void 0) { cmdHist = []; }
+            if (cmdIndex === void 0) { cmdIndex = 0; }
             this.currentFont = currentFont;
             this.currentFontSize = currentFontSize;
             this.currentXPosition = currentXPosition;
             this.currentYPosition = currentYPosition;
             this.buffer = buffer;
             this.cmdHist = cmdHist;
+            this.cmdIndex = cmdIndex;
         }
         Console.prototype.init = function () {
             this.clearScreen();
@@ -46,6 +50,7 @@ var DOS;
                     _OsShell.handleInput(this.buffer);
                     //... add the cmd to the history ...
                     this.cmdHist.push(this.buffer);
+                    this.cmdIndex += 1;
                     // ... and reset our buffer.
                     this.buffer = "";
                     // Check if the backpace key was pressed.
@@ -65,17 +70,16 @@ var DOS;
                         // move the cursor and  over write the now deleted character
                         this.currentXPosition = this.currentXPosition - offset;
                         this.delChar(offset);
-                        this.cmdCompletion(chr);
                     }
                 }
                 else if (chr === String.fromCharCode(9)) {
                     this.cmdCompletion(chr);
                 }
                 else if (chr === String.fromCharCode(38)) { // Up and down keys
-                    this.cmdHistory("down");
+                    this.cmdHistory("up");
                 }
                 else if (chr === String.fromCharCode(40)) {
-                    this.cmdHistory("up");
+                    this.cmdHistory("down");
                 }
                 else {
                     // This is a "normal" character, so ...
@@ -130,18 +134,31 @@ var DOS;
         };
         Console.prototype.cmdCompletion = function (cmd) {
             this.clearLine();
-            console.log(cmd);
+            console.log(_OsShell.commandList);
         };
         Console.prototype.cmdHistory = function (direc) {
             this.clearLine();
-            // get list of commands
-            var cmds = this.cmdHist;
-            for (var i in cmds) {
-                console.log(cmds[i]);
-            }
             if (direc === "up") {
+                // check if index out of range then 
+                if (this.cmdIndex >= 0) {
+                    this.cmdIndex -= 1;
+                    this.putText(this.cmdHist[this.cmdIndex]);
+                }
+                else {
+                    // put nothing if out of range
+                    this.putText("");
+                }
             }
             else if (direc === "down") {
+                // check if index out of range then 
+                if (this.cmdIndex <= this.cmdHistory.length) {
+                    this.cmdIndex += 1;
+                    this.putText(this.cmdHist[this.cmdIndex]);
+                }
+                else {
+                    // put nothing if out of range
+                    this.putText("");
+                }
             }
         };
         Console.prototype.clearLine = function () {
