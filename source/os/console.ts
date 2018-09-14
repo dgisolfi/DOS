@@ -13,13 +13,16 @@ module DOS {
 
     export class Console {
         constructor(
-                public currentFont = _DefaultFontFamily,
-                public currentFontSize = _DefaultFontSize,
+                public currentFont      = _DefaultFontFamily,
+                public currentFontSize  = _DefaultFontSize,
                 public currentXPosition = 0,
                 public currentYPosition = _DefaultFontSize,
-                public buffer = "",
-                public cmdHist = [],                        // Keeps array of commands entered
-                public cmdIndex = 0                         // Keeps track of index of command
+                public buffer           = "",
+                public cmdHist          = [],       // Keeps array of commands entered
+                public cmdIndex         = 0,        // Keeps track of index of command
+                public tempIndex        = 0,
+                public canvasData       = [],
+                
                 ){
         }
 
@@ -48,7 +51,7 @@ module DOS {
                     _OsShell.handleInput(this.buffer);
                     //... add the cmd to the history ...
                     this.cmdHist.push(this.buffer);
-                    this.cmdIndex += 1;
+                    this.cmdIndex += 1; //this.cmdHist.length - 1;
                     // ... and reset our buffer.
                     this.buffer = "";
                                         
@@ -124,6 +127,36 @@ module DOS {
                                      _FontHeightMargin;
 
             // TODO: Handle scrolling. (iProject 1)
+            if (this.currentYPosition >= _Canvas.height) {
+               // Find out how many lines need to be removed
+               var extraLines = this.currentYPosition - _Canvas.height;
+
+               // store all lines in array
+               for(var i=0; i<_Canvas.height; i+= this.currentYPosition){
+                var lineData = _DrawingContext.getImageData(0, i, _Canvas.width, this.currentYPosition);
+                this.canvasData.push(lineData);
+               }
+
+            // var ctx = canvas.getContext('2d');
+            // ctx.textAlign = 'center';
+            // for (var w = 0; w < canvas.width; w += 100) {
+            //   for (var h = 0; h < canvas.height; h += 100) {
+            //     ctx.fillText(w + ',' + h, w, h);
+            //   }
+            // }
+               //remove top x lines from array
+            //    this.canvasData.slice(-extraLines);
+
+               //clear the canvas
+            //    _DrawingContext.clearRect(0, 0, _Canvas.width, _Canvas.height);
+
+               //output the remaining lines
+               this.canvasData.forEach(function (value) {
+                    console.log(value);
+                    // this.putText(value);
+               }); 
+               
+            }
             
              
         }
@@ -152,12 +185,16 @@ module DOS {
         }
 
         private cmdHistory(direc): void {
+            //clear the line and the buffer to avoid errors
             this.clearLine();
+            this.buffer = "";
+            var tempIndex = this.cmdIndex;
             
             if (direc === "up") {
                 // check if index out of range then 
                 if (this.cmdIndex >= 0) {
-                    this.cmdIndex -= 1;
+                    this.cmdIndex--;
+                    this.buffer += this.cmdHist[this.cmdIndex];
                     this.putText(this.cmdHist[this.cmdIndex]);
                 } else {
                     // put nothing if out of range
@@ -166,14 +203,17 @@ module DOS {
 
             } else if (direc === "down") {
                 // check if index out of range then 
-                if (this.cmdIndex <= this.cmdHistory.length) {
-                    this.cmdIndex += 1;
+                if (this.cmdIndex <= this.cmdHistory.length - 1) {
+                    this.cmdIndex++;
+                    this.buffer += this.cmdHist[this.cmdIndex];
                     this.putText(this.cmdHist[this.cmdIndex]);
                 } else {
                     // put nothing if out of range
                     this.putText("");
                 }
             }
+            // Restore index after looking through history
+           
         }
         
         private clearLine(): void {

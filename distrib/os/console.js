@@ -11,8 +11,8 @@ var DOS;
 (function (DOS) {
     var Console = /** @class */ (function () {
         function Console(currentFont, currentFontSize, currentXPosition, currentYPosition, buffer, cmdHist, // Keeps array of commands entered
-        cmdIndex // Keeps track of index of command
-        ) {
+        cmdIndex, // Keeps track of index of command
+        tempIndex, canvasData) {
             if (currentFont === void 0) { currentFont = _DefaultFontFamily; }
             if (currentFontSize === void 0) { currentFontSize = _DefaultFontSize; }
             if (currentXPosition === void 0) { currentXPosition = 0; }
@@ -20,6 +20,8 @@ var DOS;
             if (buffer === void 0) { buffer = ""; }
             if (cmdHist === void 0) { cmdHist = []; }
             if (cmdIndex === void 0) { cmdIndex = 0; }
+            if (tempIndex === void 0) { tempIndex = 0; }
+            if (canvasData === void 0) { canvasData = []; }
             this.currentFont = currentFont;
             this.currentFontSize = currentFontSize;
             this.currentXPosition = currentXPosition;
@@ -27,6 +29,8 @@ var DOS;
             this.buffer = buffer;
             this.cmdHist = cmdHist;
             this.cmdIndex = cmdIndex;
+            this.tempIndex = tempIndex;
+            this.canvasData = canvasData;
         }
         Console.prototype.init = function () {
             this.clearScreen();
@@ -50,7 +54,7 @@ var DOS;
                     _OsShell.handleInput(this.buffer);
                     //... add the cmd to the history ...
                     this.cmdHist.push(this.buffer);
-                    this.cmdIndex += 1;
+                    this.cmdIndex += 1; //this.cmdHist.length - 1;
                     // ... and reset our buffer.
                     this.buffer = "";
                     // Check if the backpace key was pressed.
@@ -120,6 +124,31 @@ var DOS;
                 _DrawingContext.fontDescent(this.currentFont, this.currentFontSize) +
                 _FontHeightMargin;
             // TODO: Handle scrolling. (iProject 1)
+            if (this.currentYPosition >= _Canvas.height) {
+                // Find out how many lines need to be removed
+                var extraLines = this.currentYPosition - _Canvas.height;
+                // store all lines in array
+                for (var i = 0; i < _Canvas.height; i += this.currentYPosition) {
+                    var lineData = _DrawingContext.getImageData(0, i, _Canvas.width, this.currentYPosition);
+                    this.canvasData.push(lineData);
+                }
+                // var ctx = canvas.getContext('2d');
+                // ctx.textAlign = 'center';
+                // for (var w = 0; w < canvas.width; w += 100) {
+                //   for (var h = 0; h < canvas.height; h += 100) {
+                //     ctx.fillText(w + ',' + h, w, h);
+                //   }
+                // }
+                //remove top x lines from array
+                //    this.canvasData.slice(-extraLines);
+                //clear the canvas
+                //    _DrawingContext.clearRect(0, 0, _Canvas.width, _Canvas.height);
+                //output the remaining lines
+                this.canvasData.forEach(function (value) {
+                    console.log(value);
+                    // this.putText(value);
+                });
+            }
         };
         Console.prototype.updateDateTime = function () {
             var datetime = _date + " | " + _time;
@@ -137,11 +166,15 @@ var DOS;
             console.log(_OsShell.commandList);
         };
         Console.prototype.cmdHistory = function (direc) {
+            //clear the line and the buffer to avoid errors
             this.clearLine();
+            this.buffer = "";
+            var tempIndex = this.cmdIndex;
             if (direc === "up") {
                 // check if index out of range then 
                 if (this.cmdIndex >= 0) {
-                    this.cmdIndex -= 1;
+                    this.cmdIndex--;
+                    this.buffer += this.cmdHist[this.cmdIndex];
                     this.putText(this.cmdHist[this.cmdIndex]);
                 }
                 else {
@@ -151,8 +184,9 @@ var DOS;
             }
             else if (direc === "down") {
                 // check if index out of range then 
-                if (this.cmdIndex <= this.cmdHistory.length) {
-                    this.cmdIndex += 1;
+                if (this.cmdIndex <= this.cmdHistory.length - 1) {
+                    this.cmdIndex++;
+                    this.buffer += this.cmdHist[this.cmdIndex];
                     this.putText(this.cmdHist[this.cmdIndex]);
                 }
                 else {
@@ -160,6 +194,7 @@ var DOS;
                     this.putText("");
                 }
             }
+            // Restore index after looking through history
         };
         Console.prototype.clearLine = function () {
             // Measure the descent(do it here cuz its prettier)

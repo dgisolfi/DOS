@@ -31,15 +31,14 @@
    <!-- Other Routines -->
    <script type="text/javascript" src="distrib/utils.js"></script>
    <!-- Uncomment the line below to enable GLaDOS testing. -->
-   <!-- <script type="text/javascript" src="http://alanclasses.github.io/TSOS/test/glados-ip0.js"></script> -->
+   <!-- <script type="text/javascript" src="test/glados-ip1.js"></script> -->
 
    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 
    <!-- Bootstrap -->
    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-   <!-- TODO: get this link to work -->
-   <!-- <script src="../node_modules/c/dist/js/bootstrap.min.js"></script> -->
+   
    <!-- Latest compiled and minified JavaScript -->
    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
 
@@ -110,7 +109,14 @@
                     <canvas id="display"
                             width="500px"
                             height="500px"
-                            tabindex="3">
+                            tabindex="3"
+                            style="
+                                background-color: #ffffff;
+                                border: 2px solid rgb(117, 181, 193);
+                                cursor: default;
+                                display: block;
+                                
+                                ">
                     </canvas>
                 </div>
             </body>
@@ -144,7 +150,12 @@
     </div>
 </div>
 
-<p class="footerText" style="clear:both;">
+<p class="footerText" style="clear:both;
+                            color: black; 
+                            font-family: Arial, 
+                            Helvetica, sans-serif;
+                            font-size: 8pt;
+                            text-align: center;">
    <br>
    Copyright &copy; 2008 - 2018 No Rights Reserved.
    <br>

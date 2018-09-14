@@ -68,6 +68,8 @@ var DOS;
             // this.commandList[this.commandList.length] = sc;
             sc = new DOS.ShellCommand(this.shellStatus, "status", " <string> - Updates the status.");
             this.commandList[this.commandList.length] = sc;
+            sc = new DOS.ShellCommand(this.shellBSOD, "BSOD", "- Force break the OS.");
+            this.commandList[this.commandList.length] = sc;
             // ps  - list the running processes and their IDs
             // kill <id> - kills the specified process id.
             //
@@ -83,6 +85,7 @@ var DOS;
             // Parse the input...
             //
             var userCommand = this.parseInput(buffer);
+            _Console.canvasData.push(userCommand);
             // ... and assign the command and args to local variables.
             var cmd = userCommand.command;
             var args = userCommand.args;
@@ -356,6 +359,10 @@ var DOS;
             this.status = "Status: " + args[0];
             document.getElementById("status").innerHTML = this.status;
             _StdOut.putText("Status Updated to: " + this.status);
+        };
+        Shell.prototype.shellBSOD = function (args) {
+            _StdOut.putText("Michael is a Bitch");
+            // _Kernel.krnTrapError("Forced by user");
         };
         return Shell;
     }());

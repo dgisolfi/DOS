@@ -74,6 +74,8 @@ var DOS;
             _date = new Date().toLocaleDateString();
             _time = new Date().toLocaleTimeString();
             _Console.updateDateTime();
+            console.log(_Console.cmdHist);
+            console.log(_Console.cmdIndex);
             // Check for an interrupt, are any. Page 560
             if (_KernelInterruptQueue.getSize() > 0) {
                 // Process the first interrupt on the interrupt queue.
@@ -161,6 +163,7 @@ var DOS;
         Kernel.prototype.krnTrapError = function (msg) {
             DOS.Control.hostLog("OS ERROR - TRAP: " + msg);
             // TODO: Display error on console, perhaps in some sort of colored screen. (Maybe blue?)
+            document.getElementById("display").style.color = "blue";
             this.krnShutdown();
         };
         return Kernel;
