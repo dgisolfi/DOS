@@ -87,8 +87,8 @@ module DOS {
             _date = new Date().toLocaleDateString();
             _time = new Date().toLocaleTimeString();
             _Console.updateDateTime();
-            console.log(_Console.cmdHist);
-            console.log(_Console.cmdIndex);
+            // console.log(_Console.cmdHist);
+            // console.log(_Console.cmdIndex);
            
             // Check for an interrupt, are any. Page 560
             if (_KernelInterruptQueue.getSize() > 0) {

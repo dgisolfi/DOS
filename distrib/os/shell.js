@@ -85,7 +85,6 @@ var DOS;
             // Parse the input...
             //
             var userCommand = this.parseInput(buffer);
-            _Console.canvasData.push(userCommand);
             // ... and assign the command and args to local variables.
             var cmd = userCommand.command;
             var args = userCommand.args;

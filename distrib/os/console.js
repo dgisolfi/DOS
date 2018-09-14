@@ -21,7 +21,7 @@ var DOS;
             if (cmdHist === void 0) { cmdHist = []; }
             if (cmdIndex === void 0) { cmdIndex = 0; }
             if (tempIndex === void 0) { tempIndex = 0; }
-            if (canvasData === void 0) { canvasData = []; }
+            if (canvasData === void 0) { canvasData = ""; }
             this.currentFont = currentFont;
             this.currentFontSize = currentFontSize;
             this.currentXPosition = currentXPosition;
@@ -120,34 +120,16 @@ var DOS;
              * Font descent measures from the baseline to the lowest point in the font.
              * Font height margin is extra spacing between the lines.
              */
+            // This is used a few times, lets put it here and make it prettier
+            var descent = _DrawingContext.fontDescent(this.currentFont, this.currentFontSize);
+            // Create a temp to store old y val
+            var oldYPosition = this.currentYPosition;
             this.currentYPosition += _DefaultFontSize +
-                _DrawingContext.fontDescent(this.currentFont, this.currentFontSize) +
+                descent +
                 _FontHeightMargin;
-            // TODO: Handle scrolling. (iProject 1)
+            // Scrolling | Check if it even needs to be called
             if (this.currentYPosition >= _Canvas.height) {
-                // Find out how many lines need to be removed
-                var extraLines = this.currentYPosition - _Canvas.height;
-                // store all lines in array
-                for (var i = 0; i < _Canvas.height; i += this.currentYPosition) {
-                    var lineData = _DrawingContext.getImageData(0, i, _Canvas.width, this.currentYPosition);
-                    this.canvasData.push(lineData);
-                }
-                // var ctx = canvas.getContext('2d');
-                // ctx.textAlign = 'center';
-                // for (var w = 0; w < canvas.width; w += 100) {
-                //   for (var h = 0; h < canvas.height; h += 100) {
-                //     ctx.fillText(w + ',' + h, w, h);
-                //   }
-                // }
-                //remove top x lines from array
-                //    this.canvasData.slice(-extraLines);
-                //clear the canvas
-                //    _DrawingContext.clearRect(0, 0, _Canvas.width, _Canvas.height);
-                //output the remaining lines
-                this.canvasData.forEach(function (value) {
-                    console.log(value);
-                    // this.putText(value);
-                });
+                this.scroll(descent, oldYPosition);
             }
         };
         Console.prototype.updateDateTime = function () {
@@ -204,6 +186,25 @@ var DOS;
             // Whoops the prompt is gone....lets just put that back
             this.currentXPosition = 0;
             _OsShell.putPrompt();
+        };
+        Console.prototype.scroll = function (descent, oldYPosition) {
+            // Find out how many lines need to be removed
+            var extraLines = this.currentYPosition - _Canvas.height;
+            // store height of canvas for image
+            var fullHeight = _Canvas.height -
+                this.currentYPosition -
+                _DrawingContext.fontDescent(this.currentFont, this.currentFontSize);
+            var startYPostion = _DefaultFontSize +
+                _DrawingContext.fontDescent(this.currentFont, this.currentFontSize) +
+                _FontHeightMargin;
+            // take a snapshot of the canvas use this -> https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/getImageData
+            this.canvasData = _DrawingContext.getImageData(0, startYPostion, _Canvas.width, fullHeight);
+            //clear the canvas
+            _DrawingContext.clearRect(0, 0, _Canvas.width, _Canvas.height);
+            //Redraw image
+            _DrawingContext.putImageData(this.canvasData, 0, 0);
+            // Move the cursur loc to...otherwise youll type in the middles of the canvas
+            this.currentYPosition = oldYPosition;
         };
         return Console;
     }());
