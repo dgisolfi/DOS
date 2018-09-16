@@ -72,6 +72,8 @@ var DOS;
             this.commandList[this.commandList.length] = sc;
             sc = new DOS.ShellCommand(this.shellDarkMode, "darktheme", "<on | off> - enables or disables the dark theme for the UI.");
             this.commandList[this.commandList.length] = sc;
+            sc = new DOS.ShellCommand(this.shellLoad, "load", "- Validates user code.");
+            this.commandList[this.commandList.length] = sc;
             // ps  - list the running processes and their IDs
             // kill <id> - kills the specified process id.
             //
@@ -264,8 +266,14 @@ var DOS;
                     case "status":
                         _StdOut.putText("Given a <string> the status will be assigned.");
                         break;
-                    case "BSOD":
+                    case "bsod":
                         _StdOut.putText("Force breaks everything :).");
+                        break;
+                    case "darktheme":
+                        _StdOut.putText("Enables or Disables the dark theme skin for the DOS UI.");
+                        break;
+                    case "load":
+                        _StdOut.putText("Validates the user code in the HTML5 text area.");
                         break;
                     default:
                         _StdOut.putText("No manual entry for " + args[0] + ".");
@@ -381,12 +389,12 @@ var DOS;
                 switch (setting) {
                     case "on":
                         //enable dark mode
-                        document.getElementById('theme').setAttribute('href', darkThemelink);
+                        document.getElementById("theme").setAttribute("href", darkThemelink);
                         _StdOut.putText("Dark Mode Enabled.");
                         break;
                     case "off":
                         //disable dark mode
-                        document.getElementById('theme').setAttribute('href', defaultThemelink);
+                        document.getElementById("theme").setAttribute("href", defaultThemelink);
                         _StdOut.putText("Dark Mode Disabled.");
                         break;
                     default:
@@ -395,6 +403,44 @@ var DOS;
             }
             else {
                 _StdOut.putText("Usage: darktheme <on | off>.");
+            }
+        };
+        Shell.prototype.shellLoad = function () {
+            try {
+                var userCode = document.getElementById('taProgramInput').value;
+                var error = false;
+                // initial validation
+                if (userCode === "" || userCode === " ") {
+                    _StdOut.putText("No user code found.");
+                    throw new Error("No user code found.");
+                }
+                else if (userCode.toUpperCase() != userCode) {
+                    _StdOut.putText("Invalid Syntax: Lower case character detected.");
+                    throw new Error("Invalid Syntax: Lower case character detected.");
+                }
+                // Begin splitting and validating individual chars
+                var userCodeArr = userCode.split(' ');
+                var validInt = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+                var validChar = ['A', 'B', 'C', 'D', 'E', 'F'];
+                userCodeArr.forEach(function (char) {
+                    if (char.length > 2) {
+                        _StdOut.putText("Syntax Error: '" + char + "' is greater than 2 in length");
+                        throw new Error("Syntax Error: '" + char + "' is greater than 2 in length");
+                    }
+                    else if (char.length < 2) {
+                        _StdOut.putText("Syntax Error: '" + char + "' is less than 2 in length");
+                        throw new Error("Syntax Error: '" + char + "' is less than 2 in length");
+                    }
+                    var digits = char.split('');
+                    digits.forEach(function (element) {
+                        // if (validInt.includes(char)){
+                        // }
+                    });
+                });
+                _StdOut.putText("Program load successful");
+            }
+            catch (e) {
+                console.log(e);
             }
         };
         return Shell;
