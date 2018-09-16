@@ -60,6 +60,8 @@ var _OsShell: DOS.Shell;
 var _date = new Date().toLocaleDateString();
 var _time = new Date().toLocaleTimeString();
 
+
+
 // At least this OS is not trying to kill you. (Yet.)
 var _SarcasticMode: boolean = false;
 

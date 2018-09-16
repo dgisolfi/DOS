@@ -23,7 +23,6 @@ module DOS {
                 public cmdSuggestions   = [],
                 public tempIndex        = 0,
                 public canvasData       = ""
-                
                 ){
         }
 
@@ -58,7 +57,7 @@ module DOS {
                                         
                 // Check if the backpace key was pressed.
                 } else if (chr === String.fromCharCode(8)) { // Del  Key
-                    //if it was pressed let remove previous char
+                    // if it was pressed lets remove previous char
                     // this.putText("del");
                     // store char to be deleted, then remove from buffer
                     var lastChar = this.buffer.charAt(this.buffer.length - 1);
@@ -123,22 +122,26 @@ module DOS {
              * Font descent measures from the baseline to the lowest point in the font.
              * Font height margin is extra spacing between the lines.
              */
-            // This is used a few times, lets put it here and make it prettier
-            var descent = _DrawingContext.fontDescent(this.currentFont, this.currentFontSize)
+            
             // Create a temp to store old y val
             var oldYPosition = this.currentYPosition;
+
+            // This is used a few times, lets put it here and make it prettier
+            var descent = _DrawingContext.fontDescent(this.currentFont, this.currentFontSize)
+
             this.currentYPosition += _DefaultFontSize + 
                                      descent +
                                      _FontHeightMargin;
 
             // Scrolling | Check if it even needs to be called
             if (this.currentYPosition >= _Canvas.height) {
-                this.scroll(descent, oldYPosition);
+                this.scroll( oldYPosition);
             }
                          
         }
 
         public updateDateTime(): void {
+            // update the display with cur time
             var datetime = _date + " | " + _time;
             document.getElementById("datetime").innerHTML = datetime;
         }
@@ -146,7 +149,7 @@ module DOS {
         // delete given character in canvas
         private delChar(offset): void {
             // Measure the descent(do it here cuz its prettier)
-            var descent =  _DrawingContext.fontDescent(this.currentFont, this.currentFontSize);
+            var descent = _DrawingContext.fontDescent(this.currentFont, this.currentFontSize);
             // Using the current fontsize, offset and descent clear the rectangle
             _DrawingContext.clearRect(
                 this.currentXPosition, 
@@ -233,31 +236,19 @@ module DOS {
             _OsShell.putPrompt();
         }
 
-        public scroll(descent, oldYPosition): void {
-            // Find out how many lines need to be removed
-            var extraLines = this.currentYPosition - _Canvas.height;
+        public scroll(oldYPosition): void {
             // store height of canvas for image
-            var fullHeight = _Canvas.height -
-                             this.currentYPosition -
-                             _DrawingContext.fontDescent(this.currentFont, this.currentFontSize);
-            
-            var startYPostion = _DefaultFontSize + 
-                             _DrawingContext.fontDescent(this.currentFont, this.currentFontSize) +
-                            _FontHeightMargin;               
-
+            var height = _DefaultFontSize +
+                        _DrawingContext.fontDescent(this.currentFont, this.currentFontSize) +
+                        _FontHeightMargin;
+                     
             // take a snapshot of the canvas use this -> https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/getImageData
-            this.canvasData = _DrawingContext.getImageData(0,
-                                                           startYPostion, 
-                                                           _Canvas.width, 
-                                                           fullHeight);
+            this.canvasData = _DrawingContext.getImageData(0, height, _Canvas.width, this.currentYPosition);
             //clear the canvas
             this.clearScreen()
-
-        
             //Redraw image
             _DrawingContext.putImageData(this.canvasData, 0, 0);
-
-            // Move the cursur loc to...otherwise youll type in the middles of the canvas
+            // Move the cursur loc...otherwise youll bad things happen
             this.currentYPosition = oldYPosition; 
         }
     }

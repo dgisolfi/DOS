@@ -62,7 +62,7 @@ var DOS;
                     // Check if the backpace key was pressed.
                 }
                 else if (chr === String.fromCharCode(8)) { // Del  Key
-                    //if it was pressed let remove previous char
+                    // if it was pressed lets remove previous char
                     // this.putText("del");
                     // store char to be deleted, then remove from buffer
                     var lastChar = this.buffer.charAt(this.buffer.length - 1);
@@ -122,19 +122,20 @@ var DOS;
              * Font descent measures from the baseline to the lowest point in the font.
              * Font height margin is extra spacing between the lines.
              */
-            // This is used a few times, lets put it here and make it prettier
-            var descent = _DrawingContext.fontDescent(this.currentFont, this.currentFontSize);
             // Create a temp to store old y val
             var oldYPosition = this.currentYPosition;
+            // This is used a few times, lets put it here and make it prettier
+            var descent = _DrawingContext.fontDescent(this.currentFont, this.currentFontSize);
             this.currentYPosition += _DefaultFontSize +
                 descent +
                 _FontHeightMargin;
             // Scrolling | Check if it even needs to be called
             if (this.currentYPosition >= _Canvas.height) {
-                this.scroll(descent, oldYPosition);
+                this.scroll(oldYPosition);
             }
         };
         Console.prototype.updateDateTime = function () {
+            // update the display with cur time
             var datetime = _date + " | " + _time;
             document.getElementById("datetime").innerHTML = datetime;
         };
@@ -147,29 +148,27 @@ var DOS;
         };
         Console.prototype.cmdCompletion = function () {
             var _this = this;
+            // search for common commands in the known list
             _OsShell.commandList.forEach(function (element) {
                 if (element['command'].search(_this.buffer) === 0) {
-                    // The string is not found in the command
+                    // only add if the cmd is not already added
                     if (_this.cmdSuggestions.indexOf(element['command']) !== 0) {
-                        console.log('match adding ' + element['command']);
                         _this.cmdSuggestions.push(element['command']);
                     }
                 }
             });
+            // now re check the results incase there is more than one possible cmd
             this.cmdSuggestions.forEach(function (element) {
-                console.log("check" + element);
+                // if the cmd is no longer a possibility remove it and recall 
+                //the function to check again
                 if (element.search(_this.buffer) !== 0) {
-                    // The string is not found in the command
                     var index = _this.cmdSuggestions.indexOf(element);
-                    console.log('removing ' + element + '|' + index);
                     _this.cmdSuggestions.splice(index, 1);
                     _this.cmdCompletion();
                 }
             });
-            console.log(this.cmdSuggestions);
             if (this.cmdSuggestions.length === 1) {
                 // clear line and update buffer
-                console.log('arr: ' + this.cmdSuggestions);
                 this.clearLine();
                 this.buffer = this.cmdSuggestions[0];
                 this.putText(this.buffer);
@@ -216,23 +215,18 @@ var DOS;
             this.currentXPosition = 0;
             _OsShell.putPrompt();
         };
-        Console.prototype.scroll = function (descent, oldYPosition) {
-            // Find out how many lines need to be removed
-            var extraLines = this.currentYPosition - _Canvas.height;
+        Console.prototype.scroll = function (oldYPosition) {
             // store height of canvas for image
-            var fullHeight = _Canvas.height -
-                this.currentYPosition -
-                _DrawingContext.fontDescent(this.currentFont, this.currentFontSize);
-            var startYPostion = _DefaultFontSize +
+            var height = _DefaultFontSize +
                 _DrawingContext.fontDescent(this.currentFont, this.currentFontSize) +
                 _FontHeightMargin;
             // take a snapshot of the canvas use this -> https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/getImageData
-            this.canvasData = _DrawingContext.getImageData(0, startYPostion, _Canvas.width, fullHeight);
+            this.canvasData = _DrawingContext.getImageData(0, height, _Canvas.width, this.currentYPosition);
             //clear the canvas
             this.clearScreen();
             //Redraw image
             _DrawingContext.putImageData(this.canvasData, 0, 0);
-            // Move the cursur loc to...otherwise youll type in the middles of the canvas
+            // Move the cursur loc...otherwise youll bad things happen
             this.currentYPosition = oldYPosition;
         };
         return Console;

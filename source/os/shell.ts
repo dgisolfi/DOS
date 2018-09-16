@@ -114,6 +114,10 @@ module DOS {
                                   "- Force break the OS.");
             this.commandList[this.commandList.length] = sc;
 
+            sc = new ShellCommand(this.shellDarkMode,
+                                  "darktheme",
+                                  "<on | off> - enables or disables the dark theme for the UI.");
+            this.commandList[this.commandList.length] = sc;
 
             // ps  - list the running processes and their IDs
             // kill <id> - kills the specified process id.
@@ -444,6 +448,31 @@ module DOS {
 
         public shellBSOD() {
             _Kernel.krnTrapError("Forced by user");
+        }
+
+        public shellDarkMode(args) {
+            var darkThemelink = 'https://stackpath.bootstrapcdn.com/bootswatch/4.1.3/slate/bootstrap.min.css';
+            var defaultThemelink = 'https://stackpath.bootstrapcdn.com/bootswatch/4.1.3/lux/bootstrap.min.css';
+
+            if (args.length > 0) {
+                var setting = args[0];
+                switch (setting) {
+                    case "on":
+                        //enable dark mode
+                        document.getElementById('theme').setAttribute('href', darkThemelink);
+                        _StdOut.putText("Dark Mode Enabled.");
+                        break;
+                    case "off":
+                        //disable dark mode
+                        document.getElementById('theme').setAttribute('href', defaultThemelink);
+                        _StdOut.putText("Dark Mode Disabled.");
+                        break;
+                    default:
+                        _StdOut.putText("Invalid arguement.  Usage: darktheme <on | off>.");
+                }
+            } else {
+                _StdOut.putText("Usage: darktheme <on | off>.");
+            }
         }
 
     }
