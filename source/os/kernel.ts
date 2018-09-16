@@ -184,7 +184,12 @@ module DOS {
         public krnTrapError(msg) {
             Control.hostLog("OS ERROR - TRAP: " + msg);
             // TODO: Display error on console, perhaps in some sort of colored screen. (Maybe blue?)
-            document.getElementById("display").style.color = "blue";
+            _Console.clearScreen();
+            _DrawingContext.fillStyle='blue';
+            _DrawingContext.fillRect(0,0,_Canvas.width,_Canvas.height);
+            _Console.putText("OS ERROR - TRAP: " + msg);
+            _Console.advanceLine();
+            _Console.putText("\nTo resolve this issue stop using a OS within a webbrowser and get a real OS...like MacOS");
             this.krnShutdown();
         }
     }

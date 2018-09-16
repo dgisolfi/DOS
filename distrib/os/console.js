@@ -12,7 +12,7 @@ var DOS;
     var Console = /** @class */ (function () {
         function Console(currentFont, currentFontSize, currentXPosition, currentYPosition, buffer, cmdHist, // Keeps array of commands entered
         cmdIndex, // Keeps track of index of command
-        tempIndex, canvasData) {
+        cmdSuggestions, tempIndex, canvasData) {
             if (currentFont === void 0) { currentFont = _DefaultFontFamily; }
             if (currentFontSize === void 0) { currentFontSize = _DefaultFontSize; }
             if (currentXPosition === void 0) { currentXPosition = 0; }
@@ -20,6 +20,7 @@ var DOS;
             if (buffer === void 0) { buffer = ""; }
             if (cmdHist === void 0) { cmdHist = []; }
             if (cmdIndex === void 0) { cmdIndex = 0; }
+            if (cmdSuggestions === void 0) { cmdSuggestions = []; }
             if (tempIndex === void 0) { tempIndex = 0; }
             if (canvasData === void 0) { canvasData = ""; }
             this.currentFont = currentFont;
@@ -29,6 +30,7 @@ var DOS;
             this.buffer = buffer;
             this.cmdHist = cmdHist;
             this.cmdIndex = cmdIndex;
+            this.cmdSuggestions = cmdSuggestions;
             this.tempIndex = tempIndex;
             this.canvasData = canvasData;
         }
@@ -77,7 +79,7 @@ var DOS;
                     }
                 }
                 else if (chr === String.fromCharCode(9)) {
-                    this.cmdCompletion(chr);
+                    this.cmdCompletion();
                 }
                 else if (chr === String.fromCharCode(38)) { // Up and down keys
                     this.cmdHistory("up");
@@ -143,9 +145,35 @@ var DOS;
             // Using the current fontsize, offset and descent clear the rectangle
             _DrawingContext.clearRect(this.currentXPosition, this.currentYPosition - this.currentFontSize, this.currentXPosition + offset, this.currentYPosition + descent);
         };
-        Console.prototype.cmdCompletion = function (cmd) {
-            this.clearLine();
-            console.log(_OsShell.commandList);
+        Console.prototype.cmdCompletion = function () {
+            var _this = this;
+            _OsShell.commandList.forEach(function (element) {
+                if (element['command'].search(_this.buffer) === 0) {
+                    // The string is not found in the command
+                    if (_this.cmdSuggestions.indexOf(element['command']) !== 0) {
+                        console.log('match adding ' + element['command']);
+                        _this.cmdSuggestions.push(element['command']);
+                    }
+                }
+            });
+            this.cmdSuggestions.forEach(function (element) {
+                console.log("check" + element);
+                if (element.search(_this.buffer) !== 0) {
+                    // The string is not found in the command
+                    var index = _this.cmdSuggestions.indexOf(element);
+                    console.log('removing ' + element + '|' + index);
+                    _this.cmdSuggestions.splice(index, 1);
+                    _this.cmdCompletion();
+                }
+            });
+            console.log(this.cmdSuggestions);
+            if (this.cmdSuggestions.length === 1) {
+                // clear line and update buffer
+                console.log('arr: ' + this.cmdSuggestions);
+                this.clearLine();
+                this.buffer = this.cmdSuggestions[0];
+                this.putText(this.buffer);
+            }
         };
         Console.prototype.cmdHistory = function (direc) {
             //clear the line and the buffer to avoid errors
@@ -184,6 +212,7 @@ var DOS;
             // Clear the entire line
             _DrawingContext.clearRect(0, this.currentYPosition - this.currentFontSize, this.currentXPosition + this.buffer.length, this.currentYPosition + descent);
             // Whoops the prompt is gone....lets just put that back
+            this.buffer = "";
             this.currentXPosition = 0;
             _OsShell.putPrompt();
         };
@@ -200,7 +229,7 @@ var DOS;
             // take a snapshot of the canvas use this -> https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/getImageData
             this.canvasData = _DrawingContext.getImageData(0, startYPostion, _Canvas.width, fullHeight);
             //clear the canvas
-            _DrawingContext.clearRect(0, 0, _Canvas.width, _Canvas.height);
+            this.clearScreen();
             //Redraw image
             _DrawingContext.putImageData(this.canvasData, 0, 0);
             // Move the cursur loc to...otherwise youll type in the middles of the canvas

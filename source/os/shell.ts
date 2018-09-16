@@ -110,7 +110,7 @@ module DOS {
             this.commandList[this.commandList.length] = sc;
 
             sc = new ShellCommand(this.shellBSOD,
-                                  "BSOD",
+                                  "bsod",
                                   "- Force break the OS.");
             this.commandList[this.commandList.length] = sc;
 
@@ -329,6 +329,10 @@ module DOS {
                     case "status":
                         _StdOut.putText("Given a <string> the status will be assigned.");
                         break;
+
+                    case "BSOD":
+                        _StdOut.putText("Force breaks everything :).");
+                        break;
                         
 
                     default:
@@ -427,14 +431,19 @@ module DOS {
         }
 
         public shellStatus(args) {
-            this.status = "Status: " + args[0];
+            this.status = "Status: "
+            args.forEach(function (value) {
+                this.status += value;
+                if (args.length > 1) {
+                    this.status += " ";
+                }
+            });
             document.getElementById("status").innerHTML = this.status;
             _StdOut.putText("Status Updated to: " + this.status);
         }
 
-        public shellBSOD(args) {
-            _StdOut.putText("Michael is a Bitch");
-            // _Kernel.krnTrapError("Forced by user");
+        public shellBSOD() {
+            _Kernel.krnTrapError("Forced by user");
         }
 
     }

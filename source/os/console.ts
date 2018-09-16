@@ -20,8 +20,9 @@ module DOS {
                 public buffer           = "",
                 public cmdHist          = [],       // Keeps array of commands entered
                 public cmdIndex         = 0,        // Keeps track of index of command
+                public cmdSuggestions   = [],
                 public tempIndex        = 0,
-                public canvasData = ""
+                public canvasData       = ""
                 
                 ){
         }
@@ -31,7 +32,7 @@ module DOS {
             this.resetXY();
         }
 
-        private clearScreen(): void {
+        public clearScreen(): void {
             _DrawingContext.clearRect(0, 0, _Canvas.width, _Canvas.height);
         }
 
@@ -76,7 +77,7 @@ module DOS {
                     }
                 
                 } else if (chr === String.fromCharCode(9)) {
-                    this.cmdCompletion(chr);
+                    this.cmdCompletion();
                 
                 } else if (chr === String.fromCharCode(38)) { // Up and down keys
                     this.cmdHistory("up");
@@ -154,10 +155,33 @@ module DOS {
                 this.currentYPosition + descent
             );
         }
-        private cmdCompletion(cmd) {
-            this.clearLine();
-            console.log(_OsShell.commandList)
-            
+        private cmdCompletion() {
+            // search for common commands in the known list
+            _OsShell.commandList.forEach(element => {
+                if (element['command'].search(this.buffer) === 0) {
+                    // only add if the cmd is not already added
+                    if (this.cmdSuggestions.indexOf(element['command']) !== 0){
+                        this.cmdSuggestions.push(element['command'])
+                    }
+                }
+            });
+            // now re check the results incase there is more than one possible cmd
+            this.cmdSuggestions.forEach(element => {
+                // if the cmd is no longer a possibility remove it and recall 
+                //the function to check again
+                if (element.search(this.buffer) !== 0) {
+                    var index = this.cmdSuggestions.indexOf(element);
+                    this.cmdSuggestions.splice(index,1);
+                    this.cmdCompletion();
+                }
+            });
+
+            if (this.cmdSuggestions.length === 1) {
+                // clear line and update buffer
+                this.clearLine();
+                this.buffer = this.cmdSuggestions[0];
+                this.putText(this.buffer);
+            }
         }
 
         private cmdHistory(direc): void {
@@ -204,6 +228,7 @@ module DOS {
             );
             
             // Whoops the prompt is gone....lets just put that back
+            this.buffer = ""; 
             this.currentXPosition = 0;
             _OsShell.putPrompt();
         }
@@ -226,7 +251,7 @@ module DOS {
                                                            _Canvas.width, 
                                                            fullHeight);
             //clear the canvas
-            _DrawingContext.clearRect(0, 0, _Canvas.width, _Canvas.height);
+            this.clearScreen()
 
         
             //Redraw image

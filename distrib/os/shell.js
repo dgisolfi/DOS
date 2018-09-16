@@ -68,7 +68,7 @@ var DOS;
             // this.commandList[this.commandList.length] = sc;
             sc = new DOS.ShellCommand(this.shellStatus, "status", " <string> - Updates the status.");
             this.commandList[this.commandList.length] = sc;
-            sc = new DOS.ShellCommand(this.shellBSOD, "BSOD", "- Force break the OS.");
+            sc = new DOS.ShellCommand(this.shellBSOD, "bsod", "- Force break the OS.");
             this.commandList[this.commandList.length] = sc;
             // ps  - list the running processes and their IDs
             // kill <id> - kills the specified process id.
@@ -262,6 +262,9 @@ var DOS;
                     case "status":
                         _StdOut.putText("Given a <string> the status will be assigned.");
                         break;
+                    case "BSOD":
+                        _StdOut.putText("Force breaks everything :).");
+                        break;
                     default:
                         _StdOut.putText("No manual entry for " + args[0] + ".");
                 }
@@ -355,13 +358,18 @@ var DOS;
             _StdOut.putText("Client IP Address: ");
         };
         Shell.prototype.shellStatus = function (args) {
-            this.status = "Status: " + args[0];
+            this.status = "Status: ";
+            args.forEach(function (value) {
+                this.status += value;
+                if (args.length > 1) {
+                    this.status += " ";
+                }
+            });
             document.getElementById("status").innerHTML = this.status;
             _StdOut.putText("Status Updated to: " + this.status);
         };
-        Shell.prototype.shellBSOD = function (args) {
-            _StdOut.putText("Michael is a Bitch");
-            // _Kernel.krnTrapError("Forced by user");
+        Shell.prototype.shellBSOD = function () {
+            _Kernel.krnTrapError("Forced by user");
         };
         return Shell;
     }());
