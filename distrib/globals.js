@@ -55,3 +55,47 @@ var _GLaDOS = null; // If the above is linked in, this is the instantiated insta
 var onDocumentLoad = function () {
     DOS.Control.hostInit();
 };
+var _shiftedSymbols = [
+    //Shifted
+    { KeyCode: 48, Symbol: ")" },
+    { KeyCode: 49, Symbol: "!" },
+    { KeyCode: 50, Symbol: "@" },
+    { KeyCode: 51, Symbol: "#" },
+    { KeyCode: 52, Symbol: "$" },
+    { KeyCode: 53, Symbol: "%" },
+    { KeyCode: 54, Symbol: "^" },
+    { KeyCode: 55, Symbol: "&" },
+    { KeyCode: 56, Symbol: "*" },
+    { KeyCode: 57, Symbol: "(" },
+    { KeyCode: 59, Symbol: ":" },
+    { KeyCode: 61, Symbol: "+" },
+    { KeyCode: 173, Symbol: "_" },
+    { KeyCode: 186, Symbol: ":" },
+    { KeyCode: 187, Symbol: "+" },
+    { KeyCode: 188, Symbol: "<" },
+    { KeyCode: 189, Symbol: "_" },
+    { KeyCode: 190, Symbol: ">" },
+    { KeyCode: 191, Symbol: "?" },
+    { KeyCode: 192, Symbol: "`" },
+    { KeyCode: 219, Symbol: "{" },
+    { KeyCode: 220, Symbol: "|" },
+    { KeyCode: 221, Symbol: "}" },
+    { KeyCode: 222, Symbol: "\"" }
+];
+var _nonShiftedSymbols = [
+    // Non-Shifted
+    { KeyCode: 59, Symbol: ";" },
+    { KeyCode: 61, Symbol: "=" },
+    { KeyCode: 173, Symbol: "-" },
+    { KeyCode: 186, Symbol: ";" },
+    { KeyCode: 187, Symbol: "=" },
+    { KeyCode: 188, Symbol: "," },
+    { KeyCode: 189, Symbol: "-" },
+    { KeyCode: 190, Symbol: "," },
+    { KeyCode: 191, Symbol: "/" },
+    { KeyCode: 192, Symbol: "~" },
+    { KeyCode: 219, Symbol: "[" },
+    { KeyCode: 220, Symbol: "\\" },
+    { KeyCode: 221, Symbol: "]" },
+    { KeyCode: 222, Symbol: "'" }
+];

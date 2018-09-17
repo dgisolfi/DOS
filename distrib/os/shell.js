@@ -382,6 +382,7 @@ var DOS;
             _Kernel.krnTrapError("Forced by user");
         };
         Shell.prototype.shellDarkMode = function (args) {
+            // CSS links.....CSS is not my thing
             var darkThemelink = 'https://stackpath.bootstrapcdn.com/bootswatch/4.1.3/slate/bootstrap.min.css';
             var defaultThemelink = 'https://stackpath.bootstrapcdn.com/bootswatch/4.1.3/lux/bootstrap.min.css';
             if (args.length > 0) {
@@ -419,29 +420,45 @@ var DOS;
                 }
                 // Begin splitting and validating individual chars
                 var userCodeArr = userCode.split(' ');
+                // Define valid hex characters
                 var validInt = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
                 var validChar = ['A', 'B', 'C', 'D', 'E', 'F'];
+                // Iterate through each hex pair
                 userCodeArr.forEach(function (char) {
+                    // Make sure the hex is the correct length before even bothering to go deeper
                     if (char.length > 2) {
+                        // Provide help to the user if the hex is detected as longer than 2 digits
                         _StdOut.putText("Syntax Error: '" + char + "' is greater than 2 in length");
+                        _Console.advanceLine();
+                        _StdOut.putText("To resolve this issue please seperate digits by a space");
                         throw new Error("Syntax Error: '" + char + "' is greater than 2 in length");
                     }
                     else if (char.length < 2) {
+                        // Provide help to the user if the hex is detected as less than 2 digits
                         _StdOut.putText("Syntax Error: '" + char + "' is less than 2 in length");
+                        _Console.advanceLine();
+                        _StdOut.putText("To resolve this issue please create hex digits with a length of 2");
                         throw new Error("Syntax Error: '" + char + "' is less than 2 in length");
                     }
+                    // Go deeper into the user code, iterate through each char of each digit
                     var digits = char.split('');
                     digits.forEach(function (element) {
+                        // If not a character... 
                         if (validChar.indexOf(element) === -1) {
+                            // then it must be a Integer...
                             if (validInt.indexOf(element) === -1) {
+                                // if not, then alert the user
                                 _StdOut.putText("Syntax Error: '" + element + "' is not a valid Hex Character");
                                 _Console.advanceLine();
                                 _StdOut.putText("Valid Hex: A-F, 0-9");
                                 throw new Error("Syntax Error: '" + element + "' is not a valid Hex Character");
                             }
                         }
+                        // If not a Integer... 
                         if (validInt.indexOf(element) === -1) {
+                            // then it must be a Character...
                             if (validChar.indexOf(element) === -1) {
+                                // if not, then alert the user
                                 _StdOut.putText("Syntax Error: '" + element + "' is not a valid Hex Character");
                                 _Console.advanceLine();
                                 _StdOut.putText("Valid Hex: A-F, 0-9");
@@ -450,9 +467,11 @@ var DOS;
                         }
                     });
                 });
-                _StdOut.putText("Program load successful");
+                // For now simply alert the user that the syntax was correct
+                _StdOut.putText("Program load successful.");
             }
             catch (e) {
+                // Log the detailed error message
                 console.log(e);
             }
         };

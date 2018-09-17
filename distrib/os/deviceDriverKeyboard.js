@@ -41,6 +41,24 @@ var DOS;
             this.status = "loaded";
             // More?
         };
+        DeviceDriverKeyboard.prototype.krnKbdGetSymbol = function (keyCode, isShifted) {
+            var requested_symbol = "";
+            if (isShifted) {
+                _shiftedSymbols.forEach(function (key) {
+                    if (keyCode === key.KeyCode) {
+                        requested_symbol = key.Symbol;
+                    }
+                });
+            }
+            else if (!isShifted) {
+                _nonShiftedSymbols.forEach(function (key) {
+                    if (keyCode === key.KeyCode) {
+                        requested_symbol = key.Symbol;
+                    }
+                });
+            }
+            return requested_symbol;
+        };
         DeviceDriverKeyboard.prototype.krnKbdDispatchKeyPress = function (params) {
             // Parse the params.    TODO: Check that the params are valid and osTrapError if not.
             var keyCode = params[0];
@@ -49,7 +67,8 @@ var DOS;
             var chr = "";
             // Check to see if we even want to deal with the key that was pressed.
             if (((keyCode >= 65) && (keyCode <= 90)) || // A..Z
-                ((keyCode >= 97) && (keyCode <= 123))) { // a..z {
+                ((keyCode >= 97) && (keyCode <= 123)) // a..z
+            ) {
                 // Determine the character we want to display.
                 // Assume it's lowercase...
                 chr = String.fromCharCode(keyCode + 32);
@@ -60,7 +79,17 @@ var DOS;
                 // TODO: Check for caps-lock and handle as shifted if so.
                 _KernelInputQueue.enqueue(chr);
             }
-            else if (((keyCode >= 48) && (keyCode <= 57)) || // digits
+            else if (((keyCode >= 48) && (keyCode <= 57) && isShifted) || // digit symbols
+                ((keyCode >= 186) && (keyCode <= 192)) || // punctuation
+                ((keyCode >= 219) && (keyCode <= 222)) ||
+                (keyCode === 59) || // somtimes the : and ; key
+                (keyCode === 61) || // somtimes the = and + key
+                (keyCode === 173) // somtimes the - and _ key
+            ) {
+                chr = this.krnKbdGetSymbol(keyCode, isShifted);
+                _KernelInputQueue.enqueue(chr);
+            }
+            else if (((keyCode >= 48) && (keyCode <= 57) && !isShifted) || // digits
                 (keyCode == 32) || // space
                 (keyCode == 13) || // enter
                 (keyCode == 8) || // Delete

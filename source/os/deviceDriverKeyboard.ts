@@ -23,12 +23,33 @@ module DOS {
             super();
             this.driverEntry = this.krnKbdDriverEntry;
             this.isr = this.krnKbdDispatchKeyPress;
+            
         }
 
         public krnKbdDriverEntry() {
             // Initialization routine for this, the kernel-mode Keyboard Device Driver.
             this.status = "loaded";
             // More?
+        }
+
+        public krnKbdGetSymbol(keyCode, isShifted) {
+            var requested_symbol = "";
+            if (isShifted){
+                _shiftedSymbols.forEach(key => {
+                    if (keyCode === key.KeyCode){
+                        requested_symbol = key.Symbol
+                    }
+                });
+
+            } else if (!isShifted) {
+                _nonShiftedSymbols.forEach(key => {
+                    if (keyCode === key.KeyCode){
+                        requested_symbol = key.Symbol
+                    }
+                });
+            }
+
+            return requested_symbol;
         }
 
         public krnKbdDispatchKeyPress(params) {
@@ -38,8 +59,10 @@ module DOS {
             _Kernel.krnTrace("Key code:" + keyCode + " shifted:" + isShifted);
             var chr = "";
             // Check to see if we even want to deal with the key that was pressed.
-            if (((keyCode >= 65) && (keyCode <= 90)) ||   // A..Z
-                ((keyCode >= 97) && (keyCode <= 123))) {  // a..z {
+            if (((keyCode >= 65) && (keyCode <= 90))   ||   // A..Z
+                ((keyCode >= 97) && (keyCode <= 123))       // a..z
+            ) {
+
                 // Determine the character we want to display.
                 // Assume it's lowercase...
                 chr = String.fromCharCode(keyCode + 32);
@@ -47,15 +70,29 @@ module DOS {
                 if (isShifted) {
                     chr = String.fromCharCode(keyCode);
                 }
+
                 // TODO: Check for caps-lock and handle as shifted if so.
                 _KernelInputQueue.enqueue(chr);
-            } else if (((keyCode >= 48) && (keyCode <= 57)) ||   // digits
-                        (keyCode == 32)                     ||   // space
-                        (keyCode == 13)                     ||   // enter
-                        (keyCode == 8)                      ||   // Delete
-                        (keyCode == 9)                      ||   // Tab
-                        (keyCode == 38)                     ||   // Up key
-                        (keyCode == 40)){                        // Down key
+
+
+            } else if (((keyCode >= 48) && (keyCode <= 57) && isShifted)   ||   // digit symbols
+                       ((keyCode >= 186) && (keyCode <= 192))              ||   // punctuation
+                       ((keyCode >= 219) && (keyCode <= 222))              ||
+                       (keyCode === 59)                                    ||   // somtimes the : and ; key
+                       (keyCode === 61)                                    ||   // somtimes the = and + key
+                       (keyCode === 173)                                        // somtimes the - and _ key
+                       ) {
+
+                chr = this.krnKbdGetSymbol(keyCode, isShifted);
+                _KernelInputQueue.enqueue(chr);
+
+            } else if (((keyCode >= 48) && (keyCode <= 57) && !isShifted) ||   // digits
+                        (keyCode == 32)                                   ||   // space
+                        (keyCode == 13)                                   ||   // enter
+                        (keyCode == 8)                                    ||   // Delete
+                        (keyCode == 9)                                    ||   // Tab
+                        (keyCode == 38)                                   ||   // Up key
+                        (keyCode == 40)){                                      // Down key
                                                  
                 chr = String.fromCharCode(keyCode);
                 _KernelInputQueue.enqueue(chr);
