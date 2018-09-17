@@ -1,4 +1,4 @@
-module TSOS {
+module DOS {
     export class ShellCommand {
         constructor(public func: any,
                     public command = "",

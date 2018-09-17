@@ -11,8 +11,8 @@
      This code references page numbers in the text book:
      Operating System Concepts 8th edition by Silberschatz, Galvin, and Gagne.  ISBN 978-0-470-12872-5
      ------------ */
-var TSOS;
-(function (TSOS) {
+var DOS;
+(function (DOS) {
     var Kernel = /** @class */ (function () {
         function Kernel() {
         }
@@ -20,22 +20,24 @@ var TSOS;
         // OS Startup and Shutdown Routines
         //
         Kernel.prototype.krnBootstrap = function () {
-            TSOS.Control.hostLog("bootstrap", "host"); // Use hostLog because we ALWAYS want this, even if _Trace is off.
+            DOS.Control.hostLog("bootstrap", "host"); // Use hostLog because we ALWAYS want this, even if _Trace is off.
             // Initialize our global queues.
-            _KernelInterruptQueue = new TSOS.Queue(); // A (currently) non-priority queue for interrupt requests (IRQs).
+            _KernelInterruptQueue = new DOS.Queue(); // A (currently) non-priority queue for interrupt requests (IRQs).
             _KernelBuffers = new Array(); // Buffers... for the kernel.
-            _KernelInputQueue = new TSOS.Queue(); // Where device input lands before being processed out somewhere.
+            _KernelInputQueue = new DOS.Queue(); // Where device input lands before being processed out somewhere.
             // Initialize the console.
-            _Console = new TSOS.Console(); // The command line interface / console I/O device.
+            _Console = new DOS.Console(); // The command line interface / console I/O device.
             _Console.init();
             // Initialize standard input and output to the _Console.
             _StdIn = _Console;
             _StdOut = _Console;
             // Load the Keyboard Device Driver
             this.krnTrace("Loading the keyboard device driver.");
-            _krnKeyboardDriver = new TSOS.DeviceDriverKeyboard(); // Construct it.
+            _krnKeyboardDriver = new DOS.DeviceDriverKeyboard(); // Construct it.
             _krnKeyboardDriver.driverEntry(); // Call the driverEntry() initialization routine.
             this.krnTrace(_krnKeyboardDriver.status);
+            // Set the default status
+            document.getElementById("status").innerHTML = "Status: OS Online";
             //
             // ... more?
             //
@@ -44,7 +46,7 @@ var TSOS;
             this.krnEnableInterrupts();
             // Launch the shell.
             this.krnTrace("Creating and Launching the shell.");
-            _OsShell = new TSOS.Shell();
+            _OsShell = new DOS.Shell();
             _OsShell.init();
             // Finally, initiate student testing protocol.
             if (_GLaDOS) {
@@ -68,6 +70,12 @@ var TSOS;
                This is NOT the same as a TIMER, which causes an interrupt and is handled like other interrupts.
                This, on the other hand, is the clock pulse from the hardware / VM / host that tells the kernel
                that it has to look for interrupts and process them if it finds any.                           */
+            // Update the host time variable. TODO find a better place for this
+            _date = new Date().toLocaleDateString();
+            _time = new Date().toLocaleTimeString();
+            _Console.updateDateTime();
+            // console.log(_Console.cmdHist);
+            // console.log(_Console.cmdIndex);
             // Check for an interrupt, are any. Page 560
             if (_KernelInterruptQueue.getSize() > 0) {
                 // Process the first interrupt on the interrupt queue.
@@ -87,12 +95,12 @@ var TSOS;
         //
         Kernel.prototype.krnEnableInterrupts = function () {
             // Keyboard
-            TSOS.Devices.hostEnableKeyboardInterrupt();
+            DOS.Devices.hostEnableKeyboardInterrupt();
             // Put more here.
         };
         Kernel.prototype.krnDisableInterrupts = function () {
             // Keyboard
-            TSOS.Devices.hostDisableKeyboardInterrupt();
+            DOS.Devices.hostDisableKeyboardInterrupt();
             // Put more here.
         };
         Kernel.prototype.krnInterruptHandler = function (irq, params) {
@@ -144,20 +152,26 @@ var TSOS;
                     if (_OSclock % 10 == 0) {
                         // Check the CPU_CLOCK_INTERVAL in globals.ts for an
                         // idea of the tick rate and adjust this line accordingly.
-                        TSOS.Control.hostLog(msg, "OS");
+                        DOS.Control.hostLog(msg, "OS");
                     }
                 }
                 else {
-                    TSOS.Control.hostLog(msg, "OS");
+                    DOS.Control.hostLog(msg, "OS");
                 }
             }
         };
         Kernel.prototype.krnTrapError = function (msg) {
-            TSOS.Control.hostLog("OS ERROR - TRAP: " + msg);
+            DOS.Control.hostLog("OS ERROR - TRAP: " + msg);
             // TODO: Display error on console, perhaps in some sort of colored screen. (Maybe blue?)
             this.krnShutdown();
+            _Console.clearScreen();
+            _DrawingContext.fillStyle = 'blue';
+            _DrawingContext.fillRect(0, 0, _Canvas.width, _Canvas.height);
+            _Console.putText("OS ERROR - TRAP: " + msg);
+            _Console.advanceLine();
+            _Console.putText("To resolve this issue stop using a OS within a webbrowser and get a real OS...like MacOS");
         };
         return Kernel;
     }());
-    TSOS.Kernel = Kernel;
-})(TSOS || (TSOS = {}));
+    DOS.Kernel = Kernel;
+})(DOS || (DOS = {}));

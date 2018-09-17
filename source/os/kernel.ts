@@ -13,7 +13,7 @@
      Operating System Concepts 8th edition by Silberschatz, Galvin, and Gagne.  ISBN 978-0-470-12872-5
      ------------ */
 
-module TSOS {
+module DOS {
 
     export class Kernel {
         //
@@ -40,6 +40,9 @@ module TSOS {
             _krnKeyboardDriver = new DeviceDriverKeyboard();     // Construct it.
             _krnKeyboardDriver.driverEntry();                    // Call the driverEntry() initialization routine.
             this.krnTrace(_krnKeyboardDriver.status);
+            
+            // Set the default status
+            document.getElementById("status").innerHTML = "Status: OS Online";
 
             //
             // ... more?
@@ -79,7 +82,14 @@ module TSOS {
                This is NOT the same as a TIMER, which causes an interrupt and is handled like other interrupts.
                This, on the other hand, is the clock pulse from the hardware / VM / host that tells the kernel
                that it has to look for interrupts and process them if it finds any.                           */
-
+            
+            // Update the host time variable. TODO find a better place for this
+            _date = new Date().toLocaleDateString();
+            _time = new Date().toLocaleTimeString();
+            _Console.updateDateTime();
+            // console.log(_Console.cmdHist);
+            // console.log(_Console.cmdIndex);
+           
             // Check for an interrupt, are any. Page 560
             if (_KernelInterruptQueue.getSize() > 0) {
                 // Process the first interrupt on the interrupt queue.
@@ -175,6 +185,13 @@ module TSOS {
             Control.hostLog("OS ERROR - TRAP: " + msg);
             // TODO: Display error on console, perhaps in some sort of colored screen. (Maybe blue?)
             this.krnShutdown();
+            _Console.clearScreen();
+            _DrawingContext.fillStyle = 'blue';
+            _DrawingContext.fillRect(0,0,_Canvas.width,_Canvas.height);
+            _Console.putText("OS ERROR - TRAP: " + msg);
+            _Console.advanceLine();
+            _Console.putText("To resolve this issue stop using a OS within a webbrowser and get a real OS...like MacOS");
+           
         }
     }
 }

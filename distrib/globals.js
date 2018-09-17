@@ -10,8 +10,8 @@
 //
 // Global CONSTANTS (TypeScript 1.5 introduced const. Very cool.)
 //
-var APP_NAME = "TSOS"; // 'cause Bob and I were at a loss for a better name.
-var APP_VERSION = "0.07"; // What did you expect?
+var APP_NAME = "DOS"; // 'cause Bob and I were at a loss for a better name.
+var APP_VERSION = "1.00"; // What did you expect?
 var CPU_CLOCK_INTERVAL = 100; // This is in ms (milliseconds) so 1000 = 1 second.
 var TIMER_IRQ = 0; // Pages 23 (timer), 9 (interrupts), and 561 (interrupt priority).
 // NOTE: The timer is different from hardware/host clock pulses. Don't confuse these.
@@ -37,9 +37,13 @@ var _KernelBuffers = null; // when clearly 'any' is not what we want. There is l
 // Standard input and output
 var _StdIn; // Same "to null or not to null" issue as above.
 var _StdOut;
+// API Calls
+var _APIReq;
 // UI
 var _Console;
 var _OsShell;
+var _date = new Date().toLocaleDateString();
+var _time = new Date().toLocaleTimeString();
 // At least this OS is not trying to kill you. (Yet.)
 var _SarcasticMode = false;
 // Global Device Driver Objects - page 12
@@ -49,5 +53,50 @@ var _hardwareClockID = null;
 var Glados = null; // This is the function Glados() in glados.js on Labouseur.com.
 var _GLaDOS = null; // If the above is linked in, this is the instantiated instance of Glados.
 var onDocumentLoad = function () {
-    TSOS.Control.hostInit();
+    DOS.Control.hostInit();
 };
+// TODO Maybe put this somehwere else
+var _shiftedSymbols = [
+    //Shifted
+    { KeyCode: 48, Symbol: ")" },
+    { KeyCode: 49, Symbol: "!" },
+    { KeyCode: 50, Symbol: "@" },
+    { KeyCode: 51, Symbol: "#" },
+    { KeyCode: 52, Symbol: "$" },
+    { KeyCode: 53, Symbol: "%" },
+    { KeyCode: 54, Symbol: "^" },
+    { KeyCode: 55, Symbol: "&" },
+    { KeyCode: 56, Symbol: "*" },
+    { KeyCode: 57, Symbol: "(" },
+    { KeyCode: 59, Symbol: ":" },
+    { KeyCode: 61, Symbol: "+" },
+    { KeyCode: 173, Symbol: "_" },
+    { KeyCode: 186, Symbol: ":" },
+    { KeyCode: 187, Symbol: "+" },
+    { KeyCode: 188, Symbol: "<" },
+    { KeyCode: 189, Symbol: "_" },
+    { KeyCode: 190, Symbol: ">" },
+    { KeyCode: 191, Symbol: "?" },
+    { KeyCode: 192, Symbol: "`" },
+    { KeyCode: 219, Symbol: "{" },
+    { KeyCode: 220, Symbol: "|" },
+    { KeyCode: 221, Symbol: "}" },
+    { KeyCode: 222, Symbol: "\"" }
+];
+var _nonShiftedSymbols = [
+    // Non-Shifted
+    { KeyCode: 59, Symbol: ";" },
+    { KeyCode: 61, Symbol: "=" },
+    { KeyCode: 173, Symbol: "-" },
+    { KeyCode: 186, Symbol: ";" },
+    { KeyCode: 187, Symbol: "=" },
+    { KeyCode: 188, Symbol: "," },
+    { KeyCode: 189, Symbol: "-" },
+    { KeyCode: 190, Symbol: "," },
+    { KeyCode: 191, Symbol: "/" },
+    { KeyCode: 192, Symbol: "~" },
+    { KeyCode: 219, Symbol: "[" },
+    { KeyCode: 220, Symbol: "\\" },
+    { KeyCode: 221, Symbol: "]" },
+    { KeyCode: 222, Symbol: "'" }
+];
