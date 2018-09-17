@@ -112,12 +112,31 @@ module DOS {
             //         Consider fixing that.
             
             if (text !== "") {
-                // Draw the text at the current X and Y coordinates.
-                _DrawingContext.drawText(this.currentFont, this.currentFontSize, this.currentXPosition, this.currentYPosition, text);
+
+                
+
                 // Move the current X position.
                 var offset = _DrawingContext.measureText(this.currentFont, this.currentFontSize, text);
-                this.currentXPosition = this.currentXPosition + offset; 
-                // put current character into cmd list
+                // check if the lines exceeds the canvas
+                if ((this.currentXPosition + offset) >= _Canvas.width) {
+                    var chars = text.split('');
+                    chars.forEach(char => {
+                        //measure each char if it can fit on the line, put it there
+                        var charLength = _DrawingContext.measureText(this.currentFont, this.currentFontSize, char);
+                        if ((this.currentXPosition + charLength) >= _Canvas.width) {
+                            // go to next line
+                            this.advanceLine();
+                        }
+                        // no matter what write the character
+                        _DrawingContext.drawText(this.currentFont, this.currentFontSize, this.currentXPosition, this.currentYPosition, char);
+                        this.currentXPosition = this.currentXPosition + charLength;
+                    });
+                } else {
+
+                    // Draw the text at the current X and Y coordinates.
+                    _DrawingContext.drawText(this.currentFont, this.currentFontSize, this.currentXPosition, this.currentYPosition, text);
+                    this.currentXPosition = this.currentXPosition + offset; 
+                }   
             }
          }
 
@@ -141,7 +160,7 @@ module DOS {
 
             // Scrolling | Check if it even needs to be called
             if (this.currentYPosition >= _Canvas.height) {
-                this.scroll( oldYPosition);
+                this.scroll(oldYPosition);
             }
                          
         }
@@ -209,20 +228,21 @@ module DOS {
             this.buffer = "";
             
             if (direc === "up") {
-                // check if index out of range then 
-                console.log(this.cmdHist, this.cmdIndex)
+                // check if index out of range then...
                 if (this.cmdIndex != -1) {
+                    // move pointer 
                     this.cmdIndex -= 1;
+                    // display cur cmd
                     this.buffer = this.cmdHist[this.cmdIndex];
                     this.putText(this.buffer);
                 }
 
             } else if (direc === "down") {
-                // check if index out of range 
-                console.log(this.cmdHist, this.cmdIndex)
-                console.log(this.cmdIndex < this.cmdHist.length - 1)
+                // check if index out of range then...
                 if (!(this.cmdIndex >= this.cmdHist.length - 1)) {
+                    // move pointer 
                     this.cmdIndex += 1;
+                    // display cur cmd
                     this.buffer = this.cmdHist[this.cmdIndex];
                     this.putText(this.buffer);
                 }

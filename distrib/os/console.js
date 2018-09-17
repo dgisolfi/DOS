@@ -111,13 +111,30 @@ var DOS;
             //
             // UPDATE: Even though we are now working in TypeScript, char and string remain undistinguished.
             //         Consider fixing that.
+            var _this = this;
             if (text !== "") {
-                // Draw the text at the current X and Y coordinates.
-                _DrawingContext.drawText(this.currentFont, this.currentFontSize, this.currentXPosition, this.currentYPosition, text);
                 // Move the current X position.
                 var offset = _DrawingContext.measureText(this.currentFont, this.currentFontSize, text);
-                this.currentXPosition = this.currentXPosition + offset;
-                // put current character into cmd list
+                // check if the lines exceeds the canvas
+                if ((this.currentXPosition + offset) >= _Canvas.width) {
+                    var chars = text.split('');
+                    chars.forEach(function (char) {
+                        //measure each char if it can fit on the line, put it there
+                        var charLength = _DrawingContext.measureText(_this.currentFont, _this.currentFontSize, char);
+                        if ((_this.currentXPosition + charLength) >= _Canvas.width) {
+                            // go to next line
+                            _this.advanceLine();
+                        }
+                        // no matter what write the character
+                        _DrawingContext.drawText(_this.currentFont, _this.currentFontSize, _this.currentXPosition, _this.currentYPosition, char);
+                        _this.currentXPosition = _this.currentXPosition + charLength;
+                    });
+                }
+                else {
+                    // Draw the text at the current X and Y coordinates.
+                    _DrawingContext.drawText(this.currentFont, this.currentFontSize, this.currentXPosition, this.currentYPosition, text);
+                    this.currentXPosition = this.currentXPosition + offset;
+                }
             }
         };
         Console.prototype.advanceLine = function () {
@@ -192,28 +209,24 @@ var DOS;
             this.clearLine();
             this.buffer = "";
             if (direc === "up") {
-                // check if index out of range then 
-                console.log(this.cmdHist, this.cmdIndex);
+                // check if index out of range then...
                 if (this.cmdIndex != -1) {
+                    // move pointer 
                     this.cmdIndex -= 1;
+                    // display cur cmd
                     this.buffer = this.cmdHist[this.cmdIndex];
                     this.putText(this.buffer);
                 }
             }
             else if (direc === "down") {
-                // check if index out of range 
-                console.log(this.cmdHist, this.cmdIndex);
-                console.log(this.cmdIndex < this.cmdHist.length - 1);
+                // check if index out of range then...
                 if (!(this.cmdIndex >= this.cmdHist.length - 1)) {
+                    // move pointer 
                     this.cmdIndex += 1;
+                    // display cur cmd
                     this.buffer = this.cmdHist[this.cmdIndex];
                     this.putText(this.buffer);
                 }
-                // else if((this.cmdIndex < this.cmdHist.length - 1) && this.cmdIndex > 0)  {
-                //     this.buffer = this.cmdHist[this.cmdIndex];
-                //     this.putText(this.buffer);
-                //     this.cmdIndex += 1;
-                // }
             }
         };
         Console.prototype.clearLine = function () {
