@@ -2,6 +2,10 @@
 
 A Typescript OS created for Fall 2018 Operating Systems class. The boilerplate for this project can be found in the [TSOS](https://github.com/AlanClasses/TSOS) repository created by Alan Labouseur. The name of this OS refers to not only my first initial but also the well known DOS attack (clever naming is hard). 
 
+### Releases 
+
+[iProject 1](https://github.com/dgisolfi/DOS/tree/iProject1)
+
 ## Deployment
 
 There are 2 ways currently to deploy an instance of this project. The simplest is the makefile. Either method is valid and results in the same compiled source code.
@@ -51,3 +55,8 @@ If you would like to run a development version where the changes made on the hos
 `docker run -it --rm --name dos_dev -p80:80 -v/PATH/TO/SRC/DIR:/OS dos bash`
 
 Alternatively, you can run the dedicated make target for this command: `make dev_os`
+
+
+
+
+
