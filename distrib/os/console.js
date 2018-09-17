@@ -167,12 +167,20 @@ var DOS;
                     _this.cmdCompletion();
                 }
             });
+            this.cmdSuggestions = this.removeDuplicates(this.cmdSuggestions);
+            console.log(this.cmdSuggestions);
             if (this.cmdSuggestions.length === 1) {
                 // clear line and update buffer
                 this.clearLine();
                 this.buffer = this.cmdSuggestions[0];
                 this.putText(this.buffer);
             }
+        };
+        Console.prototype.removeDuplicates = function (arr) {
+            var array = arr.filter(function (elem, index, self) {
+                return index == self.indexOf(elem);
+            });
+            return array;
         };
         Console.prototype.cmdHistory = function (direc) {
             //clear the line and the buffer to avoid errors

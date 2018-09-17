@@ -179,6 +179,8 @@ module DOS {
                 }
             });
 
+            this.cmdSuggestions = this.removeDuplicates(this.cmdSuggestions);
+            console.log(this.cmdSuggestions)
             if (this.cmdSuggestions.length === 1) {
                 // clear line and update buffer
                 this.clearLine();
@@ -186,6 +188,14 @@ module DOS {
                 this.putText(this.buffer);
             }
         }
+
+        private removeDuplicates(arr) {
+            let array = arr.filter(function(elem, index, self) {
+                return index == self.indexOf(elem);
+            });
+            return array
+        }
+        
 
         private cmdHistory(direc): void {
             //clear the line and the buffer to avoid errors
