@@ -56,7 +56,7 @@ var DOS;
                     _OsShell.handleInput(this.buffer);
                     //... add the cmd to the history ...
                     this.cmdHist.push(this.buffer);
-                    this.cmdIndex += 1; //this.cmdHist.length - 1;
+                    this.cmdIndex = 0; //this.cmdHist.length - 1;
                     // ... and reset our buffer.
                     this.buffer = "";
                     // Check if the backpace key was pressed.
@@ -167,8 +167,8 @@ var DOS;
                     _this.cmdCompletion();
                 }
             });
+            // remove any possible duplicates and test
             this.cmdSuggestions = this.removeDuplicates(this.cmdSuggestions);
-            console.log(this.cmdSuggestions);
             if (this.cmdSuggestions.length === 1) {
                 // clear line and update buffer
                 this.clearLine();
@@ -189,29 +189,22 @@ var DOS;
             var tempIndex = this.cmdIndex;
             if (direc === "up") {
                 // check if index out of range then 
-                if (this.cmdIndex >= 0) {
+                if (this.cmdIndex != -1) {
+                    this.buffer = this.cmdHist[this.cmdIndex];
+                    this.putText(this.buffer);
                     this.cmdIndex--;
-                    this.buffer += this.cmdHist[this.cmdIndex];
-                    this.putText(this.cmdHist[this.cmdIndex]);
-                }
-                else {
-                    // put nothing if out of range
-                    this.putText("");
                 }
             }
             else if (direc === "down") {
-                // check if index out of range then 
+                // check if index out of range 
                 if (this.cmdIndex <= this.cmdHistory.length - 1) {
+                    this.buffer = this.cmdHist[this.cmdIndex];
+                    this.putText(this.buffer);
                     this.cmdIndex++;
-                    this.buffer += this.cmdHist[this.cmdIndex];
-                    this.putText(this.cmdHist[this.cmdIndex]);
-                }
-                else {
-                    // put nothing if out of range
-                    this.putText("");
                 }
             }
             // Restore index after looking through history
+            //this.cmdIndex = tempIndex;
         };
         Console.prototype.clearLine = function () {
             // Measure the descent(do it here cuz its prettier)

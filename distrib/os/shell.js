@@ -419,7 +419,7 @@ var DOS;
                 }
                 // Begin splitting and validating individual chars
                 var userCodeArr = userCode.split(' ');
-                var validInt = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
+                var validInt = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
                 var validChar = ['A', 'B', 'C', 'D', 'E', 'F'];
                 userCodeArr.forEach(function (char) {
                     if (char.length > 2) {
@@ -432,16 +432,16 @@ var DOS;
                     }
                     var digits = char.split('');
                     digits.forEach(function (element) {
-                        if (validChar.indexOf(element) !== 0) {
-                            if (validInt.indexOf(Number(element)) !== 0) {
+                        if (validChar.indexOf(element) === -1) {
+                            if (validInt.indexOf(element) === -1) {
                                 _StdOut.putText("Syntax Error: '" + element + "' is not a valid Hex Character");
                                 _Console.advanceLine();
                                 _StdOut.putText("Valid Hex: A-F, 0-9");
                                 throw new Error("Syntax Error: '" + element + "' is not a valid Hex Character");
                             }
                         }
-                        if (validInt.indexOf(Number(element)) !== 0) {
-                            if (validChar.indexOf(element) !== 0) {
+                        if (validInt.indexOf(element) === -1) {
+                            if (validChar.indexOf(element) === -1) {
                                 _StdOut.putText("Syntax Error: '" + element + "' is not a valid Hex Character");
                                 _Console.advanceLine();
                                 _StdOut.putText("Valid Hex: A-F, 0-9");

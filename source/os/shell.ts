@@ -505,40 +505,40 @@ module DOS {
 
                 // Begin splitting and validating individual chars
                 var userCodeArr = userCode.split(' ');
-                var validInt = [0,1,2,3,4,5,6,7,8,9];
+                var validInt = ['0','1','2','3','4','5','6','7','8','9'];
                 var validChar = ['A','B', 'C', 'D', 'E', 'F'];
-
+               
                 userCodeArr.forEach(char => {
                     if (char.length > 2) {
                         _StdOut.putText("Syntax Error: '" + char + "' is greater than 2 in length");
+                        _Console.advanceLine();
+                        _StdOut.putText("To resolve this issue please seperate digits by a space");
                         throw new Error("Syntax Error: '" + char + "' is greater than 2 in length");
                     } else if (char.length < 2) {
                         _StdOut.putText("Syntax Error: '" + char + "' is less than 2 in length");
+                        _Console.advanceLine();
+                        _StdOut.putText("To resolve this issue please create hex digits with a length of 2");
                         throw new Error("Syntax Error: '" + char + "' is less than 2 in length");
                     }
                     var digits = char.split('');
                     digits.forEach(element => {
-                        if (validChar.indexOf(element) !== 0){
-                            if (validInt.indexOf(Number(element)) !== 0){
+                        if (validChar.indexOf(element) === -1){
+                            if (validInt.indexOf(element)  === -1){
                                 _StdOut.putText("Syntax Error: '" + element + "' is not a valid Hex Character");
                                 _Console.advanceLine();
                                 _StdOut.putText("Valid Hex: A-F, 0-9");
                                 throw new Error("Syntax Error: '" + element + "' is not a valid Hex Character");
                             }
-
                         }
 
-                        if (validInt.indexOf(Number(element)) !== 0){
-                            if (validChar.indexOf(element) !== 0){
+                        if (validInt.indexOf(element)  === -1){
+                            if (validChar.indexOf(element)  === -1){
                                 _StdOut.putText("Syntax Error: '" + element + "' is not a valid Hex Character");
                                 _Console.advanceLine();
                                 _StdOut.putText("Valid Hex: A-F, 0-9");
                                 throw new Error("Syntax Error: '" + element + "' is not a valid Hex Character");
                             }
-
-                        }
-                        
-                        
+                        } 
                     });
                 });
 
