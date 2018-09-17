@@ -1,0 +1,29 @@
+{
+  "name": "dos",
+  "version": "1.0.0",
+  "description": "A Typescript OS created for Fall 2018 Operating Systems class.",
+  "main": "gulpfile.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dgisolfi/DOS.git"
+  },
+  "keywords": [
+    "OS",
+    "TypeScript"
+  ],
+  "author": "Daniel Nicolas Gisolfi",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/dgisolfi/DOS/issues"
+  },
+  "homepage": "https://github.com/dgisolfi/DOS#readme",
+  "dependencies": {
+    "express": "^4.16.3"
+  }
+}

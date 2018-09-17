@@ -10,11 +10,11 @@ c: intro
 	@/usr/local/lib/node_modules/typescript/bin/tsc --rootDir source/ --outDir distrib/  source/*.ts source/host/*.ts source/os/*.ts
 
 #Run the latest deployment of the OS
-os_latest: 
-	@docker run --rm --name dos_prod -p80:80 dgisolfi/dos
+os_latest:  intro
+	@docker run --rm --name dos_prod -p6000:6000 dos
 
 # build development enviorment
-dev_os: intro
+dev_os: intro build_os
 	@docker run -it --rm --name dos_dev -p80:80 -v ${PWD}:/OS dos bash
 
 #rebuild image

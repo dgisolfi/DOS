@@ -56,7 +56,12 @@ var DOS;
                     _OsShell.handleInput(this.buffer);
                     //... add the cmd to the history ...
                     this.cmdHist.push(this.buffer);
-                    this.cmdIndex = 0; //this.cmdHist.length - 1;
+                    if (this.cmdHist.length <= 0) {
+                        this.cmdIndex = 0;
+                    }
+                    else {
+                        this.cmdIndex = this.cmdHist.length - 1;
+                    }
                     // ... and reset our buffer.
                     this.buffer = "";
                     // Check if the backpace key was pressed.
@@ -150,10 +155,10 @@ var DOS;
             var _this = this;
             // search for common commands in the known list
             _OsShell.commandList.forEach(function (element) {
-                if (element['command'].search(_this.buffer) === 0) {
+                if (element.command.search(_this.buffer) === 0) {
                     // only add if the cmd is not already added
-                    if (_this.cmdSuggestions.indexOf(element['command']) !== 0) {
-                        _this.cmdSuggestions.push(element['command']);
+                    if (_this.cmdSuggestions.indexOf(element.command) !== 0) {
+                        _this.cmdSuggestions.push(element.command);
                     }
                 }
             });
@@ -186,25 +191,30 @@ var DOS;
             //clear the line and the buffer to avoid errors
             this.clearLine();
             this.buffer = "";
-            var tempIndex = this.cmdIndex;
             if (direc === "up") {
                 // check if index out of range then 
+                console.log(this.cmdHist, this.cmdIndex);
                 if (this.cmdIndex != -1) {
+                    this.cmdIndex -= 1;
                     this.buffer = this.cmdHist[this.cmdIndex];
                     this.putText(this.buffer);
-                    this.cmdIndex--;
                 }
             }
             else if (direc === "down") {
                 // check if index out of range 
-                if (this.cmdIndex <= this.cmdHistory.length - 1) {
+                console.log(this.cmdHist, this.cmdIndex);
+                console.log(this.cmdIndex < this.cmdHist.length - 1);
+                if (!(this.cmdIndex >= this.cmdHist.length - 1)) {
+                    this.cmdIndex += 1;
                     this.buffer = this.cmdHist[this.cmdIndex];
                     this.putText(this.buffer);
-                    this.cmdIndex++;
                 }
+                // else if((this.cmdIndex < this.cmdHist.length - 1) && this.cmdIndex > 0)  {
+                //     this.buffer = this.cmdHist[this.cmdIndex];
+                //     this.putText(this.buffer);
+                //     this.cmdIndex += 1;
+                // }
             }
-            // Restore index after looking through history
-            //this.cmdIndex = tempIndex;
         };
         Console.prototype.clearLine = function () {
             // Measure the descent(do it here cuz its prettier)
