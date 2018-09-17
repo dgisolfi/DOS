@@ -1,0 +1,13 @@
+# docker-compose.yml
+# 2018-09-17
+# Boot the required services for DOS
+# Author:  Daniel Nicolas Gisolfi
+
+version: "2"
+services:
+  dos:
+    image: dgisolfi/dos:latest
+    restart: always
+    ports:
+      - "48000:48000"
+    container_name: dos_prod

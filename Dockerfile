@@ -13,13 +13,12 @@ RUN npm install -g \
 
 WORKDIR /OS
 
-# COPY . .
-# COPY /test
-COPY index.html .
+COPY /public ./public
 COPY package.json .
-COPY /distrib .
+COPY package-lock.json .
+COPY server.js .
 
-EXPOSE 6000
+EXPOSE 48000	
 
 RUN npm install
-CMD ["npm","http-server -p6000"]
+CMD ["npm","start"]

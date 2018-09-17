@@ -17,7 +17,7 @@ gulp.task('compile-typescript', function() {
 			'source/host/*.ts',
 			'source/os/*.ts'
 		],
-		dest: 'distrib/'
+		dest: 'public/distrib/'
 	};
 
 	return gulp.src(typescriptPaths.src)
