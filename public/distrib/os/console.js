@@ -244,6 +244,7 @@ var DOS;
             var height = _DefaultFontSize +
                 _DrawingContext.fontDescent(this.currentFont, this.currentFontSize) +
                 _FontHeightMargin;
+            console.log(height);
             // take a snapshot of the canvas use this -> https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/getImageData
             this.canvasData = _DrawingContext.getImageData(0, height, _Canvas.width, this.currentYPosition);
             //clear the canvas

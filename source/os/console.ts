@@ -112,9 +112,6 @@ module DOS {
             //         Consider fixing that.
             
             if (text !== "") {
-
-                
-
                 // Move the current X position.
                 var offset = _DrawingContext.measureText(this.currentFont, this.currentFontSize, text);
                 // check if the lines exceeds the canvas
@@ -157,6 +154,7 @@ module DOS {
             this.currentYPosition += _DefaultFontSize + 
                                      descent +
                                      _FontHeightMargin;
+          
 
             // Scrolling | Check if it even needs to be called
             if (this.currentYPosition >= _Canvas.height) {
@@ -271,11 +269,12 @@ module DOS {
             var height = _DefaultFontSize +
                         _DrawingContext.fontDescent(this.currentFont, this.currentFontSize) +
                         _FontHeightMargin;
+            console.log(height)
                      
             // take a snapshot of the canvas use this -> https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/getImageData
             this.canvasData = _DrawingContext.getImageData(0, height, _Canvas.width, this.currentYPosition);
             //clear the canvas
-            this.clearScreen()
+            this.clearScreen();
             //Redraw image
             _DrawingContext.putImageData(this.canvasData, 0, 0);
             // Move the cursur loc...otherwise youll bad things happen
