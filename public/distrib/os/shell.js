@@ -74,6 +74,8 @@ var DOS;
             this.commandList[this.commandList.length] = sc;
             sc = new DOS.ShellCommand(this.shellLoad, "load", "- Validates user code.");
             this.commandList[this.commandList.length] = sc;
+            sc = new DOS.ShellCommand(this.shellRun, "run", "<int> - executes a loaded program given a PID.");
+            this.commandList[this.commandList.length] = sc;
             // ps  - list the running processes and their IDs
             // kill <id> - kills the specified process id.
             //
@@ -273,7 +275,10 @@ var DOS;
                         _StdOut.putText("Enables or Disables the dark theme skin for the DOS UI.");
                         break;
                     case "load":
-                        _StdOut.putText("Validates the user code in the HTML5 text area.");
+                        _StdOut.putText("Validates the user code in the HTML5 text area, and loads into memory");
+                        break;
+                    case "run":
+                        _StdOut.putText("executes the proccess specified with <int> PID.");
                         break;
                     default:
                         _StdOut.putText("No manual entry for " + args[0] + ".");
@@ -467,12 +472,39 @@ var DOS;
                         }
                     });
                 });
+                var loadedMem = [];
+                var hexIndex = 0;
+                userCodeArr.forEach(function (char) {
+                    loadedMem[hexIndex] = char;
+                    hexIndex++;
+                });
+                if (_MEM.findFreeMem() == "00") {
+                    _MEM.memSeg00 = loadedMem;
+                    console.log(_MEM.memSeg00);
+                }
+                else if (_MEM.findFreeMem() == "01") {
+                    _MEM.memSeg01 = loadedMem;
+                    console.log(_MEM.memSeg01);
+                }
+                else if (_MEM.findFreeMem() == "02") {
+                    _MEM.memSeg02 = loadedMem;
+                    console.log(_MEM.memSeg02);
+                }
                 // For now simply alert the user that the syntax was correct
                 _StdOut.putText("Program load successful.");
             }
             catch (e) {
                 // Log the detailed error message
                 console.log(e);
+            }
+        };
+        Shell.prototype.shellRun = function (args) {
+            // take only the very first PID and execute it
+            if (args.length > 1) {
+                _StdOut.putText("Run takes only 1 PID, running first found, " + args[0] + ".");
+            }
+            else if (args.length < 1) {
+                _StdOut.putText("Please specify the PID to execute.");
             }
         };
         return Shell;

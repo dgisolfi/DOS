@@ -26,7 +26,14 @@ const KEYBOARD_IRQ: number = 1;
 // Global Variables
 // TODO: Make a global object and use that instead of the "_" naming convention in the global namespace.
 //
+
 var _CPU: DOS.Cpu;  // Utilize TypeScript's type annotation system to ensure that _CPU is an instance of the Cpu class.
+
+// Memory Class
+var _MEM: DOS.Memory;
+
+//Proccess control blocks
+var _PCB: DOS.PCB;
 
 var _OSclock: number = 0;  // Page 23.
 

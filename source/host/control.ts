@@ -98,6 +98,10 @@ module DOS {
             // .. and call the OS Kernel Bootstrap routine.
             _Kernel = new Kernel();
             _Kernel.krnBootstrap();  // _GLaDOS.afterStartup() will get called in there, if configured.
+
+
+            _MEM = new Memory();
+            _MEM.init();
         }
 
         public static hostBtnHaltOS_click(btn): void {
