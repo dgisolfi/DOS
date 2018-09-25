@@ -477,7 +477,7 @@ module DOS {
         public shellDarkMode(args) {
             // CSS links.....CSS is not my thing
             var darkThemelink = 'https://stackpath.bootstrapcdn.com/bootswatch/4.1.3/slate/bootstrap.min.css';
-            var defaultThemelink = 'https://stackpath.bootstrapcdn.com/bootswatch/4.1.3/lux/bootstrap.min.css';
+            var defaultThemelink = 'https://stackpath.bootstrapcdn.com/bootswatch/4.1.3/flatly/bootstrap.min.css';
 
             if (args.length > 0) {
                 var setting = args[0];
