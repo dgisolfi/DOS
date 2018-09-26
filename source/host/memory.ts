@@ -12,49 +12,23 @@ module DOS {
 
     export class Memory {
         constructor(
-            public memSeg00 = [],
-            public memSeg00Full = false,
-            public memSeg01 = [],
-            public memSeg01Full = false,
-            public memSeg02 = [],
-            public memSeg02Full = false
-            ) {
+            public memory: string[] ,
+            public isSeg00Full: boolean = false,
+            public isSeg01Full: boolean = false,
+            public isSeg02Full: boolean = false
+            ){
         }
-
+        
         public init(): void {
-            this.memSeg00 = [
-                "00","00","00","00","00","00","00","00",
-                "00","00","00","00","00","00","00","00",
-                "00","00","00","00","00","00","00","00",
-                "00","00","00","00","00","00","00","00"
-            ]
-            this.memSeg01 = [
-                "00","00","00","00","00","00","00","00",
-                "00","00","00","00","00","00","00","00",
-                "00","00","00","00","00","00","00","00",
-                "00","00","00","00","00","00","00","00"
-            ]
-            this.memSeg02 = [
-                "00","00","00","00","00","00","00","00",
-                "00","00","00","00","00","00","00","00",
-                "00","00","00","00","00","00","00","00",
-                "00","00","00","00","00","00","00","00"
-            ]
+            this.memory = new Array<string>();
+            for (let i = 0; i <= 767; i++) {
+                this.memory.push("00");
+             }
+            console.log(this.memory)
         }
 
-        public findFreeMem() {
-            // Check if there is even room in memory..
-            if (!this.memSeg00Full) {
-                //Segment one is empty, use it
-                return "00"
-            } else if (!this.memSeg01Full) {
-                //Segment two is empty, use it
-                return "01"
-            } else if (!this.memSeg02Full){
-                //Segment three is empty, use it
-                return "02"
-                
-            }
+        public writeMem() {
+            // this is harder than anticipated 
         }
     }
     

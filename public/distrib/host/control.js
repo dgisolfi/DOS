@@ -100,6 +100,9 @@ var DOS;
             // be reloaded from the server. If it is false or not specified the browser may reload the
             // page from its cache, which is not what we want.
         };
+        Control.prototype.populateMemory = function () {
+            var colCount = 0;
+        };
         return Control;
     }());
     DOS.Control = Control;

@@ -564,24 +564,34 @@ module DOS {
                     });
                 });
 
-                var loadedMem = [];
+                
+                // Ensure that the program does not exceed 256 bytes
+                if (userCodeArr.length > 256) {
+                    _StdOut.putText(`Program to Large, program is ${userCodeArr.length} bytes. Max is 256 per program.`);
+                    throw new Error(`Program to Large, program is ${userCodeArr.length} bytes.`);
+                }
+
+                // If the check passes load the program to memory
+                var hexIndex = 0;
+
+                if (_MEM.isSeg00Full) {
+                    hexIndex = 0;
+                } else if (_MEM.isSeg01Full) {
+                    hexIndex = 256;
+                } else if ((_MEM.isSeg02Full)){
+                    hexIndex = 512;
+                } else {
+                    // Handle Swapping  ¯\_(ツ)_/¯
+                }
 
                 var hexIndex = 0;
                 userCodeArr.forEach(char => { 
-                    loadedMem[hexIndex] = char
+                    _MEM.memory.insert(hexIndex, char);
                     hexIndex++;
                 });
+                console.log(_MEM.memory)
 
-                if (_MEM.findFreeMem() == "00"){
-                    _MEM.memSeg00 = loadedMem;
-                    console.log(_MEM.memSeg00);
-                }else if (_MEM.findFreeMem() == "01"){
-                    _MEM.memSeg01 = loadedMem;
-                    console.log(_MEM.memSeg01);
-                }else if (_MEM.findFreeMem() == "02"){
-                    _MEM.memSeg02 = loadedMem;
-                    console.log(_MEM.memSeg02);
-                }
+               
 
                 // For now simply alert the user that the syntax was correct
                 _StdOut.putText("Program load successful.");

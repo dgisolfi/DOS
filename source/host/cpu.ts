@@ -44,5 +44,29 @@ module DOS {
             // TODO: Accumulate CPU usage and profiling statistics here.
             // Do the real work here. Be sure to set this.isExecuting appropriately.
         }
+
+        public runOpCode(opCode){
+            switch (opCode) {
+                case "A9": // Load the accumulator with a constant
+                    
+                    break;
+
+                case "AD": // Load the accumulator from memory 
+                    
+                    break;
+                
+                case "8D": // Store the accumulator in memory 
+                    
+                    break;
+
+                case "A9": //Load the accumulator with a constant
+                    
+                    break;
+            
+                default:
+                    break;
+            }
+
+        }
     }
 }

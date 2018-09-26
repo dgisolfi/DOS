@@ -124,28 +124,8 @@ module DOS {
 
         public populateMemory(){
             var colCount = 0;
-
-            _MEM.memSeg00.forEach(element => {
-                var row = [];
-                
-                if (colCount === 8) {
-                    colCount = 0;
-                    row.forEach(element => {
-                        `<tbody>
-                        <tr class="table-active">
-                            <td></td>
-                            <td>-</td>
-                            <td>-</td>
-                            <td>-</td>
-                            <td>-</td>
-                            <td>-</td>
-                        </tr>
-                    </tbody>`
-                    });
-
-                }
-                
-            });
+        
         }
+                            
     }
 }
