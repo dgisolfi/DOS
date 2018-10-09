@@ -102,6 +102,9 @@ module DOS {
 
             _MEM = new Memory();
             _MEM.init();
+
+            _PCB = new PCB();
+            _PCB.init();
         }
 
         public static hostBtnHaltOS_click(btn): void {

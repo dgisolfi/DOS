@@ -45,7 +45,6 @@
                 // Create a new proccess and add it to the PCB
                 var proccess = new Proccess(_PCB.PIDcount, startIndex, memIndex);
                 _PCB.addProccess(proccess);
-                console.log(_MEM.memory);
                 
             }
         }

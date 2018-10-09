@@ -163,12 +163,6 @@ module DOS {
                          
         }
 
-        public updateDateTime(): void {
-            // update the display with cur time
-            var datetime = _date + " | " + _time;
-            document.getElementById("datetime").innerHTML = datetime;
-        }
-
         // delete given character in canvas
         private delChar(offset): void {
             // Measure the descent(do it here cuz its prettier)
@@ -269,7 +263,6 @@ module DOS {
             var height = _DefaultFontSize +
                         _DrawingContext.fontDescent(this.currentFont, this.currentFontSize) +
                         _FontHeightMargin;
-            console.log(height)
                      
             // take a snapshot of the canvas use this -> https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/getImageData
             this.canvasData = _DrawingContext.getImageData(0, height, _Canvas.width, this.currentYPosition);
@@ -279,6 +272,45 @@ module DOS {
             _DrawingContext.putImageData(this.canvasData, 0, 0);
             // Move the cursur loc...otherwise youll bad things happen
             this.currentYPosition = oldYPosition; 
+        }
+
+        public updateCPU(): void {
+            var pc = "00" + _CPU.PC.toString();
+            if (_CPU.PC > 99) {
+                pc = _CPU.PC.toString();
+            }
+            else if (_CPU.PC > 9 ) {
+                pc = "0" + _CPU.PC.toString();
+            }
+
+            document.getElementById("cpu-PC").innerHTML = pc;
+            document.getElementById("cpu-IR").innerHTML = _CPU.IR;
+            document.getElementById("cpu-Acc").innerHTML = _CPU.Acc.toString();
+            document.getElementById("cpu-X").innerHTML = _CPU.Xreg.toString();
+            document.getElementById("cpu-Y").innerHTML = _CPU.Yreg.toString();
+            document.getElementById("cpu-Z").innerHTML = _CPU.Zflag.toString();
+
+        }
+
+        public updatePCB(): void {
+            var PID = "-"
+            if (!(_PCB.curPID === 1000)) {
+               PID =  _PCB.curPID.toString();
+            } 
+            document.getElementById("pcb-PID").innerHTML = PID 
+            document.getElementById("pcb-State").innerHTML = _PCB.state;
+            document.getElementById("pcb-PC").innerHTML = _PCB.PC.toString();
+            document.getElementById("pcb-IR").innerHTML = _PCB.IR;
+            document.getElementById("pcb-Acc").innerHTML = _PCB.Acc.toString();
+            document.getElementById("pcb-X").innerHTML = _PCB.XReg.toString();
+            document.getElementById("pcb-Y").innerHTML = _PCB.YReg.toString();
+            document.getElementById("pcb-Z").innerHTML = _PCB.ZFlag.toString();
+        }
+
+        public updateDateTime(): void {
+            // update the display with cur time
+            var datetime = _date + " | " + _time;
+            document.getElementById("datetime").innerHTML = datetime;
         }
     }
  }

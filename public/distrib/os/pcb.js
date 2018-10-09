@@ -16,6 +16,8 @@ var DOS;
             this.pcb = pcb;
         }
         PCB.prototype.init = function () {
+            this.curPID = 1000;
+            this.state = "ready";
             this.PC = 0;
             this.Acc = 0;
             this.IR = "00";
@@ -24,9 +26,17 @@ var DOS;
             this.ZFlag = 0;
         };
         PCB.prototype.addProccess = function (proccess) {
+            this.curPID = proccess.pid.toString();
             this.pcb[this.PIDcount] = proccess;
             this.PIDcount++;
             _StdOut.putText("Program load successful; <pid> " + proccess.pid + " created");
+        };
+        PCB.prototype.runProccess = function (pid) {
+            _StdOut.putText("Running program with <pid> " + pid);
+            this.state = "running";
+        };
+        PCB.prototype.terminateProcess = function (pid) {
+            this.pcb[_CPU.runningPID].state = "terminated";
         };
         return PCB;
     }());

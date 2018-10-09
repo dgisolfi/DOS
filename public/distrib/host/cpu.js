@@ -16,8 +16,9 @@
 var DOS;
 (function (DOS) {
     var Cpu = /** @class */ (function () {
-        function Cpu(PC, Acc, Xreg, Yreg, Zflag, isExecuting, readyQueue, runningPID) {
+        function Cpu(PC, IR, Acc, Xreg, Yreg, Zflag, isExecuting, readyQueue, runningPID) {
             if (PC === void 0) { PC = 0; }
+            if (IR === void 0) { IR = "00"; }
             if (Acc === void 0) { Acc = 0; }
             if (Xreg === void 0) { Xreg = 0; }
             if (Yreg === void 0) { Yreg = 0; }
@@ -26,6 +27,7 @@ var DOS;
             if (readyQueue === void 0) { readyQueue = []; }
             if (runningPID === void 0) { runningPID = 0; }
             this.PC = PC;
+            this.IR = IR;
             this.Acc = Acc;
             this.Xreg = Xreg;
             this.Yreg = Yreg;
@@ -36,6 +38,7 @@ var DOS;
         }
         Cpu.prototype.init = function () {
             this.PC = 0;
+            this.IR = "00";
             this.Acc = 0;
             this.Xreg = 0;
             this.Yreg = 0;
@@ -47,25 +50,36 @@ var DOS;
             _Kernel.krnTrace("CPU cycle");
             // TODO: Accumulate CPU usage and profiling statistics here.
             // Do the real work here. Be sure to set this.isExecuting appropriately.
-            this.runOpCode(_MemoryAccessor.readMemory(this.PC));
+            var sRegister = _PCB.pcb[_CPU.runningPID].sRegister;
+            var eRegister = _PCB.pcb[_CPU.runningPID].eRegister;
+            // Get the next OP Code
+            this.IR = _MemoryAccessor.readMemory(this.PC);
+            _PCB.IR = this.IR;
+            this.runOpCode(this.IR);
+            // Increment the program counter
             this.PC++;
-            console.log("PC " + this.PC);
-            if (this.PC + _PCB.pcb[_CPU.runningPID].sRegister >= _PCB.pcb[_CPU.runningPID].eRegister) {
+            // Check wether the program has finished 
+            if (this.PC + sRegister >= eRegister) {
+                // reset and end the proccess
                 this.isExecuting = false;
                 this.PC = 0;
-                _PCB.pcb[_CPU.runningPID].state = "terminated";
+                _PCB.terminateProcess(this.runningPID);
+                this.runningPID = 0;
             }
+            _PCB.PC = this.PC;
         };
         Cpu.prototype.schedule = function () {
             // for now turn it on and let it go
             this.isExecuting = true;
             this.runningPID = this.readyQueue[0];
             this.readyQueue.splice(0, 1);
+            _PCB.runProccess(this.runningPID);
         };
         Cpu.prototype.runOpCode = function (opCode) {
-            // console.log(opCode)
             switch (opCode) {
                 case "A9": // Load the accumulator with a constant
+                    this.Acc = parseInt(_MemoryAccessor.readMemory(this.PC + 1), 16);
+                    this.PC + 2;
                     break;
                 case "AD": // Load the accumulator from memory 
                     break;

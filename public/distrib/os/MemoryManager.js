@@ -41,7 +41,6 @@ var DOS;
             // Create a new proccess and add it to the PCB
             var proccess = new DOS.Proccess(_PCB.PIDcount, startIndex, memIndex);
             _PCB.addProccess(proccess);
-            console.log(_MEM.memory);
         };
         return MemoryManager;
     }());

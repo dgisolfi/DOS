@@ -74,12 +74,6 @@ var DOS;
                This is NOT the same as a TIMER, which causes an interrupt and is handled like other interrupts.
                This, on the other hand, is the clock pulse from the hardware / VM / host that tells the kernel
                that it has to look for interrupts and process them if it finds any.                           */
-            // Update the host time variable. TODO find a better place for this
-            _date = new Date().toLocaleDateString();
-            _time = new Date().toLocaleTimeString();
-            _Console.updateDateTime();
-            // console.log(_Console.cmdHist);
-            // console.log(_Console.cmdIndex);
             // Check for an interrupt, are any. Page 560
             if (_KernelInterruptQueue.getSize() > 0) {
                 // Process the first interrupt on the interrupt queue.
@@ -93,6 +87,7 @@ var DOS;
             else { // If there are no interrupts and there is nothing being executed then just be idle. {
                 this.krnTrace("Idle");
             }
+            this.updateUI();
         };
         //
         // Interrupt Handling
@@ -174,6 +169,13 @@ var DOS;
             _Console.putText("OS ERROR - TRAP: " + msg);
             _Console.advanceLine();
             _Console.putText("To resolve this issue stop using a OS within a webbrowser and get a real OS...like MacOS");
+        };
+        Kernel.prototype.updateUI = function () {
+            _date = new Date().toLocaleDateString();
+            _time = new Date().toLocaleTimeString();
+            _Console.updateDateTime();
+            _Console.updateCPU();
+            _Console.updatePCB();
         };
         return Kernel;
     }());
