@@ -76,15 +76,25 @@ module DOS {
             _PCB.runProccess(this.runningPID);
         }
 
+        public passCmd(num): void {
+            this.PC + num;
+        }
+
         public runOpCode(opCode){
             switch (opCode) {
                 case `A9`: // Load the accumulator with a constant
                     this.Acc = parseInt(_MemoryAccessor.readMemory(this.PC+1), 16);
-                    this.PC + 2;
+                    this.passCmd(2);
                     break;
 
                 case `AD`: // Load the accumulator from memory 
-                    
+                    // read in little endian form
+                    var val1 = _MemoryAccessor.readMemory(this.PC+1);
+                    var val2 = _MemoryAccessor.readMemory(this.PC+2);
+                    var hex = val2 + val1;
+                    var hex_endian = _MemoryAccessor.readMemory(parseInt(hex, 16))
+                    this.Acc = parseInt(hex_endian, 16);
+                    this.passCmd(3);
                     break;
                 
                 case `8D`: // Store the accumulator in memory 

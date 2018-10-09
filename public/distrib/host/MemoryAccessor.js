@@ -15,7 +15,9 @@ var DOS;
             var hex_location = _PCB.pcb[_CPU.runningPID].sRegister + pc;
             return (_MEM.memory[hex_location]);
         };
-        MemoryAccessor.prototype.writeMemory = function () {
+        MemoryAccessor.prototype.writeMemory = function (address, data) {
+            var hex_location = _PCB.pcb[_CPU.runningPID].sRegister + address;
+            _MEM.memory[hex_location] = data;
         };
         return MemoryAccessor;
     }());

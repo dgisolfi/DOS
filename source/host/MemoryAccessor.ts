@@ -18,7 +18,9 @@ module DOS {
             return(_MEM.memory[hex_location])
         }
 
-        public writeMemory() {
+        public writeMemory(address, data) {
+            var hex_location = _PCB.pcb[_CPU.runningPID].sRegister + address;
+            _MEM.memory[hex_location] = data;
 
         }
        
