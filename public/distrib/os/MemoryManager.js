@@ -12,30 +12,32 @@ var DOS;
         function MemoryManager() {
         }
         MemoryManager.prototype.loadInMem = function (code) {
-            var memIndex = 0;
+            var startIndex = 0;
             var endIndex = 0;
             // Find the first open segment of memory
             if (_MEM.isSeg00Full && _MEM.isSeg01Full && _MEM.isSeg02Full) {
                 // Handle memory swapping
             }
             else if (!_MEM.isSeg00Full) {
-                memIndex = 0;
+                startIndex = 0;
                 endIndex = 255;
             }
             else if (!_MEM.isSeg01Full) {
-                memIndex = 256;
+                startIndex = 256;
                 endIndex = 512;
             }
             else if (!_MEM.isSeg02Full) {
-                memIndex = 513;
+                startIndex = 513;
                 endIndex = 768;
             }
+            var memIndex = startIndex;
             code.forEach(function (hex) {
                 _MEM.memory[memIndex] = hex;
-                console.log(_MEM.memory[memIndex]);
                 memIndex++;
             });
-            console.log(_MEM.memory);
+            // Create PCB
+            var proccess = new DOS.Proccess(_PCB.PIDcount, "new", startIndex, memIndex - 1, 0, 0);
+            _PCB.addProccess(proccess);
         };
         return MemoryManager;
     }());

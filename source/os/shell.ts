@@ -24,9 +24,9 @@ module DOS {
         public commandList = [];
         public curses = "[fuvg],[cvff],[shpx],[phag],[pbpxfhpxre],[zbgureshpxre],[gvgf]";
         public apologies = "[sorry]";
+        public status  = "";
 
-        constructor(public status  = "") {
-        }
+        constructor() {}
 
         public init() {
             var sc;
@@ -502,7 +502,7 @@ module DOS {
         }
 
         public shellLoad() {
-            try {
+            // try {
                 var userCode = (<HTMLInputElement> document.getElementById('taProgramInput')).value;
 
                 // initial validation
@@ -578,10 +578,10 @@ module DOS {
                 // For now simply alert the user that the syntax was correct
                 _StdOut.putText("Program load successful.");
                 
-            } catch(e) {
-                // Log the detailed error message
-                console.log(e);
-            }
+            // } catch(e) {
+            //     // Log the detailed error message
+            //     console.log(e);
+            // }
         }
         
         public shellRun(args){
@@ -591,9 +591,6 @@ module DOS {
             } else if (args.length < 1) {
                 _StdOut.putText("Please specify the PID to execute.");
             }
-
-
-
         }
     }
 }

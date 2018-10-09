@@ -10,7 +10,8 @@
 
 module DOS {
 
-    export class MemoryAccesor {
+    export class MemoryAccessor {
+        constructor () {}
 
        
 

@@ -16,14 +16,13 @@
 var DOS;
 (function (DOS) {
     var Shell = /** @class */ (function () {
-        function Shell(status) {
-            if (status === void 0) { status = ""; }
-            this.status = status;
+        function Shell() {
             // Properties
             this.promptStr = "=>";
             this.commandList = [];
             this.curses = "[fuvg],[cvff],[shpx],[phag],[pbpxfhpxre],[zbgureshpxre],[gvgf]";
             this.apologies = "[sorry]";
+            this.status = "";
         }
         Shell.prototype.init = function () {
             var sc;
@@ -413,80 +412,79 @@ var DOS;
             }
         };
         Shell.prototype.shellLoad = function () {
-            try {
-                var userCode = document.getElementById('taProgramInput').value;
-                // initial validation
-                if (userCode === "" || userCode === " ") {
-                    _StdOut.putText("No user code found.");
-                    throw new Error("No user code found.");
+            // try {
+            var userCode = document.getElementById('taProgramInput').value;
+            // initial validation
+            if (userCode === "" || userCode === " ") {
+                _StdOut.putText("No user code found.");
+                throw new Error("No user code found.");
+            }
+            else if (userCode.toUpperCase() != userCode) {
+                _StdOut.putText("Invalid Syntax: Lower case character detected.");
+                throw new Error("Invalid Syntax: Lower case character detected.");
+            }
+            // Begin splitting and validating individual chars
+            var userCodeArr = userCode.split(' ');
+            // Define valid hex characters
+            var validInt = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+            var validChar = ['A', 'B', 'C', 'D', 'E', 'F'];
+            // Iterate through each hex pair
+            userCodeArr.forEach(function (char) {
+                // Make sure the hex is the correct length before even bothering to go deeper
+                if (char.length > 2) {
+                    // Provide help to the user if the hex is detected as longer than 2 digits
+                    _StdOut.putText("Syntax Error: '" + char + "' is greater than 2 in length");
+                    _Console.advanceLine();
+                    _StdOut.putText("To resolve this issue please seperate digits by a space");
+                    throw new Error("Syntax Error: '" + char + "' is greater than 2 in length");
                 }
-                else if (userCode.toUpperCase() != userCode) {
-                    _StdOut.putText("Invalid Syntax: Lower case character detected.");
-                    throw new Error("Invalid Syntax: Lower case character detected.");
+                else if (char.length < 2) {
+                    // Provide help to the user if the hex is detected as less than 2 digits
+                    _StdOut.putText("Syntax Error: '" + char + "' is less than 2 in length");
+                    _Console.advanceLine();
+                    _StdOut.putText("To resolve this issue please create hex digits with a length of 2");
+                    throw new Error("Syntax Error: '" + char + "' is less than 2 in length");
                 }
-                // Begin splitting and validating individual chars
-                var userCodeArr = userCode.split(' ');
-                // Define valid hex characters
-                var validInt = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
-                var validChar = ['A', 'B', 'C', 'D', 'E', 'F'];
-                // Iterate through each hex pair
-                userCodeArr.forEach(function (char) {
-                    // Make sure the hex is the correct length before even bothering to go deeper
-                    if (char.length > 2) {
-                        // Provide help to the user if the hex is detected as longer than 2 digits
-                        _StdOut.putText("Syntax Error: '" + char + "' is greater than 2 in length");
-                        _Console.advanceLine();
-                        _StdOut.putText("To resolve this issue please seperate digits by a space");
-                        throw new Error("Syntax Error: '" + char + "' is greater than 2 in length");
-                    }
-                    else if (char.length < 2) {
-                        // Provide help to the user if the hex is detected as less than 2 digits
-                        _StdOut.putText("Syntax Error: '" + char + "' is less than 2 in length");
-                        _Console.advanceLine();
-                        _StdOut.putText("To resolve this issue please create hex digits with a length of 2");
-                        throw new Error("Syntax Error: '" + char + "' is less than 2 in length");
-                    }
-                    // Go deeper into the user code, iterate through each char of each digit
-                    var digits = char.split('');
-                    digits.forEach(function (element) {
-                        // If not a character... 
-                        if (validChar.indexOf(element) === -1) {
-                            // then it must be a Integer...
-                            if (validInt.indexOf(element) === -1) {
-                                // if not, then alert the user
-                                _StdOut.putText("Syntax Error: '" + element + "' is not a valid Hex Character");
-                                _Console.advanceLine();
-                                _StdOut.putText("Valid Hex: A-F, 0-9");
-                                throw new Error("Syntax Error: '" + element + "' is not a valid Hex Character");
-                            }
-                        }
-                        // If not a Integer... 
+                // Go deeper into the user code, iterate through each char of each digit
+                var digits = char.split('');
+                digits.forEach(function (element) {
+                    // If not a character... 
+                    if (validChar.indexOf(element) === -1) {
+                        // then it must be a Integer...
                         if (validInt.indexOf(element) === -1) {
-                            // then it must be a Character...
-                            if (validChar.indexOf(element) === -1) {
-                                // if not, then alert the user
-                                _StdOut.putText("Syntax Error: '" + element + "' is not a valid Hex Character");
-                                _Console.advanceLine();
-                                _StdOut.putText("Valid Hex: A-F, 0-9");
-                                throw new Error("Syntax Error: '" + element + "' is not a valid Hex Character");
-                            }
+                            // if not, then alert the user
+                            _StdOut.putText("Syntax Error: '" + element + "' is not a valid Hex Character");
+                            _Console.advanceLine();
+                            _StdOut.putText("Valid Hex: A-F, 0-9");
+                            throw new Error("Syntax Error: '" + element + "' is not a valid Hex Character");
                         }
-                    });
+                    }
+                    // If not a Integer... 
+                    if (validInt.indexOf(element) === -1) {
+                        // then it must be a Character...
+                        if (validChar.indexOf(element) === -1) {
+                            // if not, then alert the user
+                            _StdOut.putText("Syntax Error: '" + element + "' is not a valid Hex Character");
+                            _Console.advanceLine();
+                            _StdOut.putText("Valid Hex: A-F, 0-9");
+                            throw new Error("Syntax Error: '" + element + "' is not a valid Hex Character");
+                        }
+                    }
                 });
-                // Ensure that the program does not exceed 256 bytes
-                if (userCodeArr.length > 256) {
-                    _StdOut.putText("Program to Large, program is " + userCodeArr.length + " bytes. Max is 256 per program.");
-                    throw new Error("Program to Large, program is " + userCodeArr.length + " bytes.");
-                }
-                // If the check passes load the program to memory
-                _MemoryManager.loadInMem(userCodeArr);
-                // For now simply alert the user that the syntax was correct
-                _StdOut.putText("Program load successful.");
+            });
+            // Ensure that the program does not exceed 256 bytes
+            if (userCodeArr.length > 256) {
+                _StdOut.putText("Program to Large, program is " + userCodeArr.length + " bytes. Max is 256 per program.");
+                throw new Error("Program to Large, program is " + userCodeArr.length + " bytes.");
             }
-            catch (e) {
-                // Log the detailed error message
-                console.log(e);
-            }
+            // If the check passes load the program to memory
+            _MemoryManager.loadInMem(userCodeArr);
+            // For now simply alert the user that the syntax was correct
+            _StdOut.putText("Program load successful.");
+            // } catch(e) {
+            //     // Log the detailed error message
+            //     console.log(e);
+            // }
         };
         Shell.prototype.shellRun = function (args) {
             // take only the very first PID and execute it

@@ -9,23 +9,19 @@
 var DOS;
 (function (DOS) {
     var PCB = /** @class */ (function () {
-        function PCB(PIDcount) {
+        function PCB(PIDcount, pcb) {
             if (PIDcount === void 0) { PIDcount = 0; }
+            if (pcb === void 0) { pcb = {}; }
             this.PIDcount = PIDcount;
+            this.pcb = pcb;
         }
         PCB.prototype.init = function () {
-            this.PIDcount = _CPU.readyQueue.length;
-            console.log("Initiate PID", this.PIDcount);
         };
-        PCB.prototype.createPCB = function (sRegister, eRegister) {
-            var newPCB = {
-                PID: (this.PIDcount + 1),
-                state: "loaded",
-                startRegister: sRegister,
-                endRegister: eRegister,
-                turnaroundTime: 0,
-                waitTime: 0
-            };
+        PCB.prototype.addProccess = function (proccess) {
+            this.pcb[this.PIDcount] = proccess;
+            this.PIDcount++;
+            console.log(proccess);
+            console.log(this.pcb);
         };
         return PCB;
     }());

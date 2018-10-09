@@ -12,32 +12,36 @@ module DOS {
 
     export class PCB {
         constructor(
-            public PIDcount = 0) {
+                public PIDcount = 0,
+                public pcb = {}
+            ) {
+                
+                
         }
 
         public init(): void {
-            this.PIDcount = _CPU.readyQueue.length
-            console.log("Initiate PID", this.PIDcount)
 
-            interface pcb {
-                PID: Number;
-                state: String;
-                startRegister: String;
-                endRegister: String;
-                turnaroundTime: Number;
-                waitTime: Number; //cycles
-            }
         }
 
-        public createPCB(sRegister, eRegister) {
-            var newPCB = {
-                PID: (this.PIDcount + 1),
-                state: "loaded",
-                startRegister: sRegister,
-                endRegister: eRegister,
-                turnaroundTime: 0,
-                waitTime: 0,
-            }
+        public addProccess(proccess) {
+            this.pcb[this.PIDcount] = proccess;
+            this.PIDcount++;
+            console.log(proccess);
+            console.log(this.pcb);
+
+
         }
+
+        // public createPCB(sRegister, eRegister) {
+        //     var newPCB = {
+        //         PID: (this.PIDcount + 1),
+        //         state: "loaded",
+        //         startRegister: sRegister,
+        //         endRegister: eRegister,
+        //         turnaroundTime: 0,
+        //         waitTime: 0,
+        //     } as pcb;
+        //     console.log(newPCB)
+        // }
     }
 }

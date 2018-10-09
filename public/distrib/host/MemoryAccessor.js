@@ -8,13 +8,13 @@
      ------------ */
 var DOS;
 (function (DOS) {
-    var MemoryAccesor = /** @class */ (function () {
-        function MemoryAccesor() {
+    var MemoryAccessor = /** @class */ (function () {
+        function MemoryAccessor() {
         }
-        MemoryAccesor.prototype.writeMem = function (code) {
+        MemoryAccessor.prototype.writeMem = function (code) {
             console.log(code);
         };
-        return MemoryAccesor;
+        return MemoryAccessor;
     }());
-    DOS.MemoryAccesor = MemoryAccesor;
+    DOS.MemoryAccessor = MemoryAccessor;
 })(DOS || (DOS = {}));
