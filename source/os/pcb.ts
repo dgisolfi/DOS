@@ -11,37 +11,31 @@
 module DOS {
 
     export class PCB {
+        public PC:    Number;
+        public Acc:   Number;
+        public IR:    String;
+        public XReg:  Number;
+        public YReg:  Number;
+        public ZFlag: Number;
         constructor(
                 public PIDcount = 0,
-                public pcb = {}
-            ) {
-                
-                
+                public pcb = {}) {    
         }
 
-        public init(): void {
-
+        public init() {
+            this.PC    = 0;
+            this.Acc   = 0;
+            this.IR    = "00";
+            this.XReg  = 0;
+            this.YReg  = 0;
+            this.ZFlag = 0;
         }
 
         public addProccess(proccess) {
             this.pcb[this.PIDcount] = proccess;
             this.PIDcount++;
-            console.log(proccess);
-            console.log(this.pcb);
-
-
+            _StdOut.putText(`Program load successful; <pid> ${proccess.pid} created`);
+        
         }
-
-        // public createPCB(sRegister, eRegister) {
-        //     var newPCB = {
-        //         PID: (this.PIDcount + 1),
-        //         state: "loaded",
-        //         startRegister: sRegister,
-        //         endRegister: eRegister,
-        //         turnaroundTime: 0,
-        //         waitTime: 0,
-        //     } as pcb;
-        //     console.log(newPCB)
-        // }
     }
 }

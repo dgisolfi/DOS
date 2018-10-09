@@ -16,12 +16,17 @@ var DOS;
             this.pcb = pcb;
         }
         PCB.prototype.init = function () {
+            this.PC = 0;
+            this.Acc = 0;
+            this.IR = "00";
+            this.XReg = 0;
+            this.YReg = 0;
+            this.ZFlag = 0;
         };
         PCB.prototype.addProccess = function (proccess) {
             this.pcb[this.PIDcount] = proccess;
             this.PIDcount++;
-            console.log(proccess);
-            console.log(this.pcb);
+            _StdOut.putText("Program load successful; <pid> " + proccess.pid + " created");
         };
         return PCB;
     }());

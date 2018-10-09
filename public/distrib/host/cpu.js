@@ -6,7 +6,7 @@
 
      Routines for the host CPU simulation, NOT for the OS itself.
      In this manner, it's A LITTLE BIT like a hypervisor,
-     in that the Document environment inside a browser is the "bare metal" (so to speak) for which we write code
+     in that the Document environment inside a browser is the `bare metal` (so to speak) for which we write code
      that hosts our client OS. But that analogy only goes so far, and the lines are blurred, because we are using
      TypeScript/JavaScript in both the host and client environments.
 
@@ -16,7 +16,7 @@
 var DOS;
 (function (DOS) {
     var Cpu = /** @class */ (function () {
-        function Cpu(PC, Acc, Xreg, Yreg, Zflag, isExecuting, readyQueue) {
+        function Cpu(PC, Acc, Xreg, Yreg, Zflag, isExecuting, readyQueue, runningPID) {
             if (PC === void 0) { PC = 0; }
             if (Acc === void 0) { Acc = 0; }
             if (Xreg === void 0) { Xreg = 0; }
@@ -24,6 +24,7 @@ var DOS;
             if (Zflag === void 0) { Zflag = 0; }
             if (isExecuting === void 0) { isExecuting = false; }
             if (readyQueue === void 0) { readyQueue = []; }
+            if (runningPID === void 0) { runningPID = 0; }
             this.PC = PC;
             this.Acc = Acc;
             this.Xreg = Xreg;
@@ -31,6 +32,7 @@ var DOS;
             this.Zflag = Zflag;
             this.isExecuting = isExecuting;
             this.readyQueue = readyQueue;
+            this.runningPID = runningPID;
         }
         Cpu.prototype.init = function () {
             this.PC = 0;
@@ -42,11 +44,26 @@ var DOS;
             this.readyQueue = [];
         };
         Cpu.prototype.cycle = function () {
-            _Kernel.krnTrace('CPU cycle');
+            _Kernel.krnTrace("CPU cycle");
             // TODO: Accumulate CPU usage and profiling statistics here.
             // Do the real work here. Be sure to set this.isExecuting appropriately.
+            this.runOpCode(_MemoryAccessor.readMemory(this.PC));
+            this.PC++;
+            console.log("PC " + this.PC);
+            if (this.PC + _PCB.pcb[_CPU.runningPID].sRegister >= _PCB.pcb[_CPU.runningPID].eRegister) {
+                this.isExecuting = false;
+                this.PC = 0;
+                _PCB.pcb[_CPU.runningPID].state = "terminated";
+            }
+        };
+        Cpu.prototype.schedule = function () {
+            // for now turn it on and let it go
+            this.isExecuting = true;
+            this.runningPID = this.readyQueue[0];
+            this.readyQueue.splice(0, 1);
         };
         Cpu.prototype.runOpCode = function (opCode) {
+            // console.log(opCode)
             switch (opCode) {
                 case "A9": // Load the accumulator with a constant
                     break;

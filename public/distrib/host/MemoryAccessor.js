@@ -11,8 +11,12 @@ var DOS;
     var MemoryAccessor = /** @class */ (function () {
         function MemoryAccessor() {
         }
-        MemoryAccessor.prototype.writeMem = function (code) {
-            console.log(code);
+        MemoryAccessor.prototype.readMemory = function (pc) {
+            var hex_location = _PCB.pcb[_CPU.runningPID].sRegister + pc;
+            console.log(_MEM.memory[hex_location]);
+            return (_MEM.memory[hex_location]);
+        };
+        MemoryAccessor.prototype.writeMemory = function () {
         };
         return MemoryAccessor;
     }());

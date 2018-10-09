@@ -11,6 +11,7 @@
 module DOS {
 
     export class Memory {
+
         constructor(
             public memory: string[] = [],
             public isSeg00Full: boolean = false,
@@ -26,5 +27,4 @@ module DOS {
              }
         }
     }
-    
 }

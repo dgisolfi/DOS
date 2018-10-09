@@ -7,7 +7,7 @@
 
      Routines for the host CPU simulation, NOT for the OS itself.
      In this manner, it's A LITTLE BIT like a hypervisor,
-     in that the Document environment inside a browser is the "bare metal" (so to speak) for which we write code
+     in that the Document environment inside a browser is the `bare metal` (so to speak) for which we write code
      that hosts our client OS. But that analogy only goes so far, and the lines are blurred, because we are using
      TypeScript/JavaScript in both the host and client environments.
 
@@ -26,7 +26,8 @@ module DOS {
             public Yreg: number = 0,
             public Zflag: number = 0,
             public isExecuting: boolean = false,
-            public readyQueue: Array<string> = []) {
+            public readyQueue: Array<number> = [],
+            public runningPID: number = 0) {
         }
 
         public init(): void {
@@ -40,26 +41,44 @@ module DOS {
         }
 
         public cycle(): void {
-            _Kernel.krnTrace('CPU cycle');
+            _Kernel.krnTrace(`CPU cycle`);
             // TODO: Accumulate CPU usage and profiling statistics here.
             // Do the real work here. Be sure to set this.isExecuting appropriately.
+            this.runOpCode(_MemoryAccessor.readMemory(this.PC));
+            this.PC++;
+            console.log(`PC ` + this.PC)
+            if (this.PC + _PCB.pcb[_CPU.runningPID].sRegister  >= _PCB.pcb[_CPU.runningPID].eRegister) {
+                this.isExecuting = false;
+                this.PC = 0;
+                _PCB.pcb[_CPU.runningPID].state = `terminated`;
+            }
+           
+
+        }
+
+        public schedule() {
+            // for now turn it on and let it go
+            this.isExecuting = true;
+            this.runningPID  = this.readyQueue[0];
+            this.readyQueue.splice(0, 1)
         }
 
         public runOpCode(opCode){
+            // console.log(opCode)
             switch (opCode) {
-                case "A9": // Load the accumulator with a constant
+                case `A9`: // Load the accumulator with a constant
                     
                     break;
 
-                case "AD": // Load the accumulator from memory 
+                case `AD`: // Load the accumulator from memory 
                     
                     break;
                 
-                case "8D": // Store the accumulator in memory 
+                case `8D`: // Store the accumulator in memory 
                     
                     break;
 
-                case "A9": //Load the accumulator with a constant
+                case `A9`: //Load the accumulator with a constant
                     
                     break;
             

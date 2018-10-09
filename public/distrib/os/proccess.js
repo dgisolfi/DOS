@@ -9,13 +9,13 @@
 var DOS;
 (function (DOS) {
     var Proccess = /** @class */ (function () {
-        function Proccess(pid, state, startRegister, endRegister, turnaroundTime, waitTime) {
+        function Proccess(pid, sRegister, eRegister) {
             this.pid = pid;
-            this.state = state;
-            this.startRegister = startRegister;
-            this.endRegister = endRegister;
-            this.turnaroundTime = turnaroundTime;
-            this.waitTime = waitTime;
+            this.sRegister = sRegister;
+            this.eRegister = eRegister;
+            this.state = "new";
+            this.turnaroundTime = 0;
+            this.waitTime = 0;
         }
         return Proccess;
     }());

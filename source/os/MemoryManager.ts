@@ -17,19 +17,23 @@
                 var startIndex = 0;
                 var endIndex = 0; 
                 // Find the first open segment of memory
-                if (_MEM.isSeg00Full && _MEM.isSeg01Full && _MEM.isSeg02Full) {
-                    // Handle memory swapping
-                }else if (!_MEM.isSeg00Full) {
+                 if (!_MEM.isSeg00Full) {
                     startIndex = 0;
                     endIndex = 255;
+                    _MEM.isSeg00Full = true;
 
                 } else if (!_MEM.isSeg01Full) {
                     startIndex = 256;
                     endIndex = 512;
+                    _MEM.isSeg01Full = true;
 
                 } else if (!_MEM.isSeg02Full) {
                     startIndex = 513;
                     endIndex = 768;
+                    _MEM.isSeg02Full = true;
+
+                } else {
+                    // Handle memory swapping
                 }
 
                 var memIndex = startIndex;
@@ -38,9 +42,10 @@
                     memIndex++;
                 });
 
-                // Create PCB
-                var proccess = new Proccess(_PCB.PIDcount, "new", startIndex, memIndex - 1, 0, 0);
+                // Create a new proccess and add it to the PCB
+                var proccess = new Proccess(_PCB.PIDcount, startIndex, memIndex);
                 _PCB.addProccess(proccess);
+                console.log(_MEM.memory);
                 
             }
         }

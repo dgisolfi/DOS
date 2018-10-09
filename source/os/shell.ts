@@ -502,7 +502,7 @@ module DOS {
         }
 
         public shellLoad() {
-            // try {
+            try {
                 var userCode = (<HTMLInputElement> document.getElementById('taProgramInput')).value;
 
                 // initial validation
@@ -574,14 +574,11 @@ module DOS {
 
                 // If the check passes load the program to memory
                 _MemoryManager.loadInMem(userCodeArr);
-            
-                // For now simply alert the user that the syntax was correct
-                _StdOut.putText("Program load successful.");
                 
-            // } catch(e) {
-            //     // Log the detailed error message
-            //     console.log(e);
-            // }
+            } catch(e) {
+                // Log the detailed error message
+                console.log(e);
+            }
         }
         
         public shellRun(args){
@@ -591,6 +588,8 @@ module DOS {
             } else if (args.length < 1) {
                 _StdOut.putText("Please specify the PID to execute.");
             }
+            _CPU.readyQueue.push(args[0]);
+            _CPU.schedule();
         }
     }
 }
