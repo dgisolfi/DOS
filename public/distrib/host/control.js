@@ -56,7 +56,7 @@ var DOS;
             // Note the REAL clock in milliseconds since January 1, 1970.
             var now = new Date().getTime();
             // Build the log string.
-            var str = "({ clock:" + clock + ", source:" + source + ", msg:" + msg + ", now:" + now + " })" + "\n";
+            var str = "({ clock: " + clock + " source: " + source + " msg: " + msg + " now: " + now + "})" + "\n";
             // Update the log console.
             var taLog = document.getElementById("taHostLog");
             taLog.value = str + taLog.value;
@@ -100,7 +100,7 @@ var DOS;
             // be reloaded from the server. If it is false or not specified the browser may reload the
             // page from its cache, which is not what we want.
         };
-        Control.prototype.populateMemory = function () {
+        Control.prototype.populateMemoryTable = function () {
             var colCount = 0;
         };
         return Control;

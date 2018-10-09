@@ -34,22 +34,22 @@ module DOS {
             _Canvas = <HTMLCanvasElement>document.getElementById('display');
 
             // Get a global reference to the drawing context.
-            _DrawingContext = _Canvas.getContext("2d");
+            _DrawingContext = _Canvas.getContext(`2d`);
 
             // Enable the added-in canvas text functions (see canvastext.ts for provenance and details).
             CanvasTextFunctions.enable(_DrawingContext);   // Text functionality is now built in to the HTML5 canvas. But this is old-school, and fun, so we'll keep it.
 
             // Clear the log text box.
             // Use the TypeScript cast to HTMLInputElement
-            (<HTMLInputElement> document.getElementById("taHostLog")).value="";
+            (<HTMLInputElement> document.getElementById(`taHostLog`)).value=``;
 
             // Set focus on the start button.
             // Use the TypeScript cast to HTMLInputElement
-            (<HTMLInputElement> document.getElementById("btnStartOS")).focus();
+            (<HTMLInputElement> document.getElementById(`btnStartOS`)).focus();
 
             // Check for our testing and enrichment core, which
             // may be referenced here (from index.html) as function Glados().
-            if (typeof Glados === "function") {
+            if (typeof Glados === `function`) {
                 // function Glados() is here, so instantiate Her into
                 // the global (and properly capitalized) _GLaDOS variable.
                 _GLaDOS = new Glados();
@@ -57,7 +57,7 @@ module DOS {
             }
         }
 
-        public static hostLog(msg: string, source: string = "?"): void {
+        public static hostLog(msg: string, source: string = `?`): void {
             // Note the OS CLOCK.
             var clock: number = _OSclock;
 
@@ -65,10 +65,10 @@ module DOS {
             var now: number = new Date().getTime();
 
             // Build the log string.
-            var str: string = "({ clock:" + clock + ", source:" + source + ", msg:" + msg + ", now:" + now  + " })"  + "\n";
+            var str: string = `({ clock: ${clock} source: ${source} msg: ${msg} now: ${now}})`  + `\n`;
 
             // Update the log console.
-            var taLog = <HTMLInputElement> document.getElementById("taHostLog");
+            var taLog = <HTMLInputElement> document.getElementById(`taHostLog`);
             taLog.value = str + taLog.value;
 
             // TODO in the future: Optionally update a log database or some streaming service.
@@ -83,11 +83,11 @@ module DOS {
             btn.disabled = true;
 
             // .. enable the Halt and Reset buttons ...
-            (<HTMLButtonElement>document.getElementById("btnHaltOS")).disabled = false;
-            (<HTMLButtonElement>document.getElementById("btnReset")).disabled = false;
+            (<HTMLButtonElement>document.getElementById(`btnHaltOS`)).disabled = false;
+            (<HTMLButtonElement>document.getElementById(`btnReset`)).disabled = false;
 
             // .. set focus on the OS console display ...
-            document.getElementById("display").focus();
+            document.getElementById(`display`).focus();
 
             // ... Create and initialize the CPU (because it's part of the hardware)  ...
             _CPU = new Cpu();  // Note: We could simulate multi-core systems by instantiating more than one instance of the CPU here.
@@ -105,8 +105,8 @@ module DOS {
         }
 
         public static hostBtnHaltOS_click(btn): void {
-            Control.hostLog("Emergency halt", "host");
-            Control.hostLog("Attempting Kernel shutdown.", "host");
+            Control.hostLog(`Emergency halt`, `host`);
+            Control.hostLog(`Attempting Kernel shutdown.`, `host`);
             // Call the OS shutdown routine.
             _Kernel.krnShutdown();
             // Stop the interval that's simulating our clock pulse.
@@ -122,7 +122,7 @@ module DOS {
             // page from its cache, which is not what we want.
         }
 
-        public populateMemory(){
+        public populateMemoryTable(){
             var colCount = 0;
         
         }

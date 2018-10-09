@@ -3,6 +3,7 @@
 ///<reference path="shellCommand.ts" />
 ///<reference path="userCommand.ts" />
 ///<reference path="apiRequests.ts" />
+///<reference path="MemoryManager.ts" />
 /* ------------
    Shell.ts
 
@@ -478,25 +479,7 @@ var DOS;
                     throw new Error("Program to Large, program is " + userCodeArr.length + " bytes.");
                 }
                 // If the check passes load the program to memory
-                var hexIndex = 0;
-                if (_MEM.isSeg00Full) {
-                    hexIndex = 0;
-                }
-                else if (_MEM.isSeg01Full) {
-                    hexIndex = 256;
-                }
-                else if ((_MEM.isSeg02Full)) {
-                    hexIndex = 512;
-                }
-                else {
-                    // Handle Swapping  ¯\_(ツ)_/¯
-                }
-                var hexIndex = 0;
-                userCodeArr.forEach(function (char) {
-                    _MEM.memory[hexIndex].push(char);
-                    hexIndex++;
-                });
-                console.log(_MEM.memory);
+                _MemoryManager.loadInMem(userCodeArr);
                 // For now simply alert the user that the syntax was correct
                 _StdOut.putText("Program load successful.");
             }

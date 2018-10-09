@@ -32,6 +32,9 @@ var _CPU: DOS.Cpu;  // Utilize TypeScript's type annotation system to ensure tha
 // Memory Class
 var _MEM: DOS.Memory;
 
+var _MemoryAccessor: DOS.MemoryAccesor;
+var _MemoryManager: DOS.MemoryManager;
+
 //Proccess control blocks
 var _PCB: DOS.PCB;
 

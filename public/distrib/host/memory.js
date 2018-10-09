@@ -22,11 +22,8 @@ var DOS;
         Memory.prototype.init = function () {
             this.memory = new Array();
             for (var i = 0; i <= 767; i++) {
-                _MEM.memory.push("00");
+                this.memory.push("00");
             }
-            console.log(this.memory);
-        };
-        Memory.prototype.findFreeMem = function () {
         };
         return Memory;
     }());

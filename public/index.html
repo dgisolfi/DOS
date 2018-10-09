@@ -15,6 +15,7 @@
    <script type="text/javascript" src="distrib/host/devices.js"></script>
    <script type="text/javascript" src="distrib/host/cpu.js"></script>
    <script type="text/javascript" src="distrib/host/memory.js"></script>
+   <script type="text/javascript" src="distrib/host/MemoryAccessor.js"></script>
 
    <!-- Virtual OS Routines: Make sure Kernel code is last, since it needs those above it. -->
    <script type="text/javascript" src="distrib/os/interrupt.js"></script>
@@ -27,6 +28,7 @@
    <script type="text/javascript" src="distrib/os/shellCommand.js"></script>
    <script type="text/javascript" src="distrib/os/userCommand.js"></script>
    <script type="text/javascript" src="distrib/os/kernel.js"></script>
+   <script type="text/javascript" src="distrib/os/MemoryManager.js"></script>
 
    <!-- Other Routines -->
    <script type="text/javascript" src="distrib/utils.js"></script>
@@ -201,7 +203,7 @@
                     User Program Input
                 </div>
                 <div class="card-body text-center"  id="divUserProgramInput">
-                    <textarea name="taProgramInput" id="taProgramInput" rows= "4" cols="28" style="resize:none"></textarea>
+                    <textarea name="taProgramInput" id="taProgramInput" rows= "4" cols="32" style="resize:none"></textarea>
                 </div>
             </div>
         </div>

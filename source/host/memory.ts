@@ -12,7 +12,7 @@ module DOS {
 
     export class Memory {
         constructor(
-            public memory: string[] ,
+            public memory: string[] = [],
             public isSeg00Full: boolean = false,
             public isSeg01Full: boolean = false,
             public isSeg02Full: boolean = false
@@ -22,13 +22,8 @@ module DOS {
         public init(): void {
             this.memory = new Array<string>();
             for (let i = 0; i <= 767; i++) {
-                this.memory.push("00");
+                this.memory.push(`00`);
              }
-            console.log(this.memory)
-        }
-
-        public writeMem() {
-            // this is harder than anticipated 
         }
     }
     
