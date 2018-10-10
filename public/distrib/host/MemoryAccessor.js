@@ -12,11 +12,11 @@ var DOS;
         function MemoryAccessor() {
         }
         MemoryAccessor.prototype.readMemory = function (pc) {
-            var hex_location = _PCB.pcb[_CPU.runningPID].sRegister + pc;
+            var hex_location = _CPU.runningQueue[_CPU.runningPID].sRegister + pc;
             return (_MEM.memory[hex_location]);
         };
         MemoryAccessor.prototype.writeMemory = function (address, data) {
-            var hex_location = _PCB.pcb[_CPU.runningPID].sRegister + address;
+            var hex_location = _CPU.runningQueue[_CPU.runningPID].sRegister + address;
             _MEM.memory[hex_location] = data;
         };
         return MemoryAccessor;

@@ -21,59 +21,84 @@ module DOS {
 
         constructor(
             public PC: number = 0,
-            public IR: string = "00",
+            public IR: string = `00`,
             public Acc: number = 0,
             public Xreg: number = 0,
             public Yreg: number = 0,
             public Zflag: number = 0,
             public isExecuting: boolean = false,
-            public readyQueue: Array<number> = [],
-            public runningPID: number = 0) {
+            public readyQueue: object = {},
+            public runningQueue: object= {},
+            public runningPID: number = 0,
+            public pidCounter: number = 0) {
         }
 
         public init(): void {
             this.PC = 0;
-            this.IR = "00";
+            this.IR = `00`;
             this.Acc = 0;
             this.Xreg = 0;
             this.Yreg = 0;
             this.Zflag = 0;
             this.isExecuting = false;
-            this.readyQueue = [];
+            this.readyQueue = {};
+            this.runningQueue = {};
         }
 
         public cycle(): void {
             _Kernel.krnTrace(`CPU cycle`);
             // TODO: Accumulate CPU usage and profiling statistics here.
             // Do the real work here. Be sure to set this.isExecuting appropriately.
-            var sRegister = _PCB.pcb[_CPU.runningPID].sRegister
-            var eRegister = _PCB.pcb[_CPU.runningPID].eRegister
+            console.log(this.readyQueue);
+            console.log(this.runningQueue);
+            var sRegister = this.runningQueue[this.runningPID].sRegister 
+            var eRegister = this.runningQueue[this.runningPID].eRegister 
             // Get the next OP Code
             this.IR = _MemoryAccessor.readMemory(this.PC)
            
             this.runOpCode(this.IR);
             // Increment the program counter
             this.PC++;
+            this.runningQueue[this.runningPID].PC =  this.PC;
+            this.runningQueue[this.runningPID].IR =  this.IR;
+            this.runningQueue[this.runningPID].Acc = this.Acc;
             // Check wether the program has finished 
-            if (this.PC +sRegister  >= eRegister) {
+            if (this.PC + sRegister  >= eRegister) {
                 // reset and end the proccess
-                this.isExecuting = false;
-                this.PC = 0;
-               _PCB.terminateProcess(this.runningPID);
-               this.runningPID = 0;
+                this.runningQueue[this.runningPID].state = `terminated`;
+                this.terminateProcess(this.runningPID);
             }
-            _PCB.PC = this.PC;
-            _PCB.IR =  this.IR;
-            _PCB.Acc =  this.Acc;
-
+            
         }
 
-        public schedule() {
+        public createProcces(startIndex, memIndex): number {
+            // Create a new proccess and add it to the PCB
+            var proccess = new PCB(this.pidCounter, startIndex, memIndex);
+            proccess.init();
+            
+            this.readyQueue[this.pidCounter] = proccess;
+            this.pidCounter++;
+
+            return proccess.pid;
+        }
+
+        public terminateProcess(pid) {
+            
+            this.isExecuting = false;
+            delete this.runningQueue[pid]
+            console.log("Done")
+            console.log(this.readyQueue);
+            console.log(this.runningQueue);
+        }
+
+        public schedule(pid) {
             // for now turn it on and let it go
+            this.runningQueue[pid] = this.readyQueue[pid]
+            this.runningPID  = pid;
             this.isExecuting = true;
-            this.runningPID  = this.readyQueue[0];
-            this.readyQueue.splice(0, 1)
-            _PCB.runProccess(this.runningPID);
+            delete this.readyQueue[pid];
+            this.runningQueue[pid].runProccess(pid);
+           
         }
 
         public passCmd(num): void {

@@ -573,7 +573,14 @@ module DOS {
                 }
 
                 // If the check passes load the program to memory
-                _MemoryManager.loadInMem(userCodeArr);
+                var registers = _MemoryManager.loadInMem(userCodeArr);
+
+                //Create a new PCB
+                
+                var pid = _CPU.createProcces(registers[0], registers[1]);
+                _StdOut.putText(`Program load successful; <pid> ${pid} created`);
+
+             
                 
             } catch(e) {
                 // Log the detailed error message
@@ -588,8 +595,8 @@ module DOS {
             } else if (args.length < 1) {
                 _StdOut.putText("Please specify the PID to execute.");
             }
-            _CPU.readyQueue.push(args[0]);
-            _CPU.schedule();
+            _CPU.schedule(args[0]);
+            _StdOut.putText(`Running program with <pid> ${args[0]}`);
         }
     }
 }

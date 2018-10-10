@@ -38,9 +38,6 @@ module DOS {
             _MemoryManager = new MemoryManager();
             _MemoryAccessor = new MemoryAccessor();
 
-            _PCB = new PCB();
-            _PCB.init();
-
             // Load the Keyboard Device Driver
             this.krnTrace("Loading the keyboard device driver.");
             _krnKeyboardDriver = new DeviceDriverKeyboard();     // Construct it.

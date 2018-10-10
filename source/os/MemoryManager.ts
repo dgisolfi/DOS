@@ -14,6 +14,7 @@
             constructor() {}
     
             public loadInMem(code) {
+                var registers = [];
                 var startIndex = 0;
                 var endIndex = 0; 
                 // Find the first open segment of memory
@@ -41,10 +42,10 @@
                     _MEM.memory[memIndex] = hex;
                     memIndex++;
                 });
+                registers[0] = startIndex;
+                registers[1] = memIndex;
 
-                // Create a new proccess and add it to the PCB
-                var proccess = new Proccess(_PCB.PIDcount, startIndex, memIndex);
-                _PCB.addProccess(proccess);
+                return registers;
                 
             }
         }

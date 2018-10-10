@@ -29,7 +29,6 @@
    <script type="text/javascript" src="distrib/os/userCommand.js"></script>
    <script type="text/javascript" src="distrib/os/kernel.js"></script>
    <script type="text/javascript" src="distrib/os/pcb.js"></script>
-   <script type="text/javascript" src="distrib/os/proccess.js"></script>
    <script type="text/javascript" src="distrib/os/MemoryManager.js"></script>
 
    <!-- Other Routines -->
@@ -53,6 +52,11 @@
    
 
 </head>
+<style>
+    body{
+        background-color: rgb(193, 192, 192);
+    }
+</style>
 <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
     <a class="navbar-brand" href="#">DOS</a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarColor01" aria-controls="navbarColor01" aria-expanded="false" aria-label="Toggle navigation">
@@ -124,7 +128,20 @@
                         Memory
                     </div>
                     <div class="card-body text-center"style="height:577px ">
-                        <table class="table table-sm table-striped">    
+                        <table class="table table-sm table-striped">
+                            <tbody>
+                                <tr class="table-active">
+                                    <td id="mem-">0x00</td>
+                                    <td id="mem-">00</td>
+                                    <td id="mem-IR">00</td>
+                                    <td id="mem-Acc">00</td>
+                                    <td id="mem-X">00</td>
+                                    <td id="mem-Y">00</td>
+                                    <td id="mem-Z">00</td>
+                                    <td id="mem-Z">00</td>
+                                    <td id="mem-Z">00</td>
+                                </tr>
+                            </tbody>
                         </table>
                     </div>
                 </div>

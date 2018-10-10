@@ -83,8 +83,6 @@ var DOS;
             _Kernel.krnBootstrap(); // _GLaDOS.afterStartup() will get called in there, if configured.
             _MEM = new DOS.Memory();
             _MEM.init();
-            _PCB = new DOS.PCB();
-            _PCB.init();
         };
         Control.hostBtnHaltOS_click = function (btn) {
             Control.hostLog("Emergency halt", "host");

@@ -12,6 +12,7 @@ var DOS;
         function MemoryManager() {
         }
         MemoryManager.prototype.loadInMem = function (code) {
+            var registers = [];
             var startIndex = 0;
             var endIndex = 0;
             // Find the first open segment of memory
@@ -38,9 +39,9 @@ var DOS;
                 _MEM.memory[memIndex] = hex;
                 memIndex++;
             });
-            // Create a new proccess and add it to the PCB
-            var proccess = new DOS.Proccess(_PCB.PIDcount, startIndex, memIndex);
-            _PCB.addProccess(proccess);
+            registers[0] = startIndex;
+            registers[1] = memIndex;
+            return registers;
         };
         return MemoryManager;
     }());

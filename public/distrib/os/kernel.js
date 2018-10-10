@@ -33,8 +33,6 @@ var DOS;
             _StdOut = _Console;
             _MemoryManager = new DOS.MemoryManager();
             _MemoryAccessor = new DOS.MemoryAccessor();
-            _PCB = new DOS.PCB();
-            _PCB.init();
             // Load the Keyboard Device Driver
             this.krnTrace("Loading the keyboard device driver.");
             _krnKeyboardDriver = new DOS.DeviceDriverKeyboard(); // Construct it.
