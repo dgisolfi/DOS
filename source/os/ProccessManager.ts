@@ -69,7 +69,7 @@
 
                 // Move to the the terminated queue
                 this.terminatedQueue[pid] = this.runningProccess;
-                this.runningProccess.state = `terminated`
+                this.runningProccess.state = `terminated`;
             } 
         }
     }

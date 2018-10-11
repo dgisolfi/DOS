@@ -65,6 +65,8 @@ var _GLaDOS = null; // If the above is linked in, this is the instantiated insta
 var onDocumentLoad = function () {
     DOS.Control.hostInit();
 };
+var _SingleStep = false;
+var _Step = false;
 // TODO Maybe put this somehwere else
 var _shiftedSymbols = [
     //Shifted

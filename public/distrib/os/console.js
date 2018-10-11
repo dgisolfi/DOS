@@ -290,14 +290,27 @@ var DOS;
             }
         };
         Console.prototype.updateMemory = function () {
+            var count = 0;
             var table = "";
             var rowData = [];
             _MEM.memory.forEach(function (hex) {
+                var memSeg;
+                if (count <= 255) {
+                    memSeg = 0;
+                }
+                else if (count >= 255 || count <= 512) {
+                    memSeg = 1;
+                }
+                else if (count >= 513 || count <= 768) {
+                    memSeg = 2;
+                }
                 //Build a row
+                var addr = 0;
+                var rowLabel = memSeg + "x" + count;
                 rowData.push(hex);
                 if (rowData.length === 8) {
                     var row = "<tr class=\"table-active\">" +
-                        "<td id=\"mem-head\">0x00</td>" +
+                        ("<td id=\"mem-head\">" + rowLabel + "</td>") +
                         ("<td id=\"mem-\">" + rowData[0] + "</td>") +
                         ("<td id=\"mem-IR\">" + rowData[1] + "</td>") +
                         ("<td id=\"mem-Acc\">" + rowData[2] + "</td>") +
@@ -309,6 +322,7 @@ var DOS;
                         "</tr>";
                     table += row;
                     rowData = [];
+                    count++;
                 }
             });
             document.getElementById("mem").innerHTML = table;

@@ -78,7 +78,7 @@
                     id = "btnHaltOS"
                     name="brnHaltOS"
                     class="btn btn-success"
-                    disabled="disabled"
+                    disabled="true"
                     tabindex="1"
                     onclick="DOS.Control.hostBtnHaltOS_click(this);">Halt</button>
             </li>
@@ -87,9 +87,27 @@
                     id = "btnReset"
                     name="brnReset"
                     class="btn btn-danger"
-                    disabled="disabled"
+                    disabled="true"
                     tabindex="2"
                     onclick="DOS.Control.hostBtnReset_click(this);">Reset</button>
+            </li>
+            <li class="nav-item" style="padding-left:10px;  padding-right:10px;">
+                    <button
+                    id = "btnSingleStep"
+                    name="brnSingleStep"
+                    class="btn btn-success"
+                    disabled="true"
+                    tabindex="2"
+                    onclick="DOS.Control.hostBtnSingleStep_click(this);">Single-Step: Disabled</button>
+            </li>
+            <li class="nav-item" style="padding-left:10px;  padding-right:10px;">
+                    <button
+                    id = "btnNextCycle"
+                    name="brnNextCycle"
+                    class="btn btn-success"
+                    disabled="true"
+                    tabindex="2"
+                    onclick="DOS.Control.hostBtnNextCycle_click(this);">></button>
             </li>
         </ul>
         <ul class="nav navbar-nav navbar-right" >
@@ -106,7 +124,7 @@
 <br>
 <div class="container-fluid">
     <div class="row">
-        <div class="col-5">
+        <div class="col-lg-5">
             <div class="card mx-auto text-center" >
                 <div class="card-header bg-primary text-center" id="divConsole" style="background-color:#455A64; color:#ffffff">
                         Console
@@ -114,7 +132,7 @@
                 <div class="card-body text-center"  id="divUserProgramInput">
                     <body onload="onDocumentLoad()">
                         <div id="divConsole" >
-                            <canvas id="display" width="480px" height="523px" tabindex="3" 
+                            <canvas id="display" width="500px" height="523px" tabindex="3" 
                             style="background-color: #ffffff; border: 2px solid black; cursor: default;">
                             </canvas>
                         </div>
@@ -123,23 +141,25 @@
             </div>
         </div>
 
-        <div class="col-4">
+        <div class="col-lg-4">
                 <div class="card mx-auto" >
                     <div class="card-header bg-primary text-center" id="divMem" style="color:#ffffff;">
                         Memory
                     </div>
-                    <div class="card-body text-center"style="height:577px display: block; overflow-y: auto; -ms-overflow-style: -ms-autohiding-scrollbar; ">
-                        <table class="table table-sm table-striped">
-                            <tbody id="mem">
-                            </tbody>
-                        </table>
+                    <div class="card-body text-center" style="height:577px ">
+                        <div class="container">
+                            <table class="table table-sm ">
+                                <tbody id="mem" style="display:inline-block; height:520px; overflow-y:auto; ">
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             
             
         </div>
 
-        <div class="col-3">
+        <div class="col-lg-3">
             <div class="card mx-auto" >
                 <div class="card-header bg-primary text-center" id="divCPU" style="color:#ffffff;">
                     CPU

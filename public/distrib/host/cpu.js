@@ -56,9 +56,13 @@ var DOS;
             _PCM.runningProccess.PC = this.PC;
             _PCM.runningProccess.IR = this.IR;
             _PCM.runningProccess.Acc = this.Acc;
+            _PCM.runningProccess.XReg = this.Xreg;
+            _PCM.runningProccess.YReg = this.Yreg;
+            _PCM.runningProccess.ZFlag = this.Acc;
             // Check wether the program has finished 
             if (this.PC + sRegister >= eRegister) {
                 // reset and end the proccess
+                _SingleStep = false;
                 _PCM.runningProccess.state = "terminated";
                 _KernelInterruptQueue.enqueue(new DOS.Interrupt(PROCESS_EXIT, _PCM.runningProccess.pid));
             }
@@ -104,6 +108,38 @@ var DOS;
                     var value = _MemoryAccessor.readMemory(parseInt(hexAddress, 16));
                     //Finally, parse it from HEX to Decimal and add it to the Accumulator
                     this.Acc += parseInt(value, 16);
+                    this.passCmd(3);
+                    break;
+                case "A2": // load the x register with a given constant
+                    this.Xreg = parseInt(_MemoryAccessor.readMemory(this.PC + 1), 16);
+                    this.passCmd(2);
+                    break;
+                case "AE": // load the x register from mem
+                    // Store the values at the first and second postions
+                    var val1 = _MemoryAccessor.readMemory(this.PC + 1);
+                    var val2 = _MemoryAccessor.readMemory(this.PC + 2);
+                    // Switch the order because we must read/write in little endian
+                    var hexAddress = val2 + val1;
+                    // Read from memory with the corected endian format 
+                    var hex_endian = _MemoryAccessor.readMemory(parseInt(hexAddress, 16));
+                    //Finally, parse it from HEX to Decimal and load the Xreg
+                    this.Xreg = parseInt(hex_endian, 16);
+                    this.passCmd(3);
+                    break;
+                case "A0": // load the y register with a given constant
+                    this.Yreg = parseInt(_MemoryAccessor.readMemory(this.PC + 1), 16);
+                    this.passCmd(2);
+                    break;
+                case "AC": // load the y register from mem
+                    // Store the values at the first and second postions
+                    var val1 = _MemoryAccessor.readMemory(this.PC + 1);
+                    var val2 = _MemoryAccessor.readMemory(this.PC + 2);
+                    // Switch the order because we must read/write in little endian
+                    var hexAddress = val2 + val1;
+                    // Read from memory with the corected endian format 
+                    var hex_endian = _MemoryAccessor.readMemory(parseInt(hexAddress, 16));
+                    //Finally, parse it from HEX to Decimal and load the Xreg
+                    this.Yreg = parseInt(hex_endian, 16);
                     this.passCmd(3);
                     break;
                 case "AHHHH": // break (system call)

@@ -85,7 +85,8 @@ module DOS {
             // .. enable the Halt and Reset buttons ...
             (<HTMLButtonElement>document.getElementById(`btnHaltOS`)).disabled = false;
             (<HTMLButtonElement>document.getElementById(`btnReset`)).disabled = false;
-
+            (<HTMLButtonElement>document.getElementById(`btnSingleStep`)).disabled = false;
+           
             // .. set focus on the OS console display ...
             document.getElementById(`display`).focus();
 
@@ -122,10 +123,26 @@ module DOS {
             // page from its cache, which is not what we want.
         }
 
-        public populateMemoryTable(){
-            var colCount = 0;
-        
+        public static hostBtnSingleStep_click(btn): void {
+            // disable
+            if ((<HTMLButtonElement>document.getElementById(`btnSingleStep`)).innerHTML === `Single-Step: Enabled`) {
+                (<HTMLButtonElement>document.getElementById(`btnSingleStep`)).innerHTML = `Single-Step: Disabled`;
+                (<HTMLButtonElement>document.getElementById(`btnSingleStep`)).disabled = false;
+                (<HTMLButtonElement>document.getElementById(`btnNextCycle`)).disabled = true;
+                _SingleStep = false;
+            // enable 
+            } else if ((<HTMLButtonElement>document.getElementById(`btnSingleStep`)).innerHTML === `Single-Step: Disabled`){
+                (<HTMLButtonElement>document.getElementById(`btnSingleStep`)).innerHTML = `Single-Step: Enabled`;
+                (<HTMLButtonElement>document.getElementById(`btnNextCycle`)).disabled = false;
+                _SingleStep = true;
+
+            }
+            
         }
-                            
+
+        public static hostBtnNextCycle_click(btn): void {
+            _Step = true;
+            
+        }            
     }
 }

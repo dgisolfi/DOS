@@ -57,6 +57,7 @@ var DOS;
             // Move to the the terminated queue
             this.terminatedQueue[pid] = this.runningProccess;
             this.runningProccess.state = "terminated";
+            console.log(this.runningProccess);
         };
         return ProccessManager;
     }());

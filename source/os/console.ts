@@ -336,14 +336,14 @@ module DOS {
                     memSeg = 2;
                 }
                 //Build a row
-              
-
                 var addr = 0
+                var rowLabel = `${memSeg}x${count}`
                 rowData.push(hex);
+    
                 if (rowData.length === 8) {
                     var row =
                     `<tr class="table-active">` +
-                        `<td id="mem-head">${}</td>`+
+                        `<td id="mem-head">${rowLabel}</td>`+
                         `<td id="mem-">${rowData[0]}</td>`+
                         `<td id="mem-IR">${rowData[1]}</td>`+
                         `<td id="mem-Acc">${rowData[2]}</td>`+
@@ -359,7 +359,7 @@ module DOS {
                 }  
             });
 
-            document.getElementById(`mem`).innerHTML = table
+            document.getElementById(`mem`).innerHTML = table;
             
         }
 

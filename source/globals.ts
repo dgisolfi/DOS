@@ -94,7 +94,8 @@ var onDocumentLoad = function() {
 	DOS.Control.hostInit();
 };
 
-
+var _SingleStep: boolean = false;
+var _Step: boolean = false;
 // TODO Maybe put this somehwere else
 let _shiftedSymbols = [ 
     //Shifted
