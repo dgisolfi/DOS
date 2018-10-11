@@ -11,11 +11,14 @@
 // Global CONSTANTS (TypeScript 1.5 introduced const. Very cool.)
 //
 var APP_NAME = "DOS"; // 'cause Bob and I were at a loss for a better name.
-var APP_VERSION = "1.00"; // What did you expect?
+var APP_VERSION = "2.1"; // project 2 
 var CPU_CLOCK_INTERVAL = 100; // This is in ms (milliseconds) so 1000 = 1 second.
 var TIMER_IRQ = 0; // Pages 23 (timer), 9 (interrupts), and 561 (interrupt priority).
 // NOTE: The timer is different from hardware/host clock pulses. Don't confuse these.
 var KEYBOARD_IRQ = 1;
+// Are these values important???
+var PROCESS_EXIT = 2;
+var OP_NOT_FOUND = 3;
 //
 // Global Variables
 // TODO: Make a global object and use that instead of the "_" naming convention in the global namespace.

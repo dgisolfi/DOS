@@ -21,8 +21,23 @@ var DOS;
         }
         Memory.prototype.init = function () {
             this.memory = new Array();
-            for (var i = 0; i <= 767; i++) {
+            for (var i = 0; i <= 768; i++) {
                 this.memory.push("00");
+            }
+        };
+        Memory.prototype.wipeSeg00 = function () {
+            for (var i = 0; i <= 255; i++) {
+                this.memory.splice(i, 0, "00");
+            }
+        };
+        Memory.prototype.wipeSeg01 = function () {
+            for (var i = 256; i <= 512; i++) {
+                this.memory.splice(i, 0, "00");
+            }
+        };
+        Memory.prototype.wipeSeg02 = function () {
+            for (var i = 513; i <= 768; i++) {
+                this.memory.splice(i, 0, "00");
             }
         };
         return Memory;

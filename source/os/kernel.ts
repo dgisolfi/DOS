@@ -97,12 +97,12 @@ module DOS {
                 this.krnInterruptHandler(interrupt.irq, interrupt.params);
             } else if (_CPU.isExecuting) { // If there are no interrupts then run one CPU cycle if there is anything being processed. {
                 _CPU.cycle();
-                this.updateUI();
+                
             } else {                      // If there are no interrupts and there is nothing being executed then just be idle. {
                 this.krnTrace("Idle");
             }
-            this.updateDateTime();
-            
+
+            this.updateUI();
         }
 
 
@@ -137,6 +137,17 @@ module DOS {
                 case KEYBOARD_IRQ:
                     _krnKeyboardDriver.isr(params);   // Kernel mode device driver
                     _StdIn.handleInput();
+                    break;
+                case PROCESS_EXIT:                  // exit proccesses
+                    _PCM.terminateProcess(params)
+                    break;
+                case OP_NOT_FOUND:
+                    _StdOut.putText(`proccess ${_PCM.runningProccess.pid} terminated`);
+                    _StdOut.advanceLine();
+                    _StdOut.putText(`invaild OPCode => ${params}`);
+                    _StdOut.advanceLine();
+                    _OsShell.putPrompt();                    
+
                     break;
                 default:
                     this.krnTrapError("Invalid Interrupt Request. irq=" + irq + " params=[" + params + "]");
@@ -196,14 +207,15 @@ module DOS {
            
         }
 
-        public updateDateTime() {
+        public updateUI() {
             _date = new Date().toLocaleDateString();
             _time = new Date().toLocaleTimeString();
             _Console.updateDateTime();
-        }
-        public updateUI() {
+
             _Console.updateCPU();
             _Console.updatePCB();
+
+            _Console.updateMemory();
         }
     }
 }

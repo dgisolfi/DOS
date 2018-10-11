@@ -13,17 +13,14 @@ module DOS {
     export class MemoryAccessor {
         constructor () {}
 
-        public readMemory(pc): string {
-            var hex_location = _PCM.runningQueue[_PCM.runningPID].sRegister + pc;
+        public readMemory(address): string {
+            var hex_location = _PCM.runningProccess.sRegister + address;
             return(_MEM.memory[hex_location]);
         }
 
         public writeMemory(address, data) {
-            var hex_location = _PCM.runningQueue[_PCM.runningPID].sRegister + address;
+            var hex_location = _PCM.runningProccess.sRegister + address;
             _MEM.memory[hex_location] = data;
-
         }
-       
     }
-
 }

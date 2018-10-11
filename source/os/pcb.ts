@@ -18,8 +18,8 @@ module DOS {
         public XReg:   number;
         public YReg:   number;
         public ZFlag:  number;
-        public turnaroundTime: Number;
-        public waitTime:       Number;
+        public turnaroundTime: number;
+        public waitTime: number;
         constructor(
             public pid,
             public sRegister,
@@ -27,13 +27,15 @@ module DOS {
         }
 
         public init() {
-            this.state = "ready"
+            this.state = "new"
             this.PC    = 0;
             this.Acc   = 0;
             this.IR    = "00";
             this.XReg  = 0;
             this.YReg  = 0;
             this.ZFlag = 0;
+            this.turnaroundTime = 0;
+            this.waitTime = 0;
             
         }
 

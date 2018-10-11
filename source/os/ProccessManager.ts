@@ -11,20 +11,20 @@
      module DOS {
 
         export class ProccessManager {
-            public readyQueue: object;
-            public runningQueue: object;
-            public terminatedQueue: object;
-            public runningPID: number;
             public pidCounter: number;
+            public readyQueue: object;
+            public terminatedQueue: object;
+            public runningProccess: DOS.PCB;
 
             constructor() {}
     
             public init() {
+                this.pidCounter = 0;          
                 this.readyQueue = {};
-                this.runningQueue= {};
                 this.terminatedQueue = {};
-                this.runningPID = 0;
-                this.pidCounter = 0;                
+                // create a initial instance to avoid errors
+                this.runningProccess =  new PCB(10000,0,0);
+                this.runningProccess.init();                    
             }
 
             public createProcces(startIndex, memIndex): number {
@@ -33,32 +33,43 @@
                 proccess.init();
                 
                 this.readyQueue[this.pidCounter] = proccess;
+                this.readyQueue[this.pidCounter].state = `ready`;
+
                 this.pidCounter++;
-    
                 return proccess.pid;
             }
 
             public runProcess(pid) {
                 // for now turn it on and let it go
-                this.runningQueue[pid] = this.readyQueue[pid]
-                this.runningPID  = pid;
+                this.runningProccess = this.readyQueue[pid]
+                this.runningProccess.state = `running`
                 _CPU.isExecuting = true;
                 delete this.readyQueue[pid];
-               
             }
     
             public terminateProcess(pid) {
                 _CPU.isExecuting = false;
+                _StdOut.advanceLine();
                 _StdOut.putText(`proccess ${pid} finished`);
                 _StdOut.advanceLine();
-                _StdOut.putText(`Turnaround Time ${this.runningQueue[pid].turnaroundTime} Cycles`);
+                _StdOut.putText(`Turnaround Time ${this.runningProccess.turnaroundTime} Cycles`);
                 _StdOut.advanceLine();
-                _StdOut.putText(`Wait Time ${this.runningQueue[pid].turnaroundTime} Cycles`);
+                _StdOut.putText(`Wait Time ${this.runningProccess.waitTime} Cycles`);
                 _StdOut.advanceLine();
-                delete this.runningQueue[pid];
+                _OsShell.putPrompt();
+
+                if (this.runningProccess.sRegister === 0) {
+                    _MEM.wipeSeg00();
+                } else if (this.runningProccess.sRegister === 256) {
+                    _MEM.wipeSeg01();
+                } else if (this.runningProccess.sRegister === 513) {
+                    _MEM.wipeSeg02();
+                }
                 
-            }
-    
-            
+
+                // Move to the the terminated queue
+                this.terminatedQueue[pid] = this.runningProccess;
+                this.runningProccess.state = `terminated`
+            } 
         }
     }

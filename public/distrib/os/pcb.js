@@ -15,13 +15,15 @@ var DOS;
             this.eRegister = eRegister;
         }
         PCB.prototype.init = function () {
-            this.state = "ready";
+            this.state = "new";
             this.PC = 0;
             this.Acc = 0;
             this.IR = "00";
             this.XReg = 0;
             this.YReg = 0;
             this.ZFlag = 0;
+            this.turnaroundTime = 0;
+            this.waitTime = 0;
         };
         return PCB;
     }());

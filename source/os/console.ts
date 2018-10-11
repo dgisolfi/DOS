@@ -17,12 +17,12 @@ module DOS {
                 public currentFontSize  = _DefaultFontSize,
                 public currentXPosition = 0,
                 public currentYPosition = _DefaultFontSize,
-                public buffer           = "",
+                public buffer           = ``,
                 public cmdHist          = [],       // Keeps array of commands entered
                 public cmdIndex         = 0,        // Keeps track of index of command
                 public cmdSuggestions   = [],
                 public tempIndex        = 0,
-                public canvasData       = ""
+                public canvasData       = ``
                 ){
         }
 
@@ -59,7 +59,7 @@ module DOS {
                     }
                     
                     // ... and reset our buffer.
-                    this.buffer = "";
+                    this.buffer = ``;
                                         
                 // Check if the backpace key was pressed.
                 } else if (chr === String.fromCharCode(8)) { // Del  Key
@@ -85,10 +85,10 @@ module DOS {
                     this.cmdCompletion();
                 
                 } else if (chr === String.fromCharCode(38)) { // Up and down keys
-                    this.cmdHistory("up");
+                    this.cmdHistory(`up`);
 
                 } else if (chr === String.fromCharCode(40)) {
-                    this.cmdHistory("down");
+                    this.cmdHistory(`down`);
 
                 }else {
                     // This is a "normal" character, so ...
@@ -111,7 +111,7 @@ module DOS {
             // UPDATE: Even though we are now working in TypeScript, char and string remain undistinguished.
             //         Consider fixing that.
             
-            if (text !== "") {
+            if (text !== ``) {
                 // Move the current X position.
                 var offset = _DrawingContext.measureText(this.currentFont, this.currentFontSize, text);
                 // check if the lines exceeds the canvas
@@ -218,9 +218,9 @@ module DOS {
         private cmdHistory(direc): void {
             //clear the line and the buffer to avoid errors
             this.clearLine();
-            this.buffer = "";
+            this.buffer = ``;
             
-            if (direc === "up") {
+            if (direc === `up`) {
                 // check if index out of range then...
                 if (this.cmdIndex != -1) {
                     // move pointer 
@@ -230,7 +230,7 @@ module DOS {
                     this.putText(this.buffer);
                 }
 
-            } else if (direc === "down") {
+            } else if (direc === `down`) {
                 // check if index out of range then...
                 if (!(this.cmdIndex >= this.cmdHist.length - 1)) {
                     // move pointer 
@@ -254,7 +254,7 @@ module DOS {
             );
             
             // Whoops the prompt is gone....lets just put that back
-            this.buffer = ""; 
+            this.buffer = ``; 
             this.currentXPosition = 0;
             _OsShell.putPrompt();
         }
@@ -276,46 +276,97 @@ module DOS {
         }
 
         public updateCPU(): void {
-            var pc = "00" + _CPU.PC.toString();
+            var pc = `00` + _CPU.PC.toString();
             if (_CPU.PC > 99) {
                 pc = _CPU.PC.toString();
             }
             else if (_CPU.PC > 9 ) {
-                pc = "0" + _CPU.PC.toString();
+                pc = `0` + _CPU.PC.toString();
             }
 
-            document.getElementById("cpu-PC").innerHTML = pc;
-            document.getElementById("cpu-IR").innerHTML = _CPU.IR;
-            document.getElementById("cpu-Acc").innerHTML = _CPU.Acc.toString();
-            document.getElementById("cpu-X").innerHTML = _CPU.Xreg.toString();
-            document.getElementById("cpu-Y").innerHTML = _CPU.Yreg.toString();
-            document.getElementById("cpu-Z").innerHTML = _CPU.Zflag.toString();
+            document.getElementById(`cpu-PC`).innerHTML = pc;
+            document.getElementById(`cpu-IR`).innerHTML = _CPU.IR;
+            document.getElementById(`cpu-Acc`).innerHTML = _CPU.Acc.toString();
+            document.getElementById(`cpu-X`).innerHTML = _CPU.Xreg.toString();
+            document.getElementById(`cpu-Y`).innerHTML = _CPU.Yreg.toString();
+            document.getElementById(`cpu-Z`).innerHTML = _CPU.Zflag.toString();
 
         }
 
         public updatePCB(): void {
-            var PID = "-"
-            if (!(_PCM.runningQueue[0].pid === 1000)) {
-               PID =  _PCM.runningQueue[0].pid.toString();
-            } 
-            document.getElementById("pcb-PID").innerHTML = PID 
-            document.getElementById("pcb-State").innerHTML = _PCM.runningQueue[0].state;
-            document.getElementById("pcb-PC").innerHTML = _PCM.runningQueue[0].PC.toString();
-            document.getElementById("pcb-IR").innerHTML = _PCM.runningQueue[0].IR;
-            document.getElementById("pcb-Acc").innerHTML = _PCM.runningQueue[0].Acc.toString();
-            document.getElementById("pcb-X").innerHTML = _PCM.runningQueue[0].XReg.toString();
-            document.getElementById("pcb-Y").innerHTML = _PCM.runningQueue[0].YReg.toString();
-            document.getElementById("pcb-Z").innerHTML = _PCM.runningQueue[0].ZFlag.toString();
+
+            if (_PCM.runningProccess.state === `new` || _PCM.runningProccess.state === `terminated`) {
+                document.getElementById(`pcb-PID`).innerHTML   = `-`;
+                document.getElementById(`pcb-State`).innerHTML = `-`;
+                document.getElementById(`pcb-PC`).innerHTML    = `-`;
+                document.getElementById(`pcb-IR`).innerHTML    = `-`;
+                document.getElementById(`pcb-Acc`).innerHTML   = `-`;
+                document.getElementById(`pcb-X`).innerHTML     = `-`;
+                document.getElementById(`pcb-Y`).innerHTML     = `-`;
+                document.getElementById(`pcb-Z`).innerHTML     = `-`;
+
+            } else {
+                var PID = `-`
+                if (!(_PCM.runningProccess.pid === 1000)) {
+                    PID =  _PCM.runningProccess.pid.toString();
+                } 
+                document.getElementById(`pcb-PID`).innerHTML = PID 
+                document.getElementById(`pcb-State`).innerHTML = _PCM.runningProccess.state;
+                document.getElementById(`pcb-PC`).innerHTML = _PCM.runningProccess.PC.toString();
+                document.getElementById(`pcb-IR`).innerHTML = _PCM.runningProccess.IR;
+                document.getElementById(`pcb-Acc`).innerHTML = _PCM.runningProccess.Acc.toString();
+                document.getElementById(`pcb-X`).innerHTML = _PCM.runningProccess.XReg.toString();
+                document.getElementById(`pcb-Y`).innerHTML = _PCM.runningProccess.YReg.toString();
+                document.getElementById(`pcb-Z`).innerHTML = _PCM.runningProccess.ZFlag.toString();
+
+            }  
         }
 
         public updateMemory(): void {
-            // document.getElementById("pcb-PID").innerHTML = PID 
+            var count = 0;
+            var table = ``;
+            var rowData = []
+            _MEM.memory.forEach(hex => {
+                var memSeg: number;
+                if (count <= 255) {
+                    memSeg = 0;
+                } else if (count >= 255 || count <= 512) {
+                    memSeg = 1;
+                } else if (count >= 513 || count <= 768) {
+                    memSeg = 2;
+                }
+                //Build a row
+              
+
+                var addr = 0
+                rowData.push(hex);
+                if (rowData.length === 8) {
+                    var row =
+                    `<tr class="table-active">` +
+                        `<td id="mem-head">${}</td>`+
+                        `<td id="mem-">${rowData[0]}</td>`+
+                        `<td id="mem-IR">${rowData[1]}</td>`+
+                        `<td id="mem-Acc">${rowData[2]}</td>`+
+                        `<td id="mem-X">${rowData[3]}</td>`+
+                        `<td id="mem-Y">${rowData[4]}</td>`+
+                        `<td id="mem-Z">${rowData[5]}</td>`+
+                        `<td id="mem-Z">${rowData[6]}</td>`+
+                        `<td id="mem-Z">${rowData[7]}</td>`+
+                    `</tr>`
+                    table += row;
+                    rowData = [];
+                    count++;
+                }  
+            });
+
+            document.getElementById(`mem`).innerHTML = table
+            
         }
 
         public updateDateTime(): void {
             // update the display with cur time
-            var datetime = _date + " | " + _time;
-            document.getElementById("datetime").innerHTML = datetime;
+            var datetime = _date + ` | ` + _time;
+            document.getElementById(`datetime`).innerHTML = datetime;
         }
     }
  }

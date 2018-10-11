@@ -44,22 +44,23 @@ module DOS {
             _Kernel.krnTrace(`CPU cycle`);
             // TODO: Accumulate CPU usage and profiling statistics here.
             // Do the real work here. Be sure to set this.isExecuting appropriately.
-            var sRegister = _PCM.runningQueue[_PCM.runningPID].sRegister 
-            var eRegister = _PCM.runningQueue[_PCM.runningPID].eRegister 
+            var sRegister = _PCM.runningProccess.sRegister 
+            var eRegister = _PCM.runningProccess.eRegister 
             // Get the next OP Code
-            this.IR = _MemoryAccessor.readMemory(this.PC)
+            this.IR = _MemoryAccessor.readMemory(this.PC);
            
             this.runOpCode(this.IR);
             // Increment the program counter
             this.PC++;
-            _PCM.runningQueue[_PCM.runningPID].PC =  this.PC;
-            _PCM.runningQueue[_PCM.runningPID].IR =  this.IR;
-            _PCM.runningQueue[_PCM.runningPID].Acc = this.Acc;
+            _PCM.runningProccess.turnaroundTime++;
+            _PCM.runningProccess.PC =  this.PC;
+            _PCM.runningProccess.IR =  this.IR;
+            _PCM.runningProccess.Acc = this.Acc;
             // Check wether the program has finished 
             if (this.PC + sRegister  >= eRegister) {
                 // reset and end the proccess
-                _PCM.runningQueue[_PCM.runningPID].state = `terminated`;
-                _PCM.terminateProcess(_PCM.runningPID);
+                _PCM.runningProccess.state = `terminated`;
+                _KernelInterruptQueue.enqueue(new Interrupt(PROCESS_EXIT, _PCM.runningProccess.pid));
             }
             
         }
@@ -78,25 +79,54 @@ module DOS {
                     break;
 
                 case `AD`: // Load the accumulator from memory 
-                    // read in little endian form
+                    // Store the values at the first and second postions
                     var val1 = _MemoryAccessor.readMemory(this.PC+1);
                     var val2 = _MemoryAccessor.readMemory(this.PC+2);
-                    var hex = val2 + val1;
-                    var hex_endian = _MemoryAccessor.readMemory(parseInt(hex, 16))
+                    // Switch the order because we must read/write in little endian
+                    var hexAddress = val2 + val1;
+                    // Read from memory with the corected endian format 
+                    var hex_endian = _MemoryAccessor.readMemory(parseInt(hexAddress, 16))
+                    //Finally, parse it from HEX to Decimal and load the Accumulator
                     this.Acc = parseInt(hex_endian, 16);
                     this.passCmd(3);
                     break;
                 
-                case `8D`: // Store the accumulator in memory 
-                    
+                case `8D`: // Store the accumulator in memory
+                    // Store the values at the first and second postions
+                    var val1 = _MemoryAccessor.readMemory(this.PC+1);
+                    var val2 = _MemoryAccessor.readMemory(this.PC+2);
+                    // Switch the order because we must read/write in little endian
+                    var hexAddress = val2 + val1;
+
+                    var value = this.Acc.toString(16).toLocaleUpperCase();
+                    _MemoryAccessor.writeMemory(parseInt(hexAddress,16), value);
+                    this.passCmd(3);
                     break;
 
-                case `A9`: //Load the accumulator with a constant
-                    
+                case `6D`: //Read from memory and add to the accumulator
+                    // Store the values at the first and second postions
+                    var val1 = _MemoryAccessor.readMemory(this.PC+1);
+                    var val2 = _MemoryAccessor.readMemory(this.PC+2);
+                    // Switch the order because we must read/write in little endian
+                    var hexAddress = val2 + val1;
+                    // Read from memory with the corected endian format 
+                    var value = _MemoryAccessor.readMemory(parseInt(hexAddress, 16));
+
+                    //Finally, parse it from HEX to Decimal and add it to the Accumulator
+                    this.Acc += parseInt(value, 16);
+                    this.passCmd(3);
+                    break;
+                
+                case "AHHHH": // break (system call)
+                    // Execute system call for a process exit by generating software interrupt
+                    _KernelInterruptQueue.enqueue(new Interrupt(PROCESS_EXIT, _PCM.runningProccess.pid));
                     break;
             
                 default:
+                    // _KernelInterruptQueue.enqueue(new Interrupt(OP_NOT_FOUND, opCode));
+                    // _KernelInterruptQueue.enqueue(new Interrupt(PROCESS_EXIT, _PCM.runningProccess.pid));
                     break;
+                    
             }
 
         }

@@ -264,21 +264,54 @@ var DOS;
             document.getElementById("cpu-Z").innerHTML = _CPU.Zflag.toString();
         };
         Console.prototype.updatePCB = function () {
-            var PID = "-";
-            if (!(_PCM.runningQueue[0].pid === 1000)) {
-                PID = _PCM.runningQueue[0].pid.toString();
+            if (_PCM.runningProccess.state === "new" || _PCM.runningProccess.state === "terminated") {
+                document.getElementById("pcb-PID").innerHTML = "-";
+                document.getElementById("pcb-State").innerHTML = "-";
+                document.getElementById("pcb-PC").innerHTML = "-";
+                document.getElementById("pcb-IR").innerHTML = "-";
+                document.getElementById("pcb-Acc").innerHTML = "-";
+                document.getElementById("pcb-X").innerHTML = "-";
+                document.getElementById("pcb-Y").innerHTML = "-";
+                document.getElementById("pcb-Z").innerHTML = "-";
             }
-            document.getElementById("pcb-PID").innerHTML = PID;
-            document.getElementById("pcb-State").innerHTML = _PCM.runningQueue[0].state;
-            document.getElementById("pcb-PC").innerHTML = _PCM.runningQueue[0].PC.toString();
-            document.getElementById("pcb-IR").innerHTML = _PCM.runningQueue[0].IR;
-            document.getElementById("pcb-Acc").innerHTML = _PCM.runningQueue[0].Acc.toString();
-            document.getElementById("pcb-X").innerHTML = _PCM.runningQueue[0].XReg.toString();
-            document.getElementById("pcb-Y").innerHTML = _PCM.runningQueue[0].YReg.toString();
-            document.getElementById("pcb-Z").innerHTML = _PCM.runningQueue[0].ZFlag.toString();
+            else {
+                var PID = "-";
+                if (!(_PCM.runningProccess.pid === 1000)) {
+                    PID = _PCM.runningProccess.pid.toString();
+                }
+                document.getElementById("pcb-PID").innerHTML = PID;
+                document.getElementById("pcb-State").innerHTML = _PCM.runningProccess.state;
+                document.getElementById("pcb-PC").innerHTML = _PCM.runningProccess.PC.toString();
+                document.getElementById("pcb-IR").innerHTML = _PCM.runningProccess.IR;
+                document.getElementById("pcb-Acc").innerHTML = _PCM.runningProccess.Acc.toString();
+                document.getElementById("pcb-X").innerHTML = _PCM.runningProccess.XReg.toString();
+                document.getElementById("pcb-Y").innerHTML = _PCM.runningProccess.YReg.toString();
+                document.getElementById("pcb-Z").innerHTML = _PCM.runningProccess.ZFlag.toString();
+            }
         };
         Console.prototype.updateMemory = function () {
-            // document.getElementById("pcb-PID").innerHTML = PID 
+            var table = "";
+            var rowData = [];
+            _MEM.memory.forEach(function (hex) {
+                //Build a row
+                rowData.push(hex);
+                if (rowData.length === 8) {
+                    var row = "<tr class=\"table-active\">" +
+                        "<td id=\"mem-head\">0x00</td>" +
+                        ("<td id=\"mem-\">" + rowData[0] + "</td>") +
+                        ("<td id=\"mem-IR\">" + rowData[1] + "</td>") +
+                        ("<td id=\"mem-Acc\">" + rowData[2] + "</td>") +
+                        ("<td id=\"mem-X\">" + rowData[3] + "</td>") +
+                        ("<td id=\"mem-Y\">" + rowData[4] + "</td>") +
+                        ("<td id=\"mem-Z\">" + rowData[5] + "</td>") +
+                        ("<td id=\"mem-Z\">" + rowData[6] + "</td>") +
+                        ("<td id=\"mem-Z\">" + rowData[7] + "</td>") +
+                        "</tr>";
+                    table += row;
+                    rowData = [];
+                }
+            });
+            document.getElementById("mem").innerHTML = table;
         };
         Console.prototype.updateDateTime = function () {
             // update the display with cur time
