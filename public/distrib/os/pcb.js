@@ -22,7 +22,6 @@ var DOS;
             this.XReg = 0;
             this.YReg = 0;
             this.ZFlag = 0;
-            // this.PIDcount++;
         };
         return PCB;
     }());

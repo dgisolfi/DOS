@@ -265,17 +265,17 @@ var DOS;
         };
         Console.prototype.updatePCB = function () {
             var PID = "-";
-            if (!(_CPU.runningQueue[0].pid === 1000)) {
-                PID = _CPU.runningQueue[0].pid.toString();
+            if (!(_PCM.runningQueue[0].pid === 1000)) {
+                PID = _PCM.runningQueue[0].pid.toString();
             }
             document.getElementById("pcb-PID").innerHTML = PID;
-            document.getElementById("pcb-State").innerHTML = _CPU.runningQueue[0].state;
-            document.getElementById("pcb-PC").innerHTML = _CPU.runningQueue[0].PC.toString();
-            document.getElementById("pcb-IR").innerHTML = _CPU.runningQueue[0].IR;
-            document.getElementById("pcb-Acc").innerHTML = _CPU.runningQueue[0].Acc.toString();
-            document.getElementById("pcb-X").innerHTML = _CPU.runningQueue[0].XReg.toString();
-            document.getElementById("pcb-Y").innerHTML = _CPU.runningQueue[0].YReg.toString();
-            document.getElementById("pcb-Z").innerHTML = _CPU.runningQueue[0].ZFlag.toString();
+            document.getElementById("pcb-State").innerHTML = _PCM.runningQueue[0].state;
+            document.getElementById("pcb-PC").innerHTML = _PCM.runningQueue[0].PC.toString();
+            document.getElementById("pcb-IR").innerHTML = _PCM.runningQueue[0].IR;
+            document.getElementById("pcb-Acc").innerHTML = _PCM.runningQueue[0].Acc.toString();
+            document.getElementById("pcb-X").innerHTML = _PCM.runningQueue[0].XReg.toString();
+            document.getElementById("pcb-Y").innerHTML = _PCM.runningQueue[0].YReg.toString();
+            document.getElementById("pcb-Z").innerHTML = _PCM.runningQueue[0].ZFlag.toString();
         };
         Console.prototype.updateMemory = function () {
             // document.getElementById("pcb-PID").innerHTML = PID 

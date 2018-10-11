@@ -480,7 +480,7 @@ var DOS;
                 // If the check passes load the program to memory
                 var registers = _MemoryManager.loadInMem(userCodeArr);
                 //Create a new PCB
-                var pid = _CPU.createProcces(registers[0], registers[1]);
+                var pid = _PCM.createProcces(registers[0], registers[1]);
                 _StdOut.putText("Program load successful; <pid> " + pid + " created");
             }
             catch (e) {
@@ -496,8 +496,9 @@ var DOS;
             else if (args.length < 1) {
                 _StdOut.putText("Please specify the PID to execute.");
             }
-            _CPU.schedule(args[0]);
+            _PCM.runProcess(args[0]);
             _StdOut.putText("Running program with <pid> " + args[0]);
+            _StdOut.advanceLine();
         };
         return Shell;
     }());

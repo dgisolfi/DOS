@@ -37,6 +37,7 @@ var _MemoryManager: DOS.MemoryManager;
 
 //Proccess control blocks
 var _PCB: DOS.PCB;
+var _PCM: DOS.ProccessManager
 
 var _OSclock: number = 0;  // Page 23.
 

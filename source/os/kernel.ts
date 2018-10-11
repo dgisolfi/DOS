@@ -38,6 +38,9 @@ module DOS {
             _MemoryManager = new MemoryManager();
             _MemoryAccessor = new MemoryAccessor();
 
+            _PCM = new ProccessManager();
+            _PCM.init();
+
             // Load the Keyboard Device Driver
             this.krnTrace("Loading the keyboard device driver.");
             _krnKeyboardDriver = new DeviceDriverKeyboard();     // Construct it.
@@ -94,10 +97,12 @@ module DOS {
                 this.krnInterruptHandler(interrupt.irq, interrupt.params);
             } else if (_CPU.isExecuting) { // If there are no interrupts then run one CPU cycle if there is anything being processed. {
                 _CPU.cycle();
+                this.updateUI();
             } else {                      // If there are no interrupts and there is nothing being executed then just be idle. {
                 this.krnTrace("Idle");
             }
-            this.updateUI();
+            this.updateDateTime();
+            
         }
 
 
@@ -191,10 +196,12 @@ module DOS {
            
         }
 
-        public updateUI() {
+        public updateDateTime() {
             _date = new Date().toLocaleDateString();
             _time = new Date().toLocaleTimeString();
             _Console.updateDateTime();
+        }
+        public updateUI() {
             _Console.updateCPU();
             _Console.updatePCB();
         }

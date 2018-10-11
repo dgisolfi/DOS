@@ -14,12 +14,12 @@ module DOS {
         constructor () {}
 
         public readMemory(pc): string {
-            var hex_location = _CPU.runningQueue[_CPU.runningPID].sRegister + pc;
+            var hex_location = _PCM.runningQueue[_PCM.runningPID].sRegister + pc;
             return(_MEM.memory[hex_location]);
         }
 
         public writeMemory(address, data) {
-            var hex_location = _CPU.runningQueue[_CPU.runningPID].sRegister + address;
+            var hex_location = _PCM.runningQueue[_PCM.runningPID].sRegister + address;
             _MEM.memory[hex_location] = data;
 
         }

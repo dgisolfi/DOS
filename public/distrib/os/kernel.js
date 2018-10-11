@@ -33,6 +33,8 @@ var DOS;
             _StdOut = _Console;
             _MemoryManager = new DOS.MemoryManager();
             _MemoryAccessor = new DOS.MemoryAccessor();
+            _PCM = new DOS.ProccessManager();
+            _PCM.init();
             // Load the Keyboard Device Driver
             this.krnTrace("Loading the keyboard device driver.");
             _krnKeyboardDriver = new DOS.DeviceDriverKeyboard(); // Construct it.
@@ -81,11 +83,12 @@ var DOS;
             }
             else if (_CPU.isExecuting) { // If there are no interrupts then run one CPU cycle if there is anything being processed. {
                 _CPU.cycle();
+                this.updateUI();
             }
             else { // If there are no interrupts and there is nothing being executed then just be idle. {
                 this.krnTrace("Idle");
             }
-            this.updateUI();
+            this.updateDateTime();
         };
         //
         // Interrupt Handling
@@ -168,10 +171,12 @@ var DOS;
             _Console.advanceLine();
             _Console.putText("To resolve this issue stop using a OS within a webbrowser and get a real OS...like MacOS");
         };
-        Kernel.prototype.updateUI = function () {
+        Kernel.prototype.updateDateTime = function () {
             _date = new Date().toLocaleDateString();
             _time = new Date().toLocaleTimeString();
             _Console.updateDateTime();
+        };
+        Kernel.prototype.updateUI = function () {
             _Console.updateCPU();
             _Console.updatePCB();
         };
