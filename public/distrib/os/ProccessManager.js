@@ -46,18 +46,17 @@ var DOS;
             _StdOut.advanceLine();
             _OsShell.putPrompt();
             if (this.runningProccess.sRegister === 0) {
-                _MEM.wipeSeg00();
+                _MemoryManager.wipeSeg00();
             }
             else if (this.runningProccess.sRegister === 256) {
-                _MEM.wipeSeg01();
+                _MemoryManager.wipeSeg01();
             }
             else if (this.runningProccess.sRegister === 513) {
-                _MEM.wipeSeg02();
+                _MemoryManager.wipeSeg02();
             }
             // Move to the the terminated queue
             this.terminatedQueue[pid] = this.runningProccess;
             this.runningProccess.state = "terminated";
-            console.log(this.runningProccess);
         };
         return ProccessManager;
     }());

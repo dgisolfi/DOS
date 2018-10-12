@@ -63,8 +63,8 @@ var DOS;
             this.commandList[this.commandList.length] = sc;
             //get client IP
             // sc = new ShellCommand(this.shellGetIP,
-            //                       "myip",
-            //                       "d");
+            //                       `myip`,
+            //                       `d`);
             // this.commandList[this.commandList.length] = sc;
             sc = new DOS.ShellCommand(this.shellStatus, "status", " <string> - Updates the status.");
             this.commandList[this.commandList.length] = sc;
@@ -116,7 +116,7 @@ var DOS;
             }
             else {
                 // It's not found, so check for curses and apologies before declaring the command invalid.
-                if (this.curses.indexOf("[" + DOS.Utils.rot13(cmd) + "]") >= 0) { // Check for curses.
+                if (this.curses.indexOf("[ " + DOS.Utils.rot13(cmd) + "]") >= 0) { // Check for curses.
                     this.execute(this.shellCurse);
                 }
                 else if (this.apologies.indexOf("[" + cmd + "]") >= 0) { // Check for apologies.
@@ -262,8 +262,8 @@ var DOS;
                             _StdOut.putText("Allows the user to enable or disable sarcasm mode.");
                         }
                         break;
-                    // case "myip":
-                    //     _StdOut.putText("Returns the Client IP address.");
+                    // case `myip`:
+                    //     _StdOut.putText(`Returns the Client IP address.`);
                     //     break;
                     case "status":
                         _StdOut.putText("Given a <string> the status will be assigned.");

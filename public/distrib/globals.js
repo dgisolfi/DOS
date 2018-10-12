@@ -18,7 +18,8 @@ var TIMER_IRQ = 0; // Pages 23 (timer), 9 (interrupts), and 561 (interrupt prior
 var KEYBOARD_IRQ = 1;
 // Are these values important???
 var PROCESS_EXIT = 2;
-var OP_NOT_FOUND = 3;
+var PRINT_IR = 3;
+// const OP_NOT_FOUND: number = 3
 //
 // Global Variables
 // TODO: Make a global object and use that instead of the "_" naming convention in the global namespace.

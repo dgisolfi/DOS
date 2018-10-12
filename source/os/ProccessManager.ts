@@ -59,11 +59,11 @@
                 _OsShell.putPrompt();
 
                 if (this.runningProccess.sRegister === 0) {
-                    _MEM.wipeSeg00();
+                    _MemoryManager.wipeSeg00();
                 } else if (this.runningProccess.sRegister === 256) {
-                    _MEM.wipeSeg01();
+                    _MemoryManager.wipeSeg01();
                 } else if (this.runningProccess.sRegister === 513) {
-                    _MEM.wipeSeg02();
+                    _MemoryManager.wipeSeg02();
                 }
                 
 

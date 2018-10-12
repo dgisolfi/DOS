@@ -24,7 +24,9 @@ const KEYBOARD_IRQ: number = 1;
 // Are these values important???
 const PROCESS_EXIT: number = 2
 
-const OP_NOT_FOUND: number = 3
+const PRINT_IR: number = 3
+
+// const OP_NOT_FOUND: number = 3
 
 
 //

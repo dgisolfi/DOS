@@ -48,5 +48,26 @@
                 return registers;
                 
             }
+
+            public wipeSeg00() {
+                for (let i = 0; i <= 255; i++) {
+                    _MEM.memory.splice(i, 0, `00`);
+                    _MEM.isSeg00Full = false;
+                }
+            }
+    
+            public wipeSeg01() {
+                for (let i = 256; i <= 512; i++) {
+                    _MEM.memory.splice(i, 0, `00`);
+                    _MEM.isSeg01Full = false;
+                }
+            }
+    
+            public wipeSeg02() {
+                for (let i = 513; i <= 768; i++) {
+                    _MEM.memory.splice(i, 0, `00`);
+                    _MEM.isSeg02Full = false;
+                }
+            }
         }
     }

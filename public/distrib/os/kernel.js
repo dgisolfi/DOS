@@ -81,12 +81,12 @@ var DOS;
                 var interrupt = _KernelInterruptQueue.dequeue();
                 this.krnInterruptHandler(interrupt.irq, interrupt.params);
             }
-            else if (_SingleStep) {
-                if (!(_PCM.runningProccess.pid === 10000)) {
-                    _CPU.cycle();
-                    _Step = false;
-                }
-            }
+            // else if (_SingleStep) {
+            //     if (!(_PCM.runningProccess.pid === 10000)){
+            //         _CPU.cycle();
+            //     _Step = false;
+            //     }
+            // } 
             else if (_CPU.isExecuting) { // If there are no interrupts then run one CPU cycle if there is anything being processed. {
                 _CPU.cycle();
             }
@@ -127,13 +127,15 @@ var DOS;
                 case PROCESS_EXIT: // exit proccesses
                     _PCM.terminateProcess(params);
                     break;
-                case OP_NOT_FOUND:
-                    _StdOut.putText("proccess " + _PCM.runningProccess.pid + " terminated");
-                    _StdOut.advanceLine();
-                    _StdOut.putText("invaild OPCode => " + params);
-                    _StdOut.advanceLine();
-                    _OsShell.putPrompt();
-                    break;
+                case PRINT_IR:
+                    _StdOut.putText(params);
+                // case OP_NOT_FOUND:
+                //     _StdOut.putText(`proccess ${_PCM.runningProccess.pid} terminated`);
+                //     _StdOut.advanceLine();
+                //     _StdOut.putText(`invaild OPCode => ${params}`);
+                //     _StdOut.advanceLine();
+                //     _OsShell.putPrompt();                    
+                //     break;
                 default:
                     this.krnTrapError("Invalid Interrupt Request. irq=" + irq + " params=[" + params + "]");
             }
