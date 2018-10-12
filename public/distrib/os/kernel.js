@@ -129,6 +129,7 @@ var DOS;
                     break;
                 case PRINT_IR:
                     _StdOut.putText(params);
+                    break;
                 // case OP_NOT_FOUND:
                 //     _StdOut.putText(`proccess ${_PCM.runningProccess.pid} terminated`);
                 //     _StdOut.advanceLine();
