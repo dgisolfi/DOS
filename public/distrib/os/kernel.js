@@ -81,14 +81,20 @@ var DOS;
                 var interrupt = _KernelInterruptQueue.dequeue();
                 this.krnInterruptHandler(interrupt.irq, interrupt.params);
             }
-            // else if (_SingleStep) {
-            //     if (!(_PCM.runningProccess.pid === 10000)){
-            //         _CPU.cycle();
-            //     _Step = false;
-            //     }
-            // } 
             else if (_CPU.isExecuting) { // If there are no interrupts then run one CPU cycle if there is anything being processed. {
-                _CPU.cycle();
+                if (_SingleStep) {
+                    if (_Step === true) {
+                        _CPU.cycle();
+                        _Step = false;
+                    }
+                    else {
+                        this.krnTrace("Idle");
+                    }
+                }
+                else {
+                    _CPU.cycle();
+                    console.log("cycle");
+                }
             }
             else { // If there are no interrupts and there is nothing being executed then just be idle. {
                 this.krnTrace("Idle");

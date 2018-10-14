@@ -115,6 +115,7 @@ var DOS;
                 document.getElementById("btnNextCycle").disabled = false;
                 _SingleStep = true;
             }
+            console.log(_SingleStep);
         };
         Control.hostBtnNextCycle_click = function (btn) {
             _Step = true;

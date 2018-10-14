@@ -137,6 +137,8 @@ module DOS {
                 _SingleStep = true;
 
             }
+
+            console.log(_SingleStep);
             
         }
 
