@@ -49,7 +49,7 @@ module DOS {
             // Get the next OP Code
             this.IR = _MemoryAccessor.readMemory(this.PC);
             
-            console.log(`PC: ${this.PC}`, `IR: ${this.IR}`);
+            // console.log(`PC: ${this.PC}`, `IR: ${this.IR}`);
            
             this.runOpCode(this.IR);
             // Increment the program counter
@@ -60,7 +60,7 @@ module DOS {
             _PCM.runningProccess.Acc = this.Acc;
             _PCM.runningProccess.XReg = this.Xreg;
             _PCM.runningProccess.YReg = this.Yreg;
-            _PCM.runningProccess.ZFlag = this.Acc;
+            _PCM.runningProccess.ZFlag = this.Zflag;
 
             // Check wether the program has finished 
             if (this.PC + sRegister  >= eRegister) {
@@ -144,7 +144,6 @@ module DOS {
                 
                 case `A0`: // load the y register with a given constant
                     this.Yreg = parseInt(_MemoryAccessor.readMemory(this.PC+1), 16);
-                    console.log(this.Yreg);
                     this.passCmd(2);
                     break;
 
@@ -158,7 +157,6 @@ module DOS {
                     var hex_endian = _MemoryAccessor.readMemory(parseInt(hexAddress, 16))
                     //Finally, parse it from HEX to Decimal and load the Xreg
                     this.Yreg = parseInt(hex_endian, 16);
-                    console.log(this.Yreg);
                     this.passCmd(3);
                     break;
 
@@ -183,7 +181,7 @@ module DOS {
                     } else {
                         this.Zflag = 0;
                     }
-                    
+
                     this.passCmd(3);
                     break;
                 
@@ -193,7 +191,7 @@ module DOS {
                         // get the branch value from memory
                         var branch = _MemoryAccessor.readMemory(this.PC+1);
                         var branchAddress = parseInt(branch, 16) + this.PC;
-                        console.log(`PC > ${this.PC}`, ` Branch > ${branchAddress}`);
+                        // console.log(`PC > ${this.PC}`, ` Branch > ${branchAddress}`);
 
                         // if the branch will exceed the memory, go back to 0
                         if (branchAddress > _PCM.runningProccess.eRegister ) {
@@ -226,14 +224,12 @@ module DOS {
                     
                     var out = ``;
                     if (this.Xreg === 1) { // #$01 in X reg = print the integer stored
-                        console.log(this.Yreg.toString());
                         out = this.Yreg.toString();
                         this.passCmd(1);
                     } else if (this.Xreg === 2) { // #$02 in X reg = print the 00-terminated string stored at the address in the Y register.
                         // find the address in memory and dont print them unless there acutal letters....aka not
                         var byteAddr = parseInt(this.Yreg.toString(16), 16);
                         var byte = _MemoryAccessor.readMemory(byteAddr);
-                        console.log(byte);
                         var char = String.fromCharCode(parseInt(byte, 16));
                         // keep going till we hit empty or blank memory...build the string as we do
                         while( byte != `00`) {

@@ -29,20 +29,22 @@
 
             public createProcces(startIndex, memIndex): number {
                 // Create a new proccess and add it to the PCB
-                var proccess = new PCB(this.pidCounter, startIndex, memIndex);
+                let proccess = new PCB(this.pidCounter, startIndex, memIndex);
                 proccess.init();
                 
                 this.readyQueue[this.pidCounter] = proccess;
                 this.readyQueue[this.pidCounter].state = `ready`;
-
+                console.log(this.runningProccess)
                 this.pidCounter++;
                 return proccess.pid;
             }
 
             public runProcess(pid) {
+                _CPU.init();
                 // for now turn it on and let it go
                 this.runningProccess = this.readyQueue[pid]
                 this.runningProccess.state = `running`
+                console.log(this.runningProccess)
                 _CPU.isExecuting = true;
                 delete this.readyQueue[pid];
             }

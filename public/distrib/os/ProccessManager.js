@@ -25,13 +25,16 @@ var DOS;
             proccess.init();
             this.readyQueue[this.pidCounter] = proccess;
             this.readyQueue[this.pidCounter].state = "ready";
+            console.log(this.runningProccess);
             this.pidCounter++;
             return proccess.pid;
         };
         ProccessManager.prototype.runProcess = function (pid) {
+            _CPU.init();
             // for now turn it on and let it go
             this.runningProccess = this.readyQueue[pid];
             this.runningProccess.state = "running";
+            console.log(this.runningProccess);
             _CPU.isExecuting = true;
             delete this.readyQueue[pid];
         };
