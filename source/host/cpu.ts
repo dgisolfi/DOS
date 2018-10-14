@@ -213,7 +213,7 @@ module DOS {
                     var val2 = _MemoryAccessor.readMemory(this.PC+2);
                     // Switch the order because we must read/write in little endian
                     var hexAddress = val2 + val1;
-                    var hex_endian = _MemoryAccessor.readMemory(parseInt(hexAddress + 1, 16))
+                    var hex_endian = _MemoryAccessor.readMemory(parseInt(hexAddress, 16))
                     
                     //translate to decimal....then add 1
                     var hex_val = parseInt(hex_endian, 16);
