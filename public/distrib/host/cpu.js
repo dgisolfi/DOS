@@ -203,7 +203,6 @@ var DOS;
                     var out = "";
                     if (this.Xreg === 1) { // #$01 in X reg = print the integer stored
                         out = this.Yreg.toString();
-                        this.passCmd(1);
                     }
                     else if (this.Xreg === 2) { // #$02 in X reg = print the 00-terminated string stored at the address in the Y register.
                         // find the address in memory and dont print them unless there acutal letters....aka not
@@ -218,11 +217,10 @@ var DOS;
                             var byte = _MemoryAccessor.readMemory(byteAddr);
                             var char = String.fromCharCode(parseInt(byte, 16));
                         }
-                        this.passCmd(2);
                     }
                     // print the result
                     _KernelInterruptQueue.enqueue(new DOS.Interrupt(PRINT_IR, out));
-                    // this.passCmd(1);
+                    this.passCmd(1);
                     break;
                 default:
                     // _KernelInterruptQueue.enqueue(new Interrupt(OP_NOT_FOUND, opCode));
