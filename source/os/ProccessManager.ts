@@ -34,7 +34,6 @@
                 
                 this.readyQueue[this.pidCounter] = proccess;
                 this.readyQueue[this.pidCounter].state = `ready`;
-                console.log(this.runningProccess)
                 this.pidCounter++;
                 return proccess.pid;
             }
@@ -44,7 +43,6 @@
                 // for now turn it on and let it go
                 this.runningProccess = this.readyQueue[pid]
                 this.runningProccess.state = `running`
-                console.log(this.runningProccess)
                 _CPU.isExecuting = true;
                 delete this.readyQueue[pid];
             }

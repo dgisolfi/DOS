@@ -27,19 +27,22 @@ module DOS {
             _KernelBuffers = new Array();         // Buffers... for the kernel.
             _KernelInputQueue = new Queue();      // Where device input lands before being processed out somewhere.
 
-            // Initialize the console.
-            _Console = new Console();          // The command line interface / console I/O device.
-            _Console.init();
-
-            // Initialize standard input and output to the _Console.
-            _StdIn  = _Console;
-            _StdOut = _Console;
-
             _MemoryManager = new MemoryManager();
             _MemoryAccessor = new MemoryAccessor();
 
+            _MEM = new Memory();
+            _MEM.init();
+
             _PCM = new ProccessManager();
             _PCM.init();
+
+             // Initialize the console.
+             _Console = new Console();          // The command line interface / console I/O device.
+             _Console.init();
+ 
+             // Initialize standard input and output to the _Console.
+             _StdIn  = _Console;
+             _StdOut = _Console;
 
             // Load the Keyboard Device Driver
             this.krnTrace("Loading the keyboard device driver.");

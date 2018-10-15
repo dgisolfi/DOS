@@ -82,8 +82,6 @@ var DOS;
             // .. and call the OS Kernel Bootstrap routine.
             _Kernel = new DOS.Kernel();
             _Kernel.krnBootstrap(); // _GLaDOS.afterStartup() will get called in there, if configured.
-            _MEM = new DOS.Memory();
-            _MEM.init();
         };
         Control.hostBtnHaltOS_click = function (btn) {
             Control.hostLog("Emergency halt", "host");

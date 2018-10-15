@@ -25,16 +25,18 @@ var DOS;
             _KernelInterruptQueue = new DOS.Queue(); // A (currently) non-priority queue for interrupt requests (IRQs).
             _KernelBuffers = new Array(); // Buffers... for the kernel.
             _KernelInputQueue = new DOS.Queue(); // Where device input lands before being processed out somewhere.
+            _MemoryManager = new DOS.MemoryManager();
+            _MemoryAccessor = new DOS.MemoryAccessor();
+            _MEM = new DOS.Memory();
+            _MEM.init();
+            _PCM = new DOS.ProccessManager();
+            _PCM.init();
             // Initialize the console.
             _Console = new DOS.Console(); // The command line interface / console I/O device.
             _Console.init();
             // Initialize standard input and output to the _Console.
             _StdIn = _Console;
             _StdOut = _Console;
-            _MemoryManager = new DOS.MemoryManager();
-            _MemoryAccessor = new DOS.MemoryAccessor();
-            _PCM = new DOS.ProccessManager();
-            _PCM.init();
             // Load the Keyboard Device Driver
             this.krnTrace("Loading the keyboard device driver.");
             _krnKeyboardDriver = new DOS.DeviceDriverKeyboard(); // Construct it.
