@@ -130,8 +130,13 @@ module DOS {
                                   `<int> - executes a loaded program given a PID.`);
             this.commandList[this.commandList.length] = sc;
 
+            sc = new ShellCommand(this.verboseMode,
+                `verbose`,
+                `<on | off> - enables or disables verbose mode for running proccessses.`);
+            this.commandList[this.commandList.length] = sc;
 
 
+            
 
             // ps  - list the running processes and their IDs
             // kill <id> - kills the specified process id.
@@ -363,6 +368,11 @@ module DOS {
                     case `run`:
                         _StdOut.putText(`executes the proccess specified with <int> PID.`);
                         break;
+
+                    case `verbose`:
+                        _StdOut.putText(`Enables verbose mode for running programs, will alert you in the Browser Console with each step.`);
+                        break;
+                        
                         
                     default:
                         _StdOut.putText(`No manual entry for ` + args[0] + `.`);
@@ -599,6 +609,28 @@ module DOS {
             _StdOut.putText(`Running program with <pid> ${args[0]}`);
             _StdOut.advanceLine();
  
+        }
+
+        public verboseMode(args) {
+            if (args.length > 0) {
+                var setting = args[0];
+                switch (setting) {
+                    case `on`:  
+                        _Verbose = true;
+                        _StdOut.putText(`Verbose mode enabled.`);
+                        (<HTMLButtonElement>document.getElementById(`btnSingleStep`)).setAttribute(`style`, ``);
+
+                        break;
+                    case `off`:
+                        _Verbose = false;
+                        _StdOut.putText(`Verbose mode disabled.`);
+                        break;
+                    default:
+                        _StdOut.putText(`Invalid arguement.  Usage: verbose <on | off>.`);
+                }
+            } else {
+                _StdOut.putText(`Usage: verbose <on | off>`);
+            }
         }
     }
 }

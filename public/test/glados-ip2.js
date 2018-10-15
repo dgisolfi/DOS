@@ -68,22 +68,22 @@ function Glados() {
       // Load a valid user program code and run it.
       var code = "A9 00 8D 00 00 A9 00 8D 4B 00 A9 00 8D 4B 00 A2 03 EC 4B 00 D0 07 A2 01 EC 00 00 D0 05 A2 00 EC 00 00 D0 26 A0 4C A2 02 FF AC 4B 00 A2 01 FF A9 01 6D 4B 00 8D 4B 00 A2 02 EC 4B 00 D0 05 A0 55 A2 02 FF A2 01 EC 00 00 D0 C5 00 00 63 6F 75 6E 74 69 6E 67 00 68 65 6C 6C 6F 20 77 6F 72 6C 64 00";
       document.getElementById("taProgramInput").value = code;
-      _KernelInputQueue.enqueue('l');
-      _KernelInputQueue.enqueue('o');
-      _KernelInputQueue.enqueue('a');
-      _KernelInputQueue.enqueue('d');
-      DOS.Kernel.prototype.krnInterruptHandler(KEYBOARD_IRQ, [13, false]);
+      // _KernelInputQueue.enqueue('l');
+      // _KernelInputQueue.enqueue('o');
+      // _KernelInputQueue.enqueue('a');
+      // _KernelInputQueue.enqueue('d');
+      // DOS.Kernel.prototype.krnInterruptHandler(KEYBOARD_IRQ, [13, false]);
 
-      _KernelInputQueue.enqueue('r');
-      _KernelInputQueue.enqueue('u');
-      _KernelInputQueue.enqueue('n');
-      _KernelInputQueue.enqueue(' ');
-      _KernelInputQueue.enqueue('0');      
-      DOS.Kernel.prototype.krnInterruptHandler(KEYBOARD_IRQ, [13, false]);      
+      // _KernelInputQueue.enqueue('r');
+      // _KernelInputQueue.enqueue('u');
+      // _KernelInputQueue.enqueue('n');
+      // _KernelInputQueue.enqueue(' ');
+      // _KernelInputQueue.enqueue('0');      
+      // DOS.Kernel.prototype.krnInterruptHandler(KEYBOARD_IRQ, [13, false]);      
 
 
       // Load another valid user program.
-      var code = "A9 03 8D 41 00 A9 01 8D 40 00 AC 40 00 A2 01 FF EE 40 00 AE 40 00 EC 41 00 D0 EF A9 44 8D 42 00 A9 4F 8D 43 00 A9 4E 8D 44 00 A9 45 8D 45 00 A9 00 8D 46 00 A2 02 A0 42 FF 00";
-      document.getElementById("taProgramInput").value = code; 
+      // var code = "A9 03 8D 41 00 A9 01 8D 40 00 AC 40 00 A2 01 FF EE 40 00 AE 40 00 EC 41 00 D0 EF A9 44 8D 42 00 A9 4F 8D 43 00 A9 4E 8D 44 00 A9 45 8D 45 00 A9 00 8D 46 00 A2 02 A0 42 FF 00";
+      // document.getElementById("taProgramInput").value = code; 
    };
 }

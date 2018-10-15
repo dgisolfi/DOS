@@ -26,8 +26,6 @@ const PROCESS_EXIT: number = 2
 
 const PRINT_IR: number = 3
 
-// const OP_NOT_FOUND: number = 3
-
 
 //
 // Global Variables
@@ -96,8 +94,12 @@ var onDocumentLoad = function() {
 	DOS.Control.hostInit();
 };
 
+// keep track of single stepping
 var _SingleStep: boolean = false;
 var _Step: boolean = false;
+
+// Run in verbose... yes or no?
+var _Verbose: boolean = false;
 // TODO Maybe put this somehwere else
 let _shiftedSymbols = [ 
     //Shifted

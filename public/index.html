@@ -36,7 +36,7 @@
    <!-- Other Routines -->
    <script type="text/javascript" src="distrib/utils.js"></script>
    <!-- Uncomment the line below to enable GLaDOS testing. -->
-   <script type="text/javascript" src="test/glados-ip2.js"></script>
+   <!-- <script type="text/javascript" src="test/glados-ip2.js"></script> -->
 
    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
    <script src="vendors/jquery.min.js"></script>
@@ -120,8 +120,14 @@
         </ul>
      </div>
 </nav>
-
+<div class="alert alert-info" role="alert" style="display:none;">
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+    </button>
+    <strong>Verbose Mode Enabled</strong> - Open your Broswer Console; When running a proccess all actions will be logged.
+</div>
 <br>
+
 <div class="container-fluid">
     <div class="row">
         <div class="col-lg-5">
@@ -193,7 +199,7 @@
             
 
            
-            <div class="card mx-auto" style="margin-top:19px" >
+            <div class="card mx-auto" style="margin-top:18px" >
                     <div class="card-header bg-primary text-center" id="divPCB" style="color:#ffffff;">
                         PCB
                     </div>
@@ -227,12 +233,12 @@
                     </div>
                 </div>
 
-        <div class="card mx-auto" style="margin-top:19px" >
+        <div class="card mx-auto" style="margin-top:18px" >
                 <div class="card-header bg-primary text-center" id="divUserProgramInput" style="color:#ffffff;">
                     User Program Input
                 </div>
                 <div class="card-body text-center"  id="divUserProgramInput">
-                    <textarea name="taProgramInput" id="taProgramInput" rows= "3" cols="29" style="resize:none"></textarea>
+                    <textarea name="taProgramInput" id="taProgramInput" rows= "4" cols="29" style="resize:none"></textarea>
                 </div>
             </div>
         </div>

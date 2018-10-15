@@ -75,6 +75,9 @@ var DOS;
                 case "A9": // Load the accumulator with a constant
                     this.Acc = parseInt(_MemoryAccessor.readMemory(this.PC + 1), 16);
                     // console.log(`Before: ${this.PC}`)
+                    if (_Verbose) {
+                        console.log("Setting the Accumulator to the constant: " + (this.PC + 1));
+                    }
                     this.passCmd(2);
                     // console.log(`After: ${this.PC}`)
                     break;
@@ -88,6 +91,9 @@ var DOS;
                     var hex_endian = _MemoryAccessor.readMemory(parseInt(hexAddress, 16));
                     //Finally, parse it from HEX to Decimal and load the Accumulator
                     this.Acc = parseInt(hex_endian, 16);
+                    if (_Verbose) {
+                        console.log("Loading the Accumulator from memory to: " + hex_endian);
+                    }
                     this.passCmd(3);
                     break;
                 case "8D": // Store the accumulator in memory
@@ -98,6 +104,9 @@ var DOS;
                     var hexAddress = val2 + val1;
                     var value = this.Acc.toString(16).toLocaleUpperCase();
                     _MemoryAccessor.writeMemory(parseInt(hexAddress, 16), value);
+                    if (_Verbose) {
+                        console.log("Storing the Accumulator: " + value + " into memory address: " + hexAddress);
+                    }
                     this.passCmd(3);
                     break;
                 case "6D": //Read from memory and add to the accumulator
@@ -110,10 +119,16 @@ var DOS;
                     var value = _MemoryAccessor.readMemory(parseInt(hexAddress, 16));
                     //Finally, parse it from HEX to Decimal and add it to the Accumulator
                     this.Acc += parseInt(value, 16);
+                    if (_Verbose) {
+                        console.log("Reading from memory location " + hexAddress + ", adding " + value + " to the Accumulator");
+                    }
                     this.passCmd(3);
                     break;
                 case "A2": // load the x register with a given constant
                     this.Xreg = parseInt(_MemoryAccessor.readMemory(this.PC + 1), 16);
+                    if (_Verbose) {
+                        console.log("Loading the X register with the constant: " + this.Xreg);
+                    }
                     this.passCmd(2);
                     break;
                 case "AE": // load the x register from mem
@@ -126,10 +141,16 @@ var DOS;
                     var hex_endian = _MemoryAccessor.readMemory(parseInt(hexAddress, 16));
                     //Finally, parse it from HEX to Decimal and load the Xreg
                     this.Xreg = parseInt(hex_endian, 16);
+                    if (_Verbose) {
+                        console.log("Loading the X register from Memory at address: " + hexAddress + " with value: " + this.Xreg);
+                    }
                     this.passCmd(3);
                     break;
                 case "A0": // load the y register with a given constant
                     this.Yreg = parseInt(_MemoryAccessor.readMemory(this.PC + 1), 16);
+                    if (_Verbose) {
+                        console.log("Loading the Y register with the constant: " + this.Yreg);
+                    }
                     this.passCmd(2);
                     break;
                 case "AC": // load the y register from mem
@@ -142,12 +163,21 @@ var DOS;
                     var hex_endian = _MemoryAccessor.readMemory(parseInt(hexAddress, 16));
                     //Finally, parse it from HEX to Decimal and load the Xreg
                     this.Yreg = parseInt(hex_endian, 16);
+                    if (_Verbose) {
+                        console.log("Loading the Y register from Memory at address: " + hexAddress + " with value: " + this.Yreg);
+                    }
                     this.passCmd(3);
                     break;
                 case "EA": // no op .... just skip it
+                    if (_Verbose) {
+                        console.log("No OP, Skipping");
+                    }
                     this.passCmd(2);
                     break;
                 case "00": // break
+                    if (_Verbose) {
+                        console.log("Breaking out of Proccess");
+                    }
                     // Execute system call for a process exit by generating software interrupt
                     _KernelInterruptQueue.enqueue(new DOS.Interrupt(PROCESS_EXIT, _PCM.runningProccess.pid));
                     break;
@@ -166,6 +196,9 @@ var DOS;
                     else {
                         this.Zflag = 0;
                     }
+                    if (_Verbose) {
+                        console.log("Reading from memory " + hex_endian + ", comparing read value: " + parseInt(hex_endian, 16) + " to X Register: " + this.Xreg + "; Z Flag is " + this.Zflag);
+                    }
                     this.passCmd(3);
                     break;
                 case "D0": // if flag is 0, branch x number of bytes
@@ -181,6 +214,9 @@ var DOS;
                         }
                         // Add 2 to account for the branch op and the location
                         this.PC = branchAddress + 2;
+                        if (_Verbose) {
+                            console.log("Z FLag is 0, Branching to " + branchAddress + ". New PC is " + this.PC);
+                        }
                     }
                     else {
                         this.passCmd(2);
@@ -197,12 +233,18 @@ var DOS;
                     var hex_val = parseInt(hex_endian, 16);
                     hex_val++;
                     _MemoryAccessor.writeMemory(parseInt(hexAddress, 16), hex_val.toString(16));
+                    if (_Verbose) {
+                        console.log("Byte " + hex_val + " was incremented to " + (hex_val + 1));
+                    }
                     this.passCmd(3);
                     break;
                 case "FF": // System Call...print
                     var out = "";
                     if (this.Xreg === 1) { // #$01 in X reg = print the integer stored
                         out = this.Yreg.toString();
+                        if (_Verbose) {
+                            console.log("X Register is 1, Printing the Y Register " + this.Yreg);
+                        }
                     }
                     else if (this.Xreg === 2) { // #$02 in X reg = print the 00-terminated string stored at the address in the Y register.
                         // find the address in memory and dont print them unless there acutal letters....aka not
@@ -217,14 +259,19 @@ var DOS;
                             var byte = _MemoryAccessor.readMemory(byteAddr);
                             var char = String.fromCharCode(parseInt(byte, 16));
                         }
+                        if (_Verbose) {
+                            console.log("X Register is 2, Printing the ascii of the Y Register: " + out);
+                        }
                     }
                     // print the result
                     _KernelInterruptQueue.enqueue(new DOS.Interrupt(PRINT_IR, out));
                     this.passCmd(1);
                     break;
                 default:
-                    // _KernelInterruptQueue.enqueue(new Interrupt(OP_NOT_FOUND, opCode));
-                    // _KernelInterruptQueue.enqueue(new Interrupt(PROCESS_EXIT, _PCM.runningProccess.pid));
+                    if (_Verbose) {
+                        console.log("Unrecognized OPCode; Ending Program. Check your syntax an run again.");
+                    }
+                    _KernelInterruptQueue.enqueue(new DOS.Interrupt(PROCESS_EXIT, _PCM.runningProccess.pid));
                     break;
             }
         };

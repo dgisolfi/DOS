@@ -136,13 +136,6 @@ var DOS;
                 case PRINT_IR:
                     _StdOut.putText(params);
                     break;
-                // case OP_NOT_FOUND:
-                //     _StdOut.putText(`proccess ${_PCM.runningProccess.pid} terminated`);
-                //     _StdOut.advanceLine();
-                //     _StdOut.putText(`invaild OPCode => ${params}`);
-                //     _StdOut.advanceLine();
-                //     _OsShell.putPrompt();                    
-                //     break;
                 default:
                     this.krnTrapError("Invalid Interrupt Request. irq=" + irq + " params=[" + params + "]");
             }
