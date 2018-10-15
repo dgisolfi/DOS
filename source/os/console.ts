@@ -342,7 +342,7 @@ module DOS {
     
                 if (rowData.length === 8) {
                     var row =
-                    `<tr class="table-active">` +
+                    `<tr class="table">` +
                         `<td id="mem-head">${rowLabel}</td>`+
                         `<td id="mem-">${rowData[0]}</td>`+
                         `<td id="mem-IR">${rowData[1]}</td>`+

@@ -136,10 +136,7 @@ module DOS {
                 (<HTMLButtonElement>document.getElementById(`btnNextCycle`)).disabled = false;
                 _SingleStep = true;
 
-            }
-
-            console.log(_SingleStep);
-            
+            }    
         }
 
         public static hostBtnNextCycle_click(btn): void {

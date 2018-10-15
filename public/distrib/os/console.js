@@ -309,7 +309,7 @@ var DOS;
                 var rowLabel = memSeg + "x" + count;
                 rowData.push(hex);
                 if (rowData.length === 8) {
-                    var row = "<tr class=\"table-active\">" +
+                    var row = "<tr class=\"table\">" +
                         ("<td id=\"mem-head\">" + rowLabel + "</td>") +
                         ("<td id=\"mem-\">" + rowData[0] + "</td>") +
                         ("<td id=\"mem-IR\">" + rowData[1] + "</td>") +
