@@ -74,6 +74,13 @@ module DOS {
 
                 // TODO: Check for caps-lock and handle as shifted if so.
                 _KernelInputQueue.enqueue(chr);
+            
+            } else if (keyCode === 38) {
+                _KernelInputQueue.enqueue(`KeyUp`);
+
+
+            } else if (keyCode === 40) {
+                _KernelInputQueue.enqueue(`KeyDown`);
 
 
             } else if (((keyCode >= 48) && (keyCode <= 57) && isShifted)   ||   // digit symbols

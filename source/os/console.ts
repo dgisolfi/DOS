@@ -84,11 +84,10 @@ module DOS {
                 } else if (chr === String.fromCharCode(9)) {
                     this.cmdCompletion();
                 
-                } else if (chr === String.fromCharCode(38)) { // Up and down keys
-                    console.log(String.fromCharCode(38))
+                } else if (chr === `KeyUp`) { // Up and down keys
                     this.cmdHistory(`up`);
 
-                } else if (chr === String.fromCharCode(40)) {
+                } else if (chr === `KeyDown`) {
                     this.cmdHistory(`down`);
 
                 }else {
