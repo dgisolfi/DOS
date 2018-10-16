@@ -27,7 +27,7 @@ module DOS {
         }
 
         public init() {
-            this.state = "new"
+            this.state = "resident"
             this.PC    = 0;
             this.Acc   = 0;
             this.IR    = "00";

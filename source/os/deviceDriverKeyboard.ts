@@ -35,16 +35,17 @@ module DOS {
         public krnKbdGetSymbol(keyCode, isShifted) {
             var requested_symbol = "";
             if (isShifted){
+                console.log(keyCode)
                 _shiftedSymbols.forEach(key => {
                     if (keyCode === key.KeyCode){
-                        requested_symbol = key.Symbol
+                        requested_symbol = key.Symbol;
                     }
                 });
 
             } else if (!isShifted) {
                 _nonShiftedSymbols.forEach(key => {
                     if (keyCode === key.KeyCode){
-                        requested_symbol = key.Symbol
+                        requested_symbol = key.Symbol;
                     }
                 });
             }

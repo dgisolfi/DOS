@@ -25,12 +25,12 @@
 
                 } else if (!_MEM.isSeg01Full) {
                     startIndex = 256;
-                    endIndex = 512;
+                    endIndex = 511;
                     _MEM.isSeg01Full = true;
 
                 } else if (!_MEM.isSeg02Full) {
-                    startIndex = 513;
-                    endIndex = 768;
+                    startIndex = 512;
+                    endIndex = 767;
                     _MEM.isSeg02Full = true;
 
                 } else {

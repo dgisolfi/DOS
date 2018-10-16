@@ -12,6 +12,7 @@
 
         export class ProccessManager {
             public pidCounter: number;
+            public residentQueue: object;
             public readyQueue: object;
             public terminatedQueue: object;
             public runningProccess: DOS.PCB;
@@ -19,11 +20,13 @@
             constructor() {}
     
             public init() {
-                this.pidCounter = 0;          
+                this.pidCounter = 0; 
+                this.residentQueue = {};         
                 this.readyQueue = {};
                 this.terminatedQueue = {};
+               
                 // create a initial instance to avoid errors
-                this.runningProccess =  new PCB(10000,0,0);
+                this.runningProccess =  new PCB(-1,0,0);
                 this.runningProccess.init();                    
             }
 
@@ -32,19 +35,25 @@
                 let proccess = new PCB(this.pidCounter, startIndex, memIndex);
                 proccess.init();
                 
-                this.readyQueue[this.pidCounter] = proccess;
-                this.readyQueue[this.pidCounter].state = `ready`;
+                this.residentQueue[this.pidCounter] = proccess;
+                this.residentQueue[this.pidCounter].state = `resident`;
                 this.pidCounter++;
                 return proccess.pid;
+                
             }
 
             public runProcess(pid) {
                 _CPU.init();
                 // for now turn it on and let it go
+                // put the resident proccess on the running queue
+                this.readyQueue[pid] = this.residentQueue[pid]
+                delete this.residentQueue[pid]
+                this.readyQueue[pid].state = `ready`
                 this.runningProccess = this.readyQueue[pid]
-                this.runningProccess.state = `running`
-                _CPU.isExecuting = true;
                 delete this.readyQueue[pid];
+                this.runningProccess.state = `running`                
+                // start executing
+                _CPU.isExecuting = true;
             }
     
             public terminateProcess(pid) {
@@ -69,7 +78,10 @@
 
                 // Move to the the terminated queue
                 this.terminatedQueue[pid] = this.runningProccess;
-                this.runningProccess.state = `terminated`;
+                this.terminatedQueue[pid].state = `terminated`;
+
+                
+
             } 
         }
     }

@@ -13,30 +13,34 @@ var DOS;
         }
         ProccessManager.prototype.init = function () {
             this.pidCounter = 0;
+            this.residentQueue = {};
             this.readyQueue = {};
             this.terminatedQueue = {};
             // create a initial instance to avoid errors
-            this.runningProccess = new DOS.PCB(10000, 0, 0);
+            this.runningProccess = new DOS.PCB(-1, 0, 0);
             this.runningProccess.init();
         };
         ProccessManager.prototype.createProcces = function (startIndex, memIndex) {
             // Create a new proccess and add it to the PCB
             var proccess = new DOS.PCB(this.pidCounter, startIndex, memIndex);
             proccess.init();
-            this.readyQueue[this.pidCounter] = proccess;
-            this.readyQueue[this.pidCounter].state = "ready";
-            console.log(this.runningProccess);
+            this.residentQueue[this.pidCounter] = proccess;
+            this.residentQueue[this.pidCounter].state = "resident";
             this.pidCounter++;
             return proccess.pid;
         };
         ProccessManager.prototype.runProcess = function (pid) {
             _CPU.init();
             // for now turn it on and let it go
+            // put the resident proccess on the running queue
+            this.readyQueue[pid] = this.residentQueue[pid];
+            delete this.residentQueue[pid];
+            this.readyQueue[pid].state = "ready";
             this.runningProccess = this.readyQueue[pid];
-            this.runningProccess.state = "running";
-            console.log(this.runningProccess);
-            _CPU.isExecuting = true;
             delete this.readyQueue[pid];
+            this.runningProccess.state = "running";
+            // start executing
+            _CPU.isExecuting = true;
         };
         ProccessManager.prototype.terminateProcess = function (pid) {
             _CPU.isExecuting = false;
@@ -59,7 +63,7 @@ var DOS;
             }
             // Move to the the terminated queue
             this.terminatedQueue[pid] = this.runningProccess;
-            this.runningProccess.state = "terminated";
+            this.terminatedQueue[pid].state = "terminated";
         };
         return ProccessManager;
     }());

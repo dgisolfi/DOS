@@ -87,6 +87,7 @@ var DOS;
                     this.cmdCompletion();
                 }
                 else if (chr === String.fromCharCode(38)) { // Up and down keys
+                    console.log(String.fromCharCode(38));
                     this.cmdHistory("up");
                 }
                 else if (chr === String.fromCharCode(40)) {
@@ -264,7 +265,7 @@ var DOS;
             document.getElementById("cpu-Z").innerHTML = _CPU.Zflag.toString();
         };
         Console.prototype.updatePCB = function () {
-            if (_PCM.runningProccess.state === "new" || _PCM.runningProccess.state === "terminated") {
+            if (_PCM.runningProccess.pid == -1) {
                 document.getElementById("pcb-PID").innerHTML = "-";
                 document.getElementById("pcb-State").innerHTML = "-";
                 document.getElementById("pcb-PC").innerHTML = "-";
@@ -275,11 +276,7 @@ var DOS;
                 document.getElementById("pcb-Z").innerHTML = "-";
             }
             else {
-                var PID = "-";
-                if (!(_PCM.runningProccess.pid === 1000)) {
-                    PID = _PCM.runningProccess.pid.toString();
-                }
-                document.getElementById("pcb-PID").innerHTML = PID;
+                document.getElementById("pcb-PID").innerHTML = _PCM.runningProccess.pid.toString();
                 document.getElementById("pcb-State").innerHTML = _PCM.runningProccess.state;
                 document.getElementById("pcb-PC").innerHTML = _PCM.runningProccess.PC.toString();
                 document.getElementById("pcb-IR").innerHTML = _PCM.runningProccess.IR;
@@ -290,27 +287,15 @@ var DOS;
             }
         };
         Console.prototype.updateMemory = function () {
-            var count = 0;
+            var rowCount = 0;
             var table = "";
             var rowData = [];
             _MEM.memory.forEach(function (hex) {
-                var memSeg;
-                if (count <= 255) {
-                    memSeg = 0;
-                }
-                else if (count >= 255 || count <= 512) {
-                    memSeg = 1;
-                }
-                else if (count >= 513 || count <= 768) {
-                    memSeg = 2;
-                }
                 //Build a row
-                var addr = 0;
-                var rowLabel = memSeg + "x" + count;
                 rowData.push(hex);
                 if (rowData.length === 8) {
                     var row = "<tr class=\"table\">" +
-                        ("<td id=\"mem-head\">" + rowLabel + "</td>") +
+                        ("<td id=\"mem-head\">" + ("0x" + rowCount.toString(16).toUpperCase()) + "</td>") +
                         ("<td id=\"mem-\">" + rowData[0] + "</td>") +
                         ("<td id=\"mem-IR\">" + rowData[1] + "</td>") +
                         ("<td id=\"mem-Acc\">" + rowData[2] + "</td>") +
@@ -322,7 +307,7 @@ var DOS;
                         "</tr>";
                     table += row;
                     rowData = [];
-                    count++;
+                    rowCount += 8;
                 }
             });
             document.getElementById("mem").innerHTML = table;

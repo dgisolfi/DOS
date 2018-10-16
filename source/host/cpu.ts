@@ -53,7 +53,6 @@ module DOS {
            
             this.runOpCode(this.IR);
             // Increment the program counter
-            
             _PCM.runningProccess.turnaroundTime++;
             _PCM.runningProccess.PC =  this.PC;
             _PCM.runningProccess.IR =  this.IR;
@@ -61,7 +60,8 @@ module DOS {
             _PCM.runningProccess.XReg = this.Xreg;
             _PCM.runningProccess.YReg = this.Yreg;
             _PCM.runningProccess.ZFlag = this.Zflag;
-
+            
+            
             // Check wether the program has finished 
             if (this.PC + sRegister  >= eRegister) {
                 // reset and end the proccess
@@ -310,8 +310,6 @@ module DOS {
                     _KernelInterruptQueue.enqueue(new Interrupt(PRINT_IR, out));
                     this.passCmd(1);
                     break;
-
-
             
                 default:
                     if (_Verbose) {
@@ -320,9 +318,7 @@ module DOS {
                    
                     _KernelInterruptQueue.enqueue(new Interrupt(PROCESS_EXIT, _PCM.runningProccess.pid));
                     break;
-                
             }
-
         }
     }
 }

@@ -22,7 +22,7 @@ module DOS {
         
         public init(): void {
             this.memory = new Array<string>();
-            for (let i = 0; i <= 768; i++) {
+            for (let i = 0; i <= 767; i++) {
                 this.memory.push(`00`);
             }
         }

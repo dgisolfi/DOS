@@ -23,5 +23,5 @@ build_os: intro c
 
 #Push Docker image to Docker Hub
 publish_os: build_os
-	@docker tag dos dgisolfi/dos:latest
+	@docker tag dos dgisolfi/dos:2.0
 	@docker push dgisolfi/dos
