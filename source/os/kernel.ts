@@ -27,13 +27,22 @@ module DOS {
             _KernelBuffers = new Array();         // Buffers... for the kernel.
             _KernelInputQueue = new Queue();      // Where device input lands before being processed out somewhere.
 
-            // Initialize the console.
-            _Console = new Console();          // The command line interface / console I/O device.
-            _Console.init();
+            _MemoryManager = new MemoryManager();
+            _MemoryAccessor = new MemoryAccessor();
 
-            // Initialize standard input and output to the _Console.
-            _StdIn  = _Console;
-            _StdOut = _Console;
+            _MEM = new Memory();
+            _MEM.init();
+
+            _PCM = new ProccessManager();
+            _PCM.init();
+
+             // Initialize the console.
+             _Console = new Console();          // The command line interface / console I/O device.
+             _Console.init();
+ 
+             // Initialize standard input and output to the _Console.
+             _StdIn  = _Console;
+             _StdOut = _Console;
 
             // Load the Keyboard Device Driver
             this.krnTrace("Loading the keyboard device driver.");
@@ -82,14 +91,7 @@ module DOS {
                This is NOT the same as a TIMER, which causes an interrupt and is handled like other interrupts.
                This, on the other hand, is the clock pulse from the hardware / VM / host that tells the kernel
                that it has to look for interrupts and process them if it finds any.                           */
-            
-            // Update the host time variable. TODO find a better place for this
-            _date = new Date().toLocaleDateString();
-            _time = new Date().toLocaleTimeString();
-            _Console.updateDateTime();
-            // console.log(_Console.cmdHist);
-            // console.log(_Console.cmdIndex);
-           
+
             // Check for an interrupt, are any. Page 560
             if (_KernelInterruptQueue.getSize() > 0) {
                 // Process the first interrupt on the interrupt queue.
@@ -97,10 +99,22 @@ module DOS {
                 var interrupt = _KernelInterruptQueue.dequeue();
                 this.krnInterruptHandler(interrupt.irq, interrupt.params);
             } else if (_CPU.isExecuting) { // If there are no interrupts then run one CPU cycle if there is anything being processed. {
-                _CPU.cycle();
+                if (_SingleStep) {
+                    if (_Step === true){
+                        _CPU.cycle();
+                        _Step = false;
+                    } else {
+                        this.krnTrace("Idle");
+                    }
+                } else {
+                    _CPU.cycle();
+                    // console.log(`cycle`)
+                }                
             } else {                      // If there are no interrupts and there is nothing being executed then just be idle. {
                 this.krnTrace("Idle");
             }
+
+            this.updateUI();
         }
 
 
@@ -136,6 +150,13 @@ module DOS {
                     _krnKeyboardDriver.isr(params);   // Kernel mode device driver
                     _StdIn.handleInput();
                     break;
+                case PROCESS_EXIT:                  // exit proccesses
+                    _PCM.terminateProcess(params)
+                    break;
+                case PRINT_IR:
+                    _StdOut.putText(params);
+                    break;
+
                 default:
                     this.krnTrapError("Invalid Interrupt Request. irq=" + irq + " params=[" + params + "]");
             }
@@ -192,6 +213,17 @@ module DOS {
             _Console.advanceLine();
             _Console.putText("To resolve this issue stop using a OS within a webbrowser and get a real OS...like MacOS");
            
+        }
+
+        public updateUI() {
+            _date = new Date().toLocaleDateString();
+            _time = new Date().toLocaleTimeString();
+            _Console.updateDateTime();
+
+            _Console.updateCPU();
+            _Console.updatePCB();
+
+            _Console.updateMemory();
         }
     }
 }

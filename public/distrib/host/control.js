@@ -56,7 +56,7 @@ var DOS;
             // Note the REAL clock in milliseconds since January 1, 1970.
             var now = new Date().getTime();
             // Build the log string.
-            var str = "({ clock:" + clock + ", source:" + source + ", msg:" + msg + ", now:" + now + " })" + "\n";
+            var str = "({ clock: " + clock + " source: " + source + " msg: " + msg + " now: " + now + "})" + "\n";
             // Update the log console.
             var taLog = document.getElementById("taHostLog");
             taLog.value = str + taLog.value;
@@ -71,6 +71,7 @@ var DOS;
             // .. enable the Halt and Reset buttons ...
             document.getElementById("btnHaltOS").disabled = false;
             document.getElementById("btnReset").disabled = false;
+            document.getElementById("btnSingleStep").disabled = false;
             // .. set focus on the OS console display ...
             document.getElementById("display").focus();
             // ... Create and initialize the CPU (because it's part of the hardware)  ...
@@ -97,6 +98,24 @@ var DOS;
             // That boolean parameter is the 'forceget' flag. When it is true it causes the page to always
             // be reloaded from the server. If it is false or not specified the browser may reload the
             // page from its cache, which is not what we want.
+        };
+        Control.hostBtnSingleStep_click = function (btn) {
+            // disable
+            if (document.getElementById("btnSingleStep").innerHTML === "Single-Step: Enabled") {
+                document.getElementById("btnSingleStep").innerHTML = "Single-Step: Disabled";
+                document.getElementById("btnSingleStep").disabled = false;
+                document.getElementById("btnNextCycle").disabled = true;
+                _SingleStep = false;
+                // enable 
+            }
+            else if (document.getElementById("btnSingleStep").innerHTML === "Single-Step: Disabled") {
+                document.getElementById("btnSingleStep").innerHTML = "Single-Step: Enabled";
+                document.getElementById("btnNextCycle").disabled = false;
+                _SingleStep = true;
+            }
+        };
+        Control.hostBtnNextCycle_click = function (btn) {
+            _Step = true;
         };
         return Control;
     }());

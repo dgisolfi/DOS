@@ -13,7 +13,7 @@
 // Global CONSTANTS (TypeScript 1.5 introduced const. Very cool.)
 //
 const APP_NAME: string    = "DOS";   // 'cause Bob and I were at a loss for a better name.
-const APP_VERSION: string = "1.00";   // What did you expect?
+const APP_VERSION: string = "2.1";   // project 2 
 
 const CPU_CLOCK_INTERVAL: number = 100;   // This is in ms (milliseconds) so 1000 = 1 second.
 
@@ -21,12 +21,28 @@ const TIMER_IRQ: number = 0;  // Pages 23 (timer), 9 (interrupts), and 561 (inte
                               // NOTE: The timer is different from hardware/host clock pulses. Don't confuse these.
 const KEYBOARD_IRQ: number = 1;
 
+// Are these values important???
+const PROCESS_EXIT: number = 2
+
+const PRINT_IR: number = 3
+
 
 //
 // Global Variables
 // TODO: Make a global object and use that instead of the "_" naming convention in the global namespace.
 //
+
 var _CPU: DOS.Cpu;  // Utilize TypeScript's type annotation system to ensure that _CPU is an instance of the Cpu class.
+
+// Memory Class
+var _MEM: DOS.Memory;
+
+var _MemoryAccessor: DOS.MemoryAccessor;
+var _MemoryManager: DOS.MemoryManager;
+
+//Proccess control blocks
+var _PCB: DOS.PCB;
+var _PCM: DOS.ProccessManager
 
 var _OSclock: number = 0;  // Page 23.
 
@@ -78,7 +94,12 @@ var onDocumentLoad = function() {
 	DOS.Control.hostInit();
 };
 
+// keep track of single stepping
+var _SingleStep: boolean = false;
+var _Step: boolean = false;
 
+// Run in verbose... yes or no?
+var _Verbose: boolean = false;
 // TODO Maybe put this somehwere else
 let _shiftedSymbols = [ 
     //Shifted

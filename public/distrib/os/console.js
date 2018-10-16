@@ -86,10 +86,10 @@ var DOS;
                 else if (chr === String.fromCharCode(9)) {
                     this.cmdCompletion();
                 }
-                else if (chr === String.fromCharCode(38)) { // Up and down keys
+                else if (chr === "KeyUp") { // Up and down keys
                     this.cmdHistory("up");
                 }
-                else if (chr === String.fromCharCode(40)) {
+                else if (chr === "KeyDown") {
                     this.cmdHistory("down");
                 }
                 else {
@@ -155,11 +155,6 @@ var DOS;
             if (this.currentYPosition >= _Canvas.height) {
                 this.scroll(oldYPosition);
             }
-        };
-        Console.prototype.updateDateTime = function () {
-            // update the display with cur time
-            var datetime = _date + " | " + _time;
-            document.getElementById("datetime").innerHTML = datetime;
         };
         // delete given character in canvas
         Console.prototype.delChar = function (offset) {
@@ -244,7 +239,6 @@ var DOS;
             var height = _DefaultFontSize +
                 _DrawingContext.fontDescent(this.currentFont, this.currentFontSize) +
                 _FontHeightMargin;
-            console.log(height);
             // take a snapshot of the canvas use this -> https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/getImageData
             this.canvasData = _DrawingContext.getImageData(0, height, _Canvas.width, this.currentYPosition);
             //clear the canvas
@@ -253,6 +247,74 @@ var DOS;
             _DrawingContext.putImageData(this.canvasData, 0, 0);
             // Move the cursur loc...otherwise youll bad things happen
             this.currentYPosition = oldYPosition;
+        };
+        Console.prototype.updateCPU = function () {
+            var pc = "00" + _CPU.PC.toString();
+            if (_CPU.PC > 99) {
+                pc = _CPU.PC.toString();
+            }
+            else if (_CPU.PC > 9) {
+                pc = "0" + _CPU.PC.toString();
+            }
+            document.getElementById("cpu-PC").innerHTML = pc;
+            document.getElementById("cpu-IR").innerHTML = _CPU.IR;
+            document.getElementById("cpu-Acc").innerHTML = _CPU.Acc.toString();
+            document.getElementById("cpu-X").innerHTML = _CPU.Xreg.toString();
+            document.getElementById("cpu-Y").innerHTML = _CPU.Yreg.toString();
+            document.getElementById("cpu-Z").innerHTML = _CPU.Zflag.toString();
+        };
+        Console.prototype.updatePCB = function () {
+            if (_PCM.runningProccess.pid == -1) {
+                document.getElementById("pcb-PID").innerHTML = "-";
+                document.getElementById("pcb-State").innerHTML = "-";
+                document.getElementById("pcb-PC").innerHTML = "-";
+                document.getElementById("pcb-IR").innerHTML = "-";
+                document.getElementById("pcb-Acc").innerHTML = "-";
+                document.getElementById("pcb-X").innerHTML = "-";
+                document.getElementById("pcb-Y").innerHTML = "-";
+                document.getElementById("pcb-Z").innerHTML = "-";
+            }
+            else {
+                document.getElementById("pcb-PID").innerHTML = _PCM.runningProccess.pid.toString();
+                document.getElementById("pcb-State").innerHTML = _PCM.runningProccess.state;
+                document.getElementById("pcb-PC").innerHTML = _PCM.runningProccess.PC.toString();
+                document.getElementById("pcb-IR").innerHTML = _PCM.runningProccess.IR;
+                document.getElementById("pcb-Acc").innerHTML = _PCM.runningProccess.Acc.toString();
+                document.getElementById("pcb-X").innerHTML = _PCM.runningProccess.XReg.toString();
+                document.getElementById("pcb-Y").innerHTML = _PCM.runningProccess.YReg.toString();
+                document.getElementById("pcb-Z").innerHTML = _PCM.runningProccess.ZFlag.toString();
+            }
+        };
+        Console.prototype.updateMemory = function () {
+            var rowCount = 0;
+            var table = "";
+            var rowData = [];
+            _MEM.memory.forEach(function (hex) {
+                //Build a row
+                rowData.push(hex);
+                if (rowData.length === 8) {
+                    var row = "<tr class=\"table\">" +
+                        ("<td id=\"mem-head\">" + ("0x" + rowCount.toString(16).toUpperCase()) + "</td>") +
+                        ("<td id=\"mem-\">" + rowData[0] + "</td>") +
+                        ("<td id=\"mem-IR\">" + rowData[1] + "</td>") +
+                        ("<td id=\"mem-Acc\">" + rowData[2] + "</td>") +
+                        ("<td id=\"mem-X\">" + rowData[3] + "</td>") +
+                        ("<td id=\"mem-Y\">" + rowData[4] + "</td>") +
+                        ("<td id=\"mem-Z\">" + rowData[5] + "</td>") +
+                        ("<td id=\"mem-Z\">" + rowData[6] + "</td>") +
+                        ("<td id=\"mem-Z\">" + rowData[7] + "</td>") +
+                        "</tr>";
+                    table += row;
+                    rowData = [];
+                    rowCount += 8;
+                }
+            });
+            document.getElementById("mem").innerHTML = table;
+        };
+        Console.prototype.updateDateTime = function () {
+            // update the display with cur time
+            var datetime = _date + " | " + _time;
+            document.getElementById("datetime").innerHTML = datetime;
         };
         return Console;
     }());

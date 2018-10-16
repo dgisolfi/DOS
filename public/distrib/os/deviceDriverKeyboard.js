@@ -44,6 +44,7 @@ var DOS;
         DeviceDriverKeyboard.prototype.krnKbdGetSymbol = function (keyCode, isShifted) {
             var requested_symbol = "";
             if (isShifted) {
+                console.log(keyCode);
                 _shiftedSymbols.forEach(function (key) {
                     if (keyCode === key.KeyCode) {
                         requested_symbol = key.Symbol;
@@ -78,6 +79,12 @@ var DOS;
                 }
                 // TODO: Check for caps-lock and handle as shifted if so.
                 _KernelInputQueue.enqueue(chr);
+            }
+            else if (keyCode === 38) {
+                _KernelInputQueue.enqueue("KeyUp");
+            }
+            else if (keyCode === 40) {
+                _KernelInputQueue.enqueue("KeyDown");
             }
             else if (((keyCode >= 48) && (keyCode <= 57) && isShifted) || // digit symbols
                 ((keyCode >= 186) && (keyCode <= 192)) || // punctuation

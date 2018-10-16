@@ -3,6 +3,7 @@
 ///<reference path="shellCommand.ts" />
 ///<reference path="userCommand.ts" />
 ///<reference path="apiRequests.ts" />
+///<reference path="MemoryManager.ts" />
 /* ------------
    Shell.ts
 
@@ -15,14 +16,13 @@
 var DOS;
 (function (DOS) {
     var Shell = /** @class */ (function () {
-        function Shell(status) {
-            if (status === void 0) { status = ""; }
-            this.status = status;
+        function Shell() {
             // Properties
             this.promptStr = "=>";
             this.commandList = [];
             this.curses = "[fuvg],[cvff],[shpx],[phag],[pbpxfhpxre],[zbgureshpxre],[gvgf]";
             this.apologies = "[sorry]";
+            this.status = "";
         }
         Shell.prototype.init = function () {
             var sc;
@@ -63,8 +63,8 @@ var DOS;
             this.commandList[this.commandList.length] = sc;
             //get client IP
             // sc = new ShellCommand(this.shellGetIP,
-            //                       "myip",
-            //                       "d");
+            //                       `myip`,
+            //                       `d`);
             // this.commandList[this.commandList.length] = sc;
             sc = new DOS.ShellCommand(this.shellStatus, "status", " <string> - Updates the status.");
             this.commandList[this.commandList.length] = sc;
@@ -73,6 +73,10 @@ var DOS;
             sc = new DOS.ShellCommand(this.shellDarkMode, "darktheme", "<on | off> - enables or disables the dark theme for the UI.");
             this.commandList[this.commandList.length] = sc;
             sc = new DOS.ShellCommand(this.shellLoad, "load", "- Validates user code.");
+            this.commandList[this.commandList.length] = sc;
+            sc = new DOS.ShellCommand(this.shellRun, "run", "<int> - executes a loaded program given a PID.");
+            this.commandList[this.commandList.length] = sc;
+            sc = new DOS.ShellCommand(this.verboseMode, "verbose", "<on | off> - enables or disables verbose mode for running proccessses.");
             this.commandList[this.commandList.length] = sc;
             // ps  - list the running processes and their IDs
             // kill <id> - kills the specified process id.
@@ -114,7 +118,7 @@ var DOS;
             }
             else {
                 // It's not found, so check for curses and apologies before declaring the command invalid.
-                if (this.curses.indexOf("[" + DOS.Utils.rot13(cmd) + "]") >= 0) { // Check for curses.
+                if (this.curses.indexOf("[ " + DOS.Utils.rot13(cmd) + "]") >= 0) { // Check for curses.
                     this.execute(this.shellCurse);
                 }
                 else if (this.apologies.indexOf("[" + cmd + "]") >= 0) { // Check for apologies.
@@ -260,8 +264,8 @@ var DOS;
                             _StdOut.putText("Allows the user to enable or disable sarcasm mode.");
                         }
                         break;
-                    // case "myip":
-                    //     _StdOut.putText("Returns the Client IP address.");
+                    // case `myip`:
+                    //     _StdOut.putText(`Returns the Client IP address.`);
                     //     break;
                     case "status":
                         _StdOut.putText("Given a <string> the status will be assigned.");
@@ -273,7 +277,13 @@ var DOS;
                         _StdOut.putText("Enables or Disables the dark theme skin for the DOS UI.");
                         break;
                     case "load":
-                        _StdOut.putText("Validates the user code in the HTML5 text area.");
+                        _StdOut.putText("Validates the user code in the HTML5 text area, and loads into memory");
+                        break;
+                    case "run":
+                        _StdOut.putText("executes the proccess specified with <int> PID.");
+                        break;
+                    case "verbose":
+                        _StdOut.putText("Enables verbose mode for running programs, will alert you in the Browser Console with each step.");
                         break;
                     default:
                         _StdOut.putText("No manual entry for " + args[0] + ".");
@@ -384,7 +394,7 @@ var DOS;
         Shell.prototype.shellDarkMode = function (args) {
             // CSS links.....CSS is not my thing
             var darkThemelink = 'https://stackpath.bootstrapcdn.com/bootswatch/4.1.3/slate/bootstrap.min.css';
-            var defaultThemelink = 'https://stackpath.bootstrapcdn.com/bootswatch/4.1.3/lux/bootstrap.min.css';
+            var defaultThemelink = 'https://stackpath.bootstrapcdn.com/bootswatch/4.1.3/flatly/bootstrap.min.css';
             if (args.length > 0) {
                 var setting = args[0];
                 switch (setting) {
@@ -467,12 +477,53 @@ var DOS;
                         }
                     });
                 });
-                // For now simply alert the user that the syntax was correct
-                _StdOut.putText("Program load successful.");
+                // Ensure that the program does not exceed 256 bytes
+                if (userCodeArr.length > 256) {
+                    _StdOut.putText("Program to Large, program is " + userCodeArr.length + " bytes. Max is 256 per program.");
+                    throw new Error("Program to Large, program is " + userCodeArr.length + " bytes.");
+                }
+                // If the check passes load the program to memory
+                var registers = _MemoryManager.loadInMem(userCodeArr);
+                //Create a new PCB
+                var pid = _PCM.createProcces(registers[0], registers[1]);
+                _StdOut.putText("Program load successful; <pid> " + pid + " created");
             }
             catch (e) {
                 // Log the detailed error message
                 console.log(e);
+            }
+        };
+        Shell.prototype.shellRun = function (args) {
+            // take only the very first PID and execute it
+            if (args.length > 1) {
+                _StdOut.putText("Run takes only 1 PID, running first found, " + args[0] + ".");
+            }
+            else if (args.length < 1) {
+                _StdOut.putText("Please specify the PID to execute.");
+            }
+            _PCM.runProcess(args[0]);
+            _StdOut.putText("Running program with <pid> " + args[0]);
+            _StdOut.advanceLine();
+        };
+        Shell.prototype.verboseMode = function (args) {
+            if (args.length > 0) {
+                var setting = args[0];
+                switch (setting) {
+                    case "on":
+                        _Verbose = true;
+                        _StdOut.putText("Verbose mode enabled.");
+                        document.getElementById("btnSingleStep").setAttribute("style", "");
+                        break;
+                    case "off":
+                        _Verbose = false;
+                        _StdOut.putText("Verbose mode disabled.");
+                        break;
+                    default:
+                        _StdOut.putText("Invalid arguement.  Usage: verbose <on | off>.");
+                }
+            }
+            else {
+                _StdOut.putText("Usage: verbose <on | off>");
             }
         };
         return Shell;

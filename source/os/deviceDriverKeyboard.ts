@@ -35,16 +35,17 @@ module DOS {
         public krnKbdGetSymbol(keyCode, isShifted) {
             var requested_symbol = "";
             if (isShifted){
+                console.log(keyCode)
                 _shiftedSymbols.forEach(key => {
                     if (keyCode === key.KeyCode){
-                        requested_symbol = key.Symbol
+                        requested_symbol = key.Symbol;
                     }
                 });
 
             } else if (!isShifted) {
                 _nonShiftedSymbols.forEach(key => {
                     if (keyCode === key.KeyCode){
-                        requested_symbol = key.Symbol
+                        requested_symbol = key.Symbol;
                     }
                 });
             }
@@ -73,6 +74,13 @@ module DOS {
 
                 // TODO: Check for caps-lock and handle as shifted if so.
                 _KernelInputQueue.enqueue(chr);
+            
+            } else if (keyCode === 38) {
+                _KernelInputQueue.enqueue(`KeyUp`);
+
+
+            } else if (keyCode === 40) {
+                _KernelInputQueue.enqueue(`KeyDown`);
 
 
             } else if (((keyCode >= 48) && (keyCode <= 57) && isShifted)   ||   // digit symbols

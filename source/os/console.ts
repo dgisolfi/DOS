@@ -17,12 +17,12 @@ module DOS {
                 public currentFontSize  = _DefaultFontSize,
                 public currentXPosition = 0,
                 public currentYPosition = _DefaultFontSize,
-                public buffer           = "",
+                public buffer           = ``,
                 public cmdHist          = [],       // Keeps array of commands entered
                 public cmdIndex         = 0,        // Keeps track of index of command
                 public cmdSuggestions   = [],
                 public tempIndex        = 0,
-                public canvasData       = ""
+                public canvasData       = ``
                 ){
         }
 
@@ -59,7 +59,7 @@ module DOS {
                     }
                     
                     // ... and reset our buffer.
-                    this.buffer = "";
+                    this.buffer = ``;
                                         
                 // Check if the backpace key was pressed.
                 } else if (chr === String.fromCharCode(8)) { // Del  Key
@@ -84,11 +84,11 @@ module DOS {
                 } else if (chr === String.fromCharCode(9)) {
                     this.cmdCompletion();
                 
-                } else if (chr === String.fromCharCode(38)) { // Up and down keys
-                    this.cmdHistory("up");
+                } else if (chr === `KeyUp`) { // Up and down keys
+                    this.cmdHistory(`up`);
 
-                } else if (chr === String.fromCharCode(40)) {
-                    this.cmdHistory("down");
+                } else if (chr === `KeyDown`) {
+                    this.cmdHistory(`down`);
 
                 }else {
                     // This is a "normal" character, so ...
@@ -111,7 +111,7 @@ module DOS {
             // UPDATE: Even though we are now working in TypeScript, char and string remain undistinguished.
             //         Consider fixing that.
             
-            if (text !== "") {
+            if (text !== ``) {
                 // Move the current X position.
                 var offset = _DrawingContext.measureText(this.currentFont, this.currentFontSize, text);
                 // check if the lines exceeds the canvas
@@ -160,13 +160,8 @@ module DOS {
             if (this.currentYPosition >= _Canvas.height) {
                 this.scroll(oldYPosition);
             }
+           
                          
-        }
-
-        public updateDateTime(): void {
-            // update the display with cur time
-            var datetime = _date + " | " + _time;
-            document.getElementById("datetime").innerHTML = datetime;
         }
 
         // delete given character in canvas
@@ -223,9 +218,9 @@ module DOS {
         private cmdHistory(direc): void {
             //clear the line and the buffer to avoid errors
             this.clearLine();
-            this.buffer = "";
+            this.buffer = ``;
             
-            if (direc === "up") {
+            if (direc === `up`) {
                 // check if index out of range then...
                 if (this.cmdIndex != -1) {
                     // move pointer 
@@ -235,7 +230,7 @@ module DOS {
                     this.putText(this.buffer);
                 }
 
-            } else if (direc === "down") {
+            } else if (direc === `down`) {
                 // check if index out of range then...
                 if (!(this.cmdIndex >= this.cmdHist.length - 1)) {
                     // move pointer 
@@ -259,7 +254,7 @@ module DOS {
             );
             
             // Whoops the prompt is gone....lets just put that back
-            this.buffer = ""; 
+            this.buffer = ``; 
             this.currentXPosition = 0;
             _OsShell.putPrompt();
         }
@@ -269,7 +264,6 @@ module DOS {
             var height = _DefaultFontSize +
                         _DrawingContext.fontDescent(this.currentFont, this.currentFontSize) +
                         _FontHeightMargin;
-            console.log(height)
                      
             // take a snapshot of the canvas use this -> https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/getImageData
             this.canvasData = _DrawingContext.getImageData(0, height, _Canvas.width, this.currentYPosition);
@@ -279,6 +273,88 @@ module DOS {
             _DrawingContext.putImageData(this.canvasData, 0, 0);
             // Move the cursur loc...otherwise youll bad things happen
             this.currentYPosition = oldYPosition; 
+        }
+
+        public updateCPU(): void {
+            var pc = `00` + _CPU.PC.toString();
+            if (_CPU.PC > 99) {
+                pc = _CPU.PC.toString();
+            }
+            else if (_CPU.PC > 9 ) {
+                pc = `0` + _CPU.PC.toString();
+            }
+
+            document.getElementById(`cpu-PC`).innerHTML = pc;
+            document.getElementById(`cpu-IR`).innerHTML = _CPU.IR;
+            document.getElementById(`cpu-Acc`).innerHTML = _CPU.Acc.toString();
+            document.getElementById(`cpu-X`).innerHTML = _CPU.Xreg.toString();
+            document.getElementById(`cpu-Y`).innerHTML = _CPU.Yreg.toString();
+            document.getElementById(`cpu-Z`).innerHTML = _CPU.Zflag.toString();
+
+        }
+
+        public updatePCB(): void {
+
+            if (_PCM.runningProccess.pid == -1) {
+                document.getElementById(`pcb-PID`).innerHTML   = `-`;
+                document.getElementById(`pcb-State`).innerHTML = `-`;
+                document.getElementById(`pcb-PC`).innerHTML    = `-`;
+                document.getElementById(`pcb-IR`).innerHTML    = `-`;
+                document.getElementById(`pcb-Acc`).innerHTML   = `-`;
+                document.getElementById(`pcb-X`).innerHTML     = `-`;
+                document.getElementById(`pcb-Y`).innerHTML     = `-`;
+                document.getElementById(`pcb-Z`).innerHTML     = `-`;
+               
+            } else {
+                document.getElementById(`pcb-PID`).innerHTML   =  _PCM.runningProccess.pid.toString(); 
+                document.getElementById(`pcb-State`).innerHTML = _PCM.runningProccess.state;
+                document.getElementById(`pcb-PC`).innerHTML    = _PCM.runningProccess.PC.toString();
+                document.getElementById(`pcb-IR`).innerHTML    = _PCM.runningProccess.IR;
+                document.getElementById(`pcb-Acc`).innerHTML   = _PCM.runningProccess.Acc.toString();
+                document.getElementById(`pcb-X`).innerHTML     = _PCM.runningProccess.XReg.toString();
+                document.getElementById(`pcb-Y`).innerHTML     = _PCM.runningProccess.YReg.toString();
+                document.getElementById(`pcb-Z`).innerHTML     = _PCM.runningProccess.ZFlag.toString();  
+            }
+        }
+
+        public updateMemory(): void {
+            var rowCount = 0;
+            var table = ``;
+            var rowData = []
+            _MEM.memory.forEach(hex => {
+               
+                //Build a row
+                rowData.push(hex);
+    
+                if (rowData.length === 8) {
+
+                    var row =
+                    `<tr class="table">` +
+                        `<td id="mem-head">${`0x${rowCount.toString(16).toUpperCase()}`}</td>`+
+                        `<td id="mem-">${rowData[0]}</td>`+
+                        `<td id="mem-IR">${rowData[1]}</td>`+
+                        `<td id="mem-Acc">${rowData[2]}</td>`+
+                        `<td id="mem-X">${rowData[3]}</td>`+
+                        `<td id="mem-Y">${rowData[4]}</td>`+
+                        `<td id="mem-Z">${rowData[5]}</td>`+
+                        `<td id="mem-Z">${rowData[6]}</td>`+
+                        `<td id="mem-Z">${rowData[7]}</td>`+
+                    `</tr>`
+                    table += row;
+                    rowData = [];
+                    rowCount += 8;
+                   
+                }
+            });
+
+            document.getElementById(`mem`).innerHTML = table;
+            
+        }
+
+        public updateDateTime(): void {
+            // update the display with cur time
+            var datetime = _date + ` | ` + _time;
+            document.getElementById(`datetime`).innerHTML = datetime;
         }
     }
  }
