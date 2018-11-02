@@ -61,11 +61,6 @@ var DOS;
             //sarcasm
             sc = new DOS.ShellCommand(this.shellSarcasm, "sarcasm", "<on | off> - Turns the OS sarcasm mode on or off.");
             this.commandList[this.commandList.length] = sc;
-            //get client IP
-            // sc = new ShellCommand(this.shellGetIP,
-            //                       `myip`,
-            //                       `d`);
-            // this.commandList[this.commandList.length] = sc;
             sc = new DOS.ShellCommand(this.shellStatus, "status", " <string> - Updates the status.");
             this.commandList[this.commandList.length] = sc;
             sc = new DOS.ShellCommand(this.shellBSOD, "bsod", "- Force break the OS.");
@@ -78,8 +73,14 @@ var DOS;
             this.commandList[this.commandList.length] = sc;
             sc = new DOS.ShellCommand(this.verboseMode, "verbose", "<on | off> - enables or disables verbose mode for running proccessses.");
             this.commandList[this.commandList.length] = sc;
+            sc = new DOS.ShellCommand(this.clearMem, "clearmem", "resets all memory segments");
+            this.commandList[this.commandList.length] = sc;
+            sc = new DOS.ShellCommand(this.ps, "ps", "- list the running processes and their IDs");
+            this.commandList[this.commandList.length] = sc;
+            sc = new DOS.ShellCommand(this.kill, "kill", "<pid> - kills the specified process id.");
+            this.commandList[this.commandList.length] = sc;
             // ps  - list the running processes and their IDs
-            // kill <id> - kills the specified process id.
+            // kill <id> 
             //
             // Display the initial prompt.
             this.putPrompt();
@@ -524,6 +525,74 @@ var DOS;
             }
             else {
                 _StdOut.putText("Usage: verbose <on | off>");
+            }
+        };
+        Shell.prototype.clearMem = function () {
+            if (_CPU.isExecuting) {
+                _StdOut.putText("Error: proccess " + _PCM.runningProccess + " is still executing, wait until the proccess has finished executing");
+            }
+            else {
+                _MemoryManager.wipeSeg00();
+                _MemoryManager.wipeSeg01();
+                _MemoryManager.wipeSeg02();
+                _StdOut.putText("Memory Cleared");
+            }
+        };
+        Shell.prototype.isEmptyObject = function (obj) {
+            for (var prop in obj) {
+                if (obj.hasOwnProperty(prop)) {
+                    return false;
+                }
+            }
+            return true;
+        };
+        Shell.prototype.ps = function () {
+            if (_PCM.runningProccess.pid == -1 && Object.keys(_PCM.residentQueue).length == 0 && Object.keys(_PCM.readyQueue).length == 0) {
+                _StdOut.putText("There are currently no proccess running, ready or resident");
+            }
+            else {
+                var outMsg = [];
+                if (_PCM.runningProccess.pid != -1 && _PCM.runningProccess.state != "terminated") {
+                    outMsg.push("[PID]:" + _PCM.runningProccess.pid + " " + _PCM.runningProccess.state);
+                }
+                // resident PIDS
+                if (Object.keys(_PCM.residentQueue).length > 0) {
+                    Object.keys(_PCM.residentQueue).forEach(function (proccess) {
+                        outMsg.push("[PID]:" + _PCM.residentQueue[proccess].pid + " " + _PCM.residentQueue[proccess].state);
+                    });
+                }
+                // ready PIDS
+                if (Object.keys(_PCM.readyQueue).length > 0) {
+                    Object.keys(_PCM.readyQueue).forEach(function (proccess) {
+                        outMsg.push("[PID]:" + _PCM.readyQueue[proccess].pid + " " + _PCM.readyQueue[proccess].state);
+                    });
+                }
+                // terminated PIDS
+                if (Object.keys(_PCM.terminatedQueue).length > 0) {
+                    Object.keys(_PCM.terminatedQueue).forEach(function (proccess) {
+                        outMsg.push("[PID]:" + _PCM.terminatedQueue[proccess].pid + " " + _PCM.terminatedQueue[proccess].state);
+                    });
+                }
+                // _StdOut.advanceLine();
+                outMsg.forEach(function (msg) {
+                    _StdOut.putText(msg);
+                    _StdOut.advanceLine();
+                });
+            }
+        };
+        Shell.prototype.kill = function (args) {
+            console.log(args[0]);
+            var pid = args[0];
+            if (pid === parseInt(pid, 10)) {
+                _StdOut.putText("not a valid PID, must be of type <int>");
+            }
+            else {
+                Object.keys(_PCM.terminatedQueue).forEach(function (currPid) {
+                    if (currPid == pid) {
+                        _StdOut.putText("Error: process " + pid + " already terminated");
+                    }
+                });
+                _PCM.terminateProcess(pid);
             }
         };
         return Shell;

@@ -43,7 +43,15 @@ var DOS;
             _CPU.isExecuting = true;
         };
         ProccessManager.prototype.terminateProcess = function (pid) {
-            _CPU.isExecuting = false;
+            // kill running proccess
+            console.log(this.runningProccess.pid);
+            if (this.runningProccess.pid == pid) {
+                _CPU.isExecuting = false;
+            }
+            else {
+                this.terminatedQueue[pid] = this.readyQueue[pid];
+                delete this.readyQueue[pid];
+            }
             _StdOut.advanceLine();
             _StdOut.putText("proccess " + pid + " finished");
             _StdOut.advanceLine();
@@ -51,14 +59,15 @@ var DOS;
             _StdOut.advanceLine();
             _StdOut.putText("Wait Time " + this.runningProccess.waitTime + " Cycles");
             _StdOut.advanceLine();
-            _OsShell.putPrompt();
-            if (this.runningProccess.sRegister === 0) {
+            // _OsShell.putPrompt();
+            // THERE IS A REALLY ANNOYING ERROR HERE REFER TO ISSUE #
+            if (this.runningProccess.base === 0) {
                 _MemoryManager.wipeSeg00();
             }
-            else if (this.runningProccess.sRegister === 256) {
+            else if (this.runningProccess.base === 256) {
                 _MemoryManager.wipeSeg01();
             }
-            else if (this.runningProccess.sRegister === 513) {
+            else if (this.runningProccess.base === 513) {
                 _MemoryManager.wipeSeg02();
             }
             // Move to the the terminated queue

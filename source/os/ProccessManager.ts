@@ -46,18 +46,27 @@
                 _CPU.init();
                 // for now turn it on and let it go
                 // put the resident proccess on the running queue
-                this.readyQueue[pid] = this.residentQueue[pid]
-                delete this.residentQueue[pid]
-                this.readyQueue[pid].state = `ready`
-                this.runningProccess = this.readyQueue[pid]
+                this.readyQueue[pid] = this.residentQueue[pid];
+                delete this.residentQueue[pid];
+                this.readyQueue[pid].state = `ready`;
+                this.runningProccess = this.readyQueue[pid];
                 delete this.readyQueue[pid];
-                this.runningProccess.state = `running`                
+                this.runningProccess.state = `running`;          
                 // start executing
                 _CPU.isExecuting = true;
             }
     
             public terminateProcess(pid) {
-                _CPU.isExecuting = false;
+                // kill running proccess
+                console.log(this.runningProccess.pid)
+                if (this.runningProccess.pid == pid) {
+                    _CPU.isExecuting = false;
+                    
+                } else {
+                    this.terminatedQueue[pid] = this.readyQueue[pid]
+                    delete this.readyQueue[pid];
+                }
+
                 _StdOut.advanceLine();
                 _StdOut.putText(`proccess ${pid} finished`);
                 _StdOut.advanceLine();
@@ -65,13 +74,15 @@
                 _StdOut.advanceLine();
                 _StdOut.putText(`Wait Time ${this.runningProccess.waitTime} Cycles`);
                 _StdOut.advanceLine();
-                _OsShell.putPrompt();
+                // _OsShell.putPrompt();
+                
 
-                if (this.runningProccess.sRegister === 0) {
+                // THERE IS A REALLY ANNOYING ERROR HERE REFER TO ISSUE #
+                if (this.runningProccess.base === 0) {
                     _MemoryManager.wipeSeg00();
-                } else if (this.runningProccess.sRegister === 256) {
+                } else if (this.runningProccess.base === 256) {
                     _MemoryManager.wipeSeg01();
-                } else if (this.runningProccess.sRegister === 513) {
+                } else if (this.runningProccess.base === 513) {
                     _MemoryManager.wipeSeg02();
                 }
                 
@@ -79,9 +90,6 @@
                 // Move to the the terminated queue
                 this.terminatedQueue[pid] = this.runningProccess;
                 this.terminatedQueue[pid].state = `terminated`;
-
-                
-
             } 
         }
     }

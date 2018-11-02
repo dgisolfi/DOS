@@ -44,8 +44,8 @@ module DOS {
             _Kernel.krnTrace(`CPU cycle`);
             // TODO: Accumulate CPU usage and profiling statistics here.
             // Do the real work here. Be sure to set this.isExecuting appropriately.
-            var sRegister = _PCM.runningProccess.sRegister 
-            var eRegister = _PCM.runningProccess.eRegister 
+            var base = _PCM.runningProccess.base 
+            var limit = _PCM.runningProccess.limit 
             // Get the next OP Code
             this.IR = _MemoryAccessor.readMemory(this.PC);
             
@@ -63,7 +63,7 @@ module DOS {
             
             
             // Check wether the program has finished 
-            if (this.PC + sRegister  >= eRegister) {
+            if (this.PC + base  >= limit) {
                 // reset and end the proccess
                 _SingleStep = false;
                 _PCM.runningProccess.state = `terminated`;
@@ -202,7 +202,7 @@ module DOS {
                     if (_Verbose) {
                         console.log(`No OP, Skipping`);
                     }
-                    this.passCmd(2);
+                    this.passCmd(1);
                     break;
                 case `00`: // break
                     if (_Verbose) {
@@ -242,7 +242,7 @@ module DOS {
                         // console.log(`PC > ${this.PC}`, ` Branch > ${branchAddress}`);
 
                         // if the branch will exceed the memory, go back to 0
-                        if (branchAddress > _PCM.runningProccess.eRegister ) {
+                        if (branchAddress > _PCM.runningProccess.limit ) {
                             branchAddress = branchAddress%256;
                         } 
                         // Add 2 to account for the branch op and the location

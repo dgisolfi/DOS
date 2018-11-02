@@ -3,6 +3,7 @@ MAINTAINER Daniel Gisolfi
 
 # Update the enviorment
 RUN apt-get update -y
+# RUN apt-get install -y build-essential 
 
 # Install TypeScript Compiler, gulp, and gulp typescript plugin
 RUN npm install -g \

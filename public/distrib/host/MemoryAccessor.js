@@ -12,12 +12,12 @@ var DOS;
         function MemoryAccessor() {
         }
         MemoryAccessor.prototype.readMemory = function (address) {
-            var hex_location = (_PCM.runningProccess.sRegister + address);
+            var hex_location = (_PCM.runningProccess.base + address);
             // console.log(_MEM.memory[3])
             return (_MEM.memory[hex_location]);
         };
         MemoryAccessor.prototype.writeMemory = function (address, data) {
-            var hex_location = (_PCM.runningProccess.sRegister + address);
+            var hex_location = (_PCM.runningProccess.base + address);
             _MEM.memory[hex_location] = data;
         };
         return MemoryAccessor;
