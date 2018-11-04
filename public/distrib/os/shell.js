@@ -79,8 +79,8 @@ var DOS;
             this.commandList[this.commandList.length] = sc;
             sc = new DOS.ShellCommand(this.kill, "kill", "<pid> - kills the specified process id.");
             this.commandList[this.commandList.length] = sc;
-            // ps  - list the running processes and their IDs
-            // kill <id> 
+            sc = new DOS.ShellCommand(this.runAll, "runall", "- runs all resident programs.");
+            this.commandList[this.commandList.length] = sc;
             //
             // Display the initial prompt.
             this.putPrompt();
@@ -518,7 +518,21 @@ var DOS;
                         }
                     });
                     if (pidFound) {
-                        _StdOut.putText("PID is already loaded and in the Ready Queue");
+                        _StdOut.putText("PID " + args[0] + " is already loaded and in the Ready Queue");
+                        // finally check if it ded
+                    }
+                    else {
+                        Object.keys(_PCM.terminatedQueue).forEach(function (pid) {
+                            if (pid == args[0]) {
+                                pidFound = true;
+                            }
+                        });
+                        if (pidFound) {
+                            _StdOut.putText("PID " + args[0] + " is terminated and cannot be rerun.");
+                        }
+                        else {
+                            _StdOut.putText("PID \"" + args[0] + "\" not a valid program ID.");
+                        }
                     }
                 }
                 else {
@@ -620,7 +634,9 @@ var DOS;
                 _PCM.terminateProcess(pid);
             }
         };
-        Shell.prototype.runAll = function (args) {
+        // load all resident processes into ready queue
+        Shell.prototype.runAll = function () {
+            // load all resident processes into ready queue
             _PCM.runAll();
         };
         return Shell;

@@ -38,6 +38,7 @@
                 this.residentQueue[this.pidCounter] = process;
                 this.residentQueue[this.pidCounter].state = `resident`;
                 this.pidCounter++;
+                Control.hostLog(`Process:${process.pid} created`, `os`);
                 return process.pid;
                 
             }
@@ -49,18 +50,18 @@
                 delete this.readyQueue[pid];
                 // Load the saved state of the process to the CPU
                 this.loadProcessState();
+                Control.hostLog(`Running Process:${pid}`, `os`);
                 this.runningprocess.state = `running`;
                 _CPU.isExecuting = true;
-
             }
 
             public runAll():void {
+                // iterate through all resident processes and move them to the ready queue
                 Object.keys(this.residentQueue).forEach(pid => {
                     this.readyQueue[pid] = this.residentQueue[pid];
                     delete this.residentQueue[pid];
                     this.readyQueue[pid].state = `ready`;                
                 });
-
             }
 
             public loadProcessState():void{
@@ -88,14 +89,10 @@
     
             public terminateProcess(pid) {
                 // kill running process
-                console.log(this.runningprocess.pid)
-                if (this.runningprocess.pid == pid) {
-                    _CPU.isExecuting = false;
-                    
-                } else {
-                    this.terminatedQueue[pid] = this.readyQueue[pid]
-                    delete this.readyQueue[pid];
-                }
+                
+                Control.hostLog(`Process:${pid} terminated`, `os`);
+
+               
 
                 _StdOut.advanceLine();
                 _StdOut.putText(`process ${pid} finished`);
@@ -104,7 +101,7 @@
                 _StdOut.advanceLine();
                 _StdOut.putText(`Wait Time ${this.runningprocess.waitTime} Cycles`);
                 _StdOut.advanceLine();
-                
+                _OsShell.putPrompt();
 
                // reset the nessecary memory segment
                 if (this.runningprocess.base === 0) {
@@ -115,20 +112,64 @@
                     _MemoryManager.wipeSeg02();
                 }
                 
+                var processFound = false;
 
-                // Move to the the terminated queue
-                this.terminatedQueue[pid] = this.runningprocess;
-                this.terminatedQueue[pid].state = `terminated`;
-                this.runningprocess =  new PCB(-1,0,0);
-                this.runningprocess.init();  
+                Object.keys(this.residentQueue).forEach(curPid => {
+                    if(curPid == pid) {
+                        processFound = true;
+                        this.terminatedQueue[pid] = this.residentQueue[pid]
+                        this.terminatedQueue[pid].state = `terminated`;
+                        delete this.residentQueue[pid];
+                    }
+                });
+                if (!processFound){
+                    Object.keys(this.readyQueue).forEach(curPid => {
+                        if(curPid == pid) {
+                            processFound = true;
+                            this.terminatedQueue[pid] = this.readyQueue[pid]
+                            this.terminatedQueue[pid].state = `terminated`;
+                            delete this.readyQueue[pid];
+                        }
+                    });
+                }
 
+                if (!processFound){
+                    Object.keys(this.terminatedQueue).forEach(curPid => {
+                        if(curPid == pid) {
+                            // its already terminated
+                            processFound = true;
+
+                        }
+                    });
+                }
+                if (!processFound && this.runningprocess.pid == pid){
+                    this.terminatedQueue[pid] = this.runningprocess;
+                    this.terminatedQueue[pid].state = `terminated`;
+                    this.runningprocess =  new PCB(-1,0,0);
+                    this.runningprocess.init();
+
+                } 
+                
+                if (processFound) {
+                    Control.hostLog(`PID ${pid} terminated`,`os`)
+                } else {
+                    Control.hostLog(`ERROR ${pid} NOT FOUND`,`os`)
+                }
             }
 
 
             // scheduling stuffff
-            public getReadyProcess() {
-                if (Object.keys(this.readyQueue).length != 0) {
 
+            // get any ready processes left
+            public getReadyProcess() {
+                //if there is still a ready proccess run it otherwise shutdown
+                console.log(Object.keys(this.readyQueue).length)
+                if (Object.keys(this.readyQueue).length != 0) {
+                    this.runProcess()
+                }
+                else {
+                    Control.hostLog(`CPU Shutting down no processes left to run`, `os`);
+                    _CPU.isExecuting = false;
                 }
             }
         }

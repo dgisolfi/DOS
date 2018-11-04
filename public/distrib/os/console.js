@@ -309,14 +309,6 @@ var DOS;
                         + "</tr>";
                 });
                 document.getElementById("process-table").innerHTML = out;
-                // document.getElementById(`pcb-PID`).innerHTML   =  _PCM.runningprocess.pid.toString(); 
-                // document.getElementById(`pcb-State`).innerHTML = _PCM.runningprocess.state;
-                // document.getElementById(`pcb-PC`).innerHTML    = _PCM.runningprocess.PC.toString();
-                // document.getElementById(`pcb-IR`).innerHTML    = _PCM.runningprocess.IR;
-                // document.getElementById(`pcb-Acc`).innerHTML   = _PCM.runningprocess.Acc.toString();
-                // document.getElementById(`pcb-X`).innerHTML     = _PCM.runningprocess.XReg.toString();
-                // document.getElementById(`pcb-Y`).innerHTML     = _PCM.runningprocess.YReg.toString();
-                // document.getElementById(`pcb-Z`).innerHTML     = _PCM.runningprocess.ZFlag.toString();  
             }
         };
         Console.prototype.updateMemory = function () {

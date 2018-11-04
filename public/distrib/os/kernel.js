@@ -94,8 +94,8 @@ var DOS;
                     }
                 }
                 else {
+                    // _PCM.getReadyProcess();
                     _CPU.cycle();
-                    // console.log(`cycle`)
                 }
             }
             else { // If there are no interrupts and there is nothing being executed then just be idle. {

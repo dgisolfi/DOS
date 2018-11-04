@@ -27,6 +27,7 @@ var DOS;
             this.residentQueue[this.pidCounter] = process;
             this.residentQueue[this.pidCounter].state = "resident";
             this.pidCounter++;
+            DOS.Control.hostLog("Process:" + process.pid + " created", "os");
             return process.pid;
         };
         processManager.prototype.runProcess = function () {
@@ -36,11 +37,13 @@ var DOS;
             delete this.readyQueue[pid];
             // Load the saved state of the process to the CPU
             this.loadProcessState();
+            DOS.Control.hostLog("Running Process:" + pid, "os");
             this.runningprocess.state = "running";
             _CPU.isExecuting = true;
         };
         processManager.prototype.runAll = function () {
             var _this = this;
+            // iterate through all resident processes and move them to the ready queue
             Object.keys(this.residentQueue).forEach(function (pid) {
                 _this.readyQueue[pid] = _this.residentQueue[pid];
                 delete _this.residentQueue[pid];
@@ -70,14 +73,8 @@ var DOS;
         };
         processManager.prototype.terminateProcess = function (pid) {
             // kill running process
-            console.log(this.runningprocess.pid);
-            if (this.runningprocess.pid == pid) {
-                _CPU.isExecuting = false;
-            }
-            else {
-                this.terminatedQueue[pid] = this.readyQueue[pid];
-                delete this.readyQueue[pid];
-            }
+            var _this = this;
+            DOS.Control.hostLog("Process:" + pid + " terminated", "os");
             _StdOut.advanceLine();
             _StdOut.putText("process " + pid + " finished");
             _StdOut.advanceLine();
@@ -85,6 +82,7 @@ var DOS;
             _StdOut.advanceLine();
             _StdOut.putText("Wait Time " + this.runningprocess.waitTime + " Cycles");
             _StdOut.advanceLine();
+            _OsShell.putPrompt();
             // reset the nessecary memory segment
             if (this.runningprocess.base === 0) {
                 _MemoryManager.wipeSeg00();
@@ -95,15 +93,57 @@ var DOS;
             else if (this.runningprocess.base === 513) {
                 _MemoryManager.wipeSeg02();
             }
-            // Move to the the terminated queue
-            this.terminatedQueue[pid] = this.runningprocess;
-            this.terminatedQueue[pid].state = "terminated";
-            this.runningprocess = new DOS.PCB(-1, 0, 0);
-            this.runningprocess.init();
+            var processFound = false;
+            Object.keys(this.residentQueue).forEach(function (curPid) {
+                if (curPid == pid) {
+                    processFound = true;
+                    _this.terminatedQueue[pid] = _this.residentQueue[pid];
+                    _this.terminatedQueue[pid].state = "terminated";
+                    delete _this.residentQueue[pid];
+                }
+            });
+            if (!processFound) {
+                Object.keys(this.readyQueue).forEach(function (curPid) {
+                    if (curPid == pid) {
+                        processFound = true;
+                        _this.terminatedQueue[pid] = _this.readyQueue[pid];
+                        _this.terminatedQueue[pid].state = "terminated";
+                        delete _this.readyQueue[pid];
+                    }
+                });
+            }
+            if (!processFound) {
+                Object.keys(this.terminatedQueue).forEach(function (curPid) {
+                    if (curPid == pid) {
+                        // its already terminated
+                        processFound = true;
+                    }
+                });
+            }
+            if (!processFound && this.runningprocess.pid == pid) {
+                this.terminatedQueue[pid] = this.runningprocess;
+                this.terminatedQueue[pid].state = "terminated";
+                this.runningprocess = new DOS.PCB(-1, 0, 0);
+                this.runningprocess.init();
+            }
+            if (processFound) {
+                DOS.Control.hostLog("PID " + pid + " terminated", "os");
+            }
+            else {
+                DOS.Control.hostLog("ERROR " + pid + " NOT FOUND", "os");
+            }
         };
         // scheduling stuffff
+        // get any ready processes left
         processManager.prototype.getReadyProcess = function () {
+            //if there is still a ready proccess run it otherwise shutdown
+            console.log(Object.keys(this.readyQueue).length);
             if (Object.keys(this.readyQueue).length != 0) {
+                this.runProcess();
+            }
+            else {
+                DOS.Control.hostLog("CPU Shutting down no processes left to run", "os");
+                _CPU.isExecuting = false;
             }
         };
         return processManager;

@@ -144,12 +144,11 @@ module DOS {
                 `<pid> - kills the specified process id.`);
             this.commandList[this.commandList.length] = sc;
 
-
+            sc = new ShellCommand(this.runAll,
+                `runall`,
+                `- runs all resident programs.`);
+            this.commandList[this.commandList.length] = sc;
             
-
-            // ps  - list the running processes and their IDs
-            // kill <id> 
-
             //
             // Display the initial prompt.
             this.putPrompt();
@@ -629,7 +628,19 @@ module DOS {
                         }  
                     });
                     if(pidFound){
-                        _StdOut.putText(`PID is already loaded and in the Ready Queue`);
+                        _StdOut.putText(`PID ${args[0]} is already loaded and in the Ready Queue`);
+                        // finally check if it ded
+                    } else {
+                        Object.keys(_PCM.terminatedQueue).forEach(pid => {
+                            if (pid == args[0]) {
+                                pidFound = true;
+                            }  
+                        });
+                        if(pidFound){
+                            _StdOut.putText(`PID ${args[0]} is terminated and cannot be rerun.`);
+                        } else {
+                            _StdOut.putText(`PID "${args[0]}" not a valid program ID.`);
+                        }
                     }
 
                 } else {
@@ -643,11 +654,6 @@ module DOS {
                 }
                 
             }
-
-
-
-            
- 
         }
 
         public verboseMode(args) {
@@ -745,8 +751,9 @@ module DOS {
             }
         }
 
-        public runAll(args) {
-            
+        // load all resident processes into ready queue
+        public runAll() {
+            // load all resident processes into ready queue
             _PCM.runAll();
         }
     }
