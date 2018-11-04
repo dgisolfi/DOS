@@ -33,7 +33,7 @@ module DOS {
             _MEM = new Memory();
             _MEM.init();
 
-            _PCM = new ProccessManager();
+            _PCM = new processManager();
             _PCM.init();
 
              // Initialize the console.
@@ -150,7 +150,7 @@ module DOS {
                     _krnKeyboardDriver.isr(params);   // Kernel mode device driver
                     _StdIn.handleInput();
                     break;
-                case PROCESS_EXIT:                  // exit proccesses
+                case PROCESS_EXIT:                  // exit processes
                     _PCM.terminateProcess(params)
                     break;
                 case PRINT_IR:

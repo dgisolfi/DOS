@@ -264,25 +264,59 @@ var DOS;
             document.getElementById("cpu-Z").innerHTML = _CPU.Zflag.toString();
         };
         Console.prototype.updatePCB = function () {
-            if (_PCM.runningProccess.pid == -1) {
-                document.getElementById("pcb-PID").innerHTML = "-";
-                document.getElementById("pcb-State").innerHTML = "-";
-                document.getElementById("pcb-PC").innerHTML = "-";
-                document.getElementById("pcb-IR").innerHTML = "-";
-                document.getElementById("pcb-Acc").innerHTML = "-";
-                document.getElementById("pcb-X").innerHTML = "-";
-                document.getElementById("pcb-Y").innerHTML = "-";
-                document.getElementById("pcb-Z").innerHTML = "-";
+            var processes = [];
+            // resident process
+            Object.keys(_PCM.residentQueue).forEach(function (process) {
+                processes.push(_PCM.residentQueue[process]);
+            });
+            // ready process
+            Object.keys(_PCM.readyQueue).forEach(function (process) {
+                processes.push(_PCM.readyQueue[process]);
+            });
+            // runnning process
+            if (_PCM.runningprocess.pid != -1) {
+                processes.push(_PCM.runningprocess);
+            }
+            // terminated process
+            Object.keys(_PCM.terminatedQueue).forEach(function (process) {
+                processes.push(_PCM.terminatedQueue[process]);
+            });
+            if (processes.length == 0) {
+                var out = "<tr class=\"table\">"
+                    + "<td id=\"PID\">-</td>"
+                    + "<td id=\"State\">-</td>"
+                    + "<td id=\"PC\">-</td>"
+                    + "<td id=\"IR\">-</td>"
+                    + "<td id=\"Acc\">-</td>"
+                    + "<td id=\"X\">-</td>"
+                    + "<td id=\"Y\">-</td>"
+                    + "<td id=\"Z\">-</td>"
+                    + "</tr>";
+                document.getElementById("process-table").innerHTML = out;
             }
             else {
-                document.getElementById("pcb-PID").innerHTML = _PCM.runningProccess.pid.toString();
-                document.getElementById("pcb-State").innerHTML = _PCM.runningProccess.state;
-                document.getElementById("pcb-PC").innerHTML = _PCM.runningProccess.PC.toString();
-                document.getElementById("pcb-IR").innerHTML = _PCM.runningProccess.IR;
-                document.getElementById("pcb-Acc").innerHTML = _PCM.runningProccess.Acc.toString();
-                document.getElementById("pcb-X").innerHTML = _PCM.runningProccess.XReg.toString();
-                document.getElementById("pcb-Y").innerHTML = _PCM.runningProccess.YReg.toString();
-                document.getElementById("pcb-Z").innerHTML = _PCM.runningProccess.ZFlag.toString();
+                var out = "";
+                processes.forEach(function (process) {
+                    out += "<tr class=\"table\" id=\"" + process.pid + "\">"
+                        + ("<td id=\"" + process.pid + "-PID\">" + process.pid + "</td>")
+                        + ("<td id=\"" + process.pid + "-State\">" + process.state + "</td>")
+                        + ("<td id=\"" + process.pid + "-PC\">" + process.PC + "</td>")
+                        + ("<td id=\"" + process.pid + "-IR\">" + process.IR + "</td>")
+                        + ("<td id=\"" + process.pid + "-Acc\">" + process.Acc + "</td>")
+                        + ("<td id=\"" + process.pid + "-X\">" + process.XReg + "</td>")
+                        + ("<td id=\"" + process.pid + "-Y\">" + process.YReg + "</td>")
+                        + ("<td id=\"" + process.pid + "-Z\">" + process.ZFlag + "</td>")
+                        + "</tr>";
+                });
+                document.getElementById("process-table").innerHTML = out;
+                // document.getElementById(`pcb-PID`).innerHTML   =  _PCM.runningprocess.pid.toString(); 
+                // document.getElementById(`pcb-State`).innerHTML = _PCM.runningprocess.state;
+                // document.getElementById(`pcb-PC`).innerHTML    = _PCM.runningprocess.PC.toString();
+                // document.getElementById(`pcb-IR`).innerHTML    = _PCM.runningprocess.IR;
+                // document.getElementById(`pcb-Acc`).innerHTML   = _PCM.runningprocess.Acc.toString();
+                // document.getElementById(`pcb-X`).innerHTML     = _PCM.runningprocess.XReg.toString();
+                // document.getElementById(`pcb-Y`).innerHTML     = _PCM.runningprocess.YReg.toString();
+                // document.getElementById(`pcb-Z`).innerHTML     = _PCM.runningprocess.ZFlag.toString();  
             }
         };
         Console.prototype.updateMemory = function () {

@@ -30,7 +30,7 @@
    <script type="text/javascript" src="distrib/os/userCommand.js"></script>
    <script type="text/javascript" src="distrib/os/kernel.js"></script>
    <script type="text/javascript" src="distrib/os/pcb.js"></script>
-   <script type="text/javascript" src="distrib/os/ProccessManager.js"></script>
+   <script type="text/javascript" src="distrib/os/processManager.js"></script>
    <script type="text/javascript" src="distrib/os/MemoryManager.js"></script>
 
    <!-- Other Routines -->
@@ -124,7 +124,7 @@
     <button type="button" class="close" data-dismiss="alert" aria-label="Close">
             <span aria-hidden="true">&times;</span>
     </button>
-    <strong>Verbose Mode Enabled</strong> - Open your Broswer Console; When running a proccess all actions will be logged.
+    <strong>Verbose Mode Enabled</strong> - Open your Broswer Console; When running a process all actions will be logged.
 </div>
 <br>
 
@@ -218,17 +218,7 @@
                                     <th>Z</th>
                                 </tr>
                             </thead>
-                            <tbody>
-                                <tr class="table">
-                                    <td id="pcb-PID">-</td>
-                                    <td id="pcb-State">-</td>
-                                    <td id="pcb-PC">-</td>
-                                    <td id="pcb-IR">-</td>
-                                    <td id="pcb-Acc">-</td>
-                                    <td id="pcb-X">-</td>
-                                    <td id="pcb-Y">-</td>
-                                    <td id="pcb-Z">-</td>
-                                </tr>
+                            <tbody id="process-table">
                             </tbody>
                         </table>
                     </div>

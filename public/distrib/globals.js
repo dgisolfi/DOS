@@ -28,7 +28,7 @@ var _CPU; // Utilize TypeScript's type annotation system to ensure that _CPU is 
 var _MEM;
 var _MemoryAccessor;
 var _MemoryManager;
-//Proccess control blocks
+//process control blocks
 var _PCB;
 var _PCM;
 var _OSclock = 0; // Page 23.

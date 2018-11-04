@@ -71,7 +71,7 @@ var DOS;
             this.commandList[this.commandList.length] = sc;
             sc = new DOS.ShellCommand(this.shellRun, "run", "<int> - executes a loaded program given a PID.");
             this.commandList[this.commandList.length] = sc;
-            sc = new DOS.ShellCommand(this.verboseMode, "verbose", "<on | off> - enables or disables verbose mode for running proccessses.");
+            sc = new DOS.ShellCommand(this.verboseMode, "verbose", "<on | off> - enables or disables verbose mode for running processses.");
             this.commandList[this.commandList.length] = sc;
             sc = new DOS.ShellCommand(this.clearMem, "clearmem", "resets all memory segments");
             this.commandList[this.commandList.length] = sc;
@@ -281,7 +281,7 @@ var DOS;
                         _StdOut.putText("Validates the user code in the HTML5 text area, and loads into memory");
                         break;
                     case "run":
-                        _StdOut.putText("executes the proccess specified with <int> PID.");
+                        _StdOut.putText("executes the process specified with <int> PID.");
                         break;
                     case "verbose":
                         _StdOut.putText("Enables verbose mode for running programs, will alert you in the Browser Console with each step.");
@@ -499,12 +499,38 @@ var DOS;
             if (args.length > 1) {
                 _StdOut.putText("Run takes only 1 PID, running first found, " + args[0] + ".");
             }
-            else if (args.length < 1) {
+            else if (args.length == 0) {
                 _StdOut.putText("Please specify the PID to execute.");
             }
-            _PCM.runProcess(args[0]);
-            _StdOut.putText("Running program with <pid> " + args[0]);
-            _StdOut.advanceLine();
+            else {
+                // look to see if the PID is valid
+                var pidFound = false;
+                Object.keys(_PCM.residentQueue).forEach(function (pid) {
+                    if (pid == args[0]) {
+                        pidFound = true;
+                    }
+                });
+                // not found, check if its running already
+                if (!pidFound) {
+                    Object.keys(_PCM.readyQueue).forEach(function (pid) {
+                        if (pid == args[0]) {
+                            pidFound = true;
+                        }
+                    });
+                    if (pidFound) {
+                        _StdOut.putText("PID is already loaded and in the Ready Queue");
+                    }
+                }
+                else {
+                    var pid = args[0];
+                    _PCM.readyQueue[pid] = _PCM.residentQueue[pid];
+                    delete _PCM.residentQueue[pid];
+                    _PCM.readyQueue[pid].state = "ready";
+                    _PCM.runProcess();
+                    _StdOut.putText("Running program with <pid> " + pid);
+                    _StdOut.advanceLine();
+                }
+            }
         };
         Shell.prototype.verboseMode = function (args) {
             if (args.length > 0) {
@@ -529,7 +555,7 @@ var DOS;
         };
         Shell.prototype.clearMem = function () {
             if (_CPU.isExecuting) {
-                _StdOut.putText("Error: proccess " + _PCM.runningProccess + " is still executing, wait until the proccess has finished executing");
+                _StdOut.putText("Error: process " + _PCM.runningprocess + " is still executing, wait until the process has finished executing");
             }
             else {
                 _MemoryManager.wipeSeg00();
@@ -547,30 +573,30 @@ var DOS;
             return true;
         };
         Shell.prototype.ps = function () {
-            if (_PCM.runningProccess.pid == -1 && Object.keys(_PCM.residentQueue).length == 0 && Object.keys(_PCM.readyQueue).length == 0) {
-                _StdOut.putText("There are currently no proccess running, ready or resident");
+            if (_PCM.runningprocess.pid == -1 && Object.keys(_PCM.residentQueue).length == 0 && Object.keys(_PCM.readyQueue).length == 0) {
+                _StdOut.putText("There are currently no process running, ready or resident");
             }
             else {
                 var outMsg = [];
-                if (_PCM.runningProccess.pid != -1 && _PCM.runningProccess.state != "terminated") {
-                    outMsg.push("[PID]:" + _PCM.runningProccess.pid + " " + _PCM.runningProccess.state);
+                if (_PCM.runningprocess.pid != -1 && _PCM.runningprocess.state != "terminated") {
+                    outMsg.push("[PID]:" + _PCM.runningprocess.pid + " " + _PCM.runningprocess.state);
                 }
                 // resident PIDS
                 if (Object.keys(_PCM.residentQueue).length > 0) {
-                    Object.keys(_PCM.residentQueue).forEach(function (proccess) {
-                        outMsg.push("[PID]:" + _PCM.residentQueue[proccess].pid + " " + _PCM.residentQueue[proccess].state);
+                    Object.keys(_PCM.residentQueue).forEach(function (process) {
+                        outMsg.push("[PID]:" + _PCM.residentQueue[process].pid + " " + _PCM.residentQueue[process].state);
                     });
                 }
                 // ready PIDS
                 if (Object.keys(_PCM.readyQueue).length > 0) {
-                    Object.keys(_PCM.readyQueue).forEach(function (proccess) {
-                        outMsg.push("[PID]:" + _PCM.readyQueue[proccess].pid + " " + _PCM.readyQueue[proccess].state);
+                    Object.keys(_PCM.readyQueue).forEach(function (process) {
+                        outMsg.push("[PID]:" + _PCM.readyQueue[process].pid + " " + _PCM.readyQueue[process].state);
                     });
                 }
                 // terminated PIDS
                 if (Object.keys(_PCM.terminatedQueue).length > 0) {
-                    Object.keys(_PCM.terminatedQueue).forEach(function (proccess) {
-                        outMsg.push("[PID]:" + _PCM.terminatedQueue[proccess].pid + " " + _PCM.terminatedQueue[proccess].state);
+                    Object.keys(_PCM.terminatedQueue).forEach(function (process) {
+                        outMsg.push("[PID]:" + _PCM.terminatedQueue[process].pid + " " + _PCM.terminatedQueue[process].state);
                     });
                 }
                 // _StdOut.advanceLine();
@@ -581,7 +607,6 @@ var DOS;
             }
         };
         Shell.prototype.kill = function (args) {
-            console.log(args[0]);
             var pid = args[0];
             if (pid === parseInt(pid, 10)) {
                 _StdOut.putText("not a valid PID, must be of type <int>");
@@ -594,6 +619,9 @@ var DOS;
                 });
                 _PCM.terminateProcess(pid);
             }
+        };
+        Shell.prototype.runAll = function (args) {
+            _PCM.runAll();
         };
         return Shell;
     }());

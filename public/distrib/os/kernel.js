@@ -29,7 +29,7 @@ var DOS;
             _MemoryAccessor = new DOS.MemoryAccessor();
             _MEM = new DOS.Memory();
             _MEM.init();
-            _PCM = new DOS.ProccessManager();
+            _PCM = new DOS.processManager();
             _PCM.init();
             // Initialize the console.
             _Console = new DOS.Console(); // The command line interface / console I/O device.
@@ -132,7 +132,7 @@ var DOS;
                     _krnKeyboardDriver.isr(params); // Kernel mode device driver
                     _StdIn.handleInput();
                     break;
-                case PROCESS_EXIT: // exit proccesses
+                case PROCESS_EXIT: // exit processes
                     _PCM.terminateProcess(params);
                     break;
                 case PRINT_IR:

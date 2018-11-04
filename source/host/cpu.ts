@@ -44,8 +44,8 @@ module DOS {
             _Kernel.krnTrace(`CPU cycle`);
             // TODO: Accumulate CPU usage and profiling statistics here.
             // Do the real work here. Be sure to set this.isExecuting appropriately.
-            var base = _PCM.runningProccess.base 
-            var limit = _PCM.runningProccess.limit 
+            var base = _PCM.runningprocess.base 
+            var limit = _PCM.runningprocess.limit 
             // Get the next OP Code
             this.IR = _MemoryAccessor.readMemory(this.PC);
             
@@ -53,21 +53,21 @@ module DOS {
            
             this.runOpCode(this.IR);
             // Increment the program counter
-            _PCM.runningProccess.turnaroundTime++;
-            _PCM.runningProccess.PC =  this.PC;
-            _PCM.runningProccess.IR =  this.IR;
-            _PCM.runningProccess.Acc = this.Acc;
-            _PCM.runningProccess.XReg = this.Xreg;
-            _PCM.runningProccess.YReg = this.Yreg;
-            _PCM.runningProccess.ZFlag = this.Zflag;
+            _PCM.runningprocess.turnaroundTime++;
+            _PCM.runningprocess.PC =  this.PC;
+            _PCM.runningprocess.IR =  this.IR;
+            _PCM.runningprocess.Acc = this.Acc;
+            _PCM.runningprocess.XReg = this.Xreg;
+            _PCM.runningprocess.YReg = this.Yreg;
+            _PCM.runningprocess.ZFlag = this.Zflag;
             
             
             // Check wether the program has finished 
             if (this.PC + base  >= limit) {
-                // reset and end the proccess
+                // reset and end the process
                 _SingleStep = false;
-                _PCM.runningProccess.state = `terminated`;
-                _KernelInterruptQueue.enqueue(new Interrupt(PROCESS_EXIT, _PCM.runningProccess.pid));
+                _PCM.runningprocess.state = `terminated`;
+                _KernelInterruptQueue.enqueue(new Interrupt(PROCESS_EXIT, _PCM.runningprocess.pid));
             }
             
         }
@@ -206,10 +206,10 @@ module DOS {
                     break;
                 case `00`: // break
                     if (_Verbose) {
-                        console.log(`Breaking out of Proccess`);
+                        console.log(`Breaking out of process`);
                     }
                     // Execute system call for a process exit by generating software interrupt
-                    _KernelInterruptQueue.enqueue(new Interrupt(PROCESS_EXIT, _PCM.runningProccess.pid));
+                    _KernelInterruptQueue.enqueue(new Interrupt(PROCESS_EXIT, _PCM.runningprocess.pid));
                     break;
                 case `EC`: // take a byte from memory and compare it with the x Register...if equal z flag is 0
                     // Store the values at the first and second postions
@@ -242,7 +242,7 @@ module DOS {
                         // console.log(`PC > ${this.PC}`, ` Branch > ${branchAddress}`);
 
                         // if the branch will exceed the memory, go back to 0
-                        if (branchAddress > _PCM.runningProccess.limit ) {
+                        if (branchAddress > _PCM.runningprocess.limit ) {
                             branchAddress = branchAddress%256;
                         } 
                         // Add 2 to account for the branch op and the location
@@ -316,7 +316,7 @@ module DOS {
                         console.log(`Unrecognized OPCode; Ending Program. Check your syntax an run again.`);
                     }
                    
-                    _KernelInterruptQueue.enqueue(new Interrupt(PROCESS_EXIT, _PCM.runningProccess.pid));
+                    _KernelInterruptQueue.enqueue(new Interrupt(PROCESS_EXIT, _PCM.runningprocess.pid));
                     break;
             }
         }

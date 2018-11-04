@@ -40,9 +40,9 @@ var _MEM: DOS.Memory;
 var _MemoryAccessor: DOS.MemoryAccessor;
 var _MemoryManager: DOS.MemoryManager;
 
-//Proccess control blocks
+//process control blocks
 var _PCB: DOS.PCB;
-var _PCM: DOS.ProccessManager
+var _PCM: DOS.processManager
 
 var _OSclock: number = 0;  // Page 23.
 
