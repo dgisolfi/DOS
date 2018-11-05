@@ -1,5 +1,6 @@
 ///<reference path="../globals.ts" />
 ///<reference path="queue.ts" />
+///<reference path="scheduler.ts" />
 /* ------------
      Kernel.ts
 
@@ -31,6 +32,8 @@ var DOS;
             _MEM.init();
             _PCM = new DOS.processManager();
             _PCM.init();
+            _SCHED = new DOS.Scheduler();
+            _SCHED.init();
             // Initialize the console.
             _Console = new DOS.Console(); // The command line interface / console I/O device.
             _Console.init();
@@ -94,7 +97,7 @@ var DOS;
                     }
                 }
                 else {
-                    // _PCM.getReadyProcess();
+                    _SCHED.schedule();
                     _CPU.cycle();
                 }
             }

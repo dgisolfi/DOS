@@ -1,5 +1,6 @@
 ///<reference path="../globals.ts" />
 ///<reference path="queue.ts" />
+///<reference path="scheduler.ts" />
 
 /* ------------
      Kernel.ts
@@ -35,6 +36,9 @@ module DOS {
 
             _PCM = new processManager();
             _PCM.init();
+
+            _SCHED = new Scheduler();
+            _SCHED.init();
 
              // Initialize the console.
              _Console = new Console();          // The command line interface / console I/O device.
@@ -107,7 +111,7 @@ module DOS {
                         this.krnTrace("Idle");
                     }
                 } else {
-                    // _PCM.getReadyProcess();
+                    _SCHED.schedule();
                     _CPU.cycle();
                 }                
             } else {                      // If there are no interrupts and there is nothing being executed then just be idle. {

@@ -43,9 +43,11 @@
                 
             }
 
-            public runProcess():void {
+            public execProcess(pid?:string):void {
+                if (pid == undefined) {
+                    pid = Object.keys(this.readyQueue)[0]
+                }
                 // move a proccess from the Ready queue onto the CPU
-                var pid = Object.keys(this.readyQueue)[0]
                 this.runningprocess = this.readyQueue[pid];
                 delete this.readyQueue[pid];
                 // Load the saved state of the process to the CPU
@@ -62,6 +64,7 @@
                     delete this.residentQueue[pid];
                     this.readyQueue[pid].state = `ready`;                
                 });
+                this.execProcess();
             }
 
             public loadProcessState():void{
@@ -71,8 +74,6 @@
                 _CPU.Xreg = this.runningprocess.XReg;
                 _CPU.Yreg = this.runningprocess.YReg;
                 _CPU.Zflag = this.runningprocess.ZFlag;
-                // _CPU.turnaroundTime = this.runningprocess.turnaroundTime;
-                // _CPU.waitTime = this.runningprocess.waitTime;
             }
 
             public saveProcessState():void{
@@ -83,8 +84,16 @@
                 this.runningprocess.ZFlag = _CPU.Zflag;
                 this.runningprocess.state = "Waiting";
                 this.runningprocess.IR = _MemoryAccessor.readMemory(_CPU.PC);
-                // this.runningprocess.turnaroundTime = _CPU.turnaroundTime;
-                // this.runningprocess.waitTime =  _CPU.waitTime;
+            }
+
+            public calcProcessStats():void {
+                // update waittime
+                Object.keys(this.readyQueue).forEach(process => {
+                    this.readyQueue[process].waitTime++;
+                    this.readyQueue[process].turnaroundTime++;
+                });
+                // update turnaround time
+                this.runningprocess.turnaroundTime++;
             }
     
             public terminateProcess(pid) {
@@ -111,7 +120,7 @@
                 } else if (this.runningprocess.base === 513) {
                     _MemoryManager.wipeSeg02();
                 }
-                
+
                 var processFound = false;
 
                 Object.keys(this.residentQueue).forEach(curPid => {
@@ -142,34 +151,20 @@
                         }
                     });
                 }
-                if (!processFound && this.runningprocess.pid == pid){
+                if (this.runningprocess.pid == pid && Object.keys(_PCM.readyQueue).length != 0){
                     this.terminatedQueue[pid] = this.runningprocess;
                     this.terminatedQueue[pid].state = `terminated`;
+                    
+                } else if (Object.keys(_PCM.readyQueue).length == 0) {
+                    _CPU.isExecuting = false;
                     this.runningprocess =  new PCB(-1,0,0);
                     this.runningprocess.init();
-
-                } 
+                }
                 
                 if (processFound) {
                     Control.hostLog(`PID ${pid} terminated`,`os`)
                 } else {
                     Control.hostLog(`ERROR ${pid} NOT FOUND`,`os`)
-                }
-            }
-
-
-            // scheduling stuffff
-
-            // get any ready processes left
-            public getReadyProcess() {
-                //if there is still a ready proccess run it otherwise shutdown
-                console.log(Object.keys(this.readyQueue).length)
-                if (Object.keys(this.readyQueue).length != 0) {
-                    this.runProcess()
-                }
-                else {
-                    Control.hostLog(`CPU Shutting down no processes left to run`, `os`);
-                    _CPU.isExecuting = false;
                 }
             }
         }

@@ -42,7 +42,9 @@ var _MemoryManager: DOS.MemoryManager;
 
 //process control blocks
 var _PCB: DOS.PCB;
-var _PCM: DOS.processManager
+var _PCM: DOS.processManager;
+
+var _SCHED: DOS.Scheduler
 
 var _OSclock: number = 0;  // Page 23.
 

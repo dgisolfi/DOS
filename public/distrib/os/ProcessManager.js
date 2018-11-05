@@ -30,9 +30,11 @@ var DOS;
             DOS.Control.hostLog("Process:" + process.pid + " created", "os");
             return process.pid;
         };
-        processManager.prototype.runProcess = function () {
+        processManager.prototype.execProcess = function (pid) {
+            if (pid == undefined) {
+                pid = Object.keys(this.readyQueue)[0];
+            }
             // move a proccess from the Ready queue onto the CPU
-            var pid = Object.keys(this.readyQueue)[0];
             this.runningprocess = this.readyQueue[pid];
             delete this.readyQueue[pid];
             // Load the saved state of the process to the CPU
@@ -49,6 +51,7 @@ var DOS;
                 delete _this.residentQueue[pid];
                 _this.readyQueue[pid].state = "ready";
             });
+            this.execProcess();
         };
         processManager.prototype.loadProcessState = function () {
             _CPU.PC = this.runningprocess.PC;
@@ -57,8 +60,6 @@ var DOS;
             _CPU.Xreg = this.runningprocess.XReg;
             _CPU.Yreg = this.runningprocess.YReg;
             _CPU.Zflag = this.runningprocess.ZFlag;
-            // _CPU.turnaroundTime = this.runningprocess.turnaroundTime;
-            // _CPU.waitTime = this.runningprocess.waitTime;
         };
         processManager.prototype.saveProcessState = function () {
             this.runningprocess.PC = _CPU.PC;
@@ -68,8 +69,16 @@ var DOS;
             this.runningprocess.ZFlag = _CPU.Zflag;
             this.runningprocess.state = "Waiting";
             this.runningprocess.IR = _MemoryAccessor.readMemory(_CPU.PC);
-            // this.runningprocess.turnaroundTime = _CPU.turnaroundTime;
-            // this.runningprocess.waitTime =  _CPU.waitTime;
+        };
+        processManager.prototype.calcProcessStats = function () {
+            var _this = this;
+            // update waittime
+            Object.keys(this.readyQueue).forEach(function (process) {
+                _this.readyQueue[process].waitTime++;
+                _this.readyQueue[process].turnaroundTime++;
+            });
+            // update turnaround time
+            this.runningprocess.turnaroundTime++;
         };
         processManager.prototype.terminateProcess = function (pid) {
             // kill running process
@@ -120,9 +129,12 @@ var DOS;
                     }
                 });
             }
-            if (!processFound && this.runningprocess.pid == pid) {
+            if (this.runningprocess.pid == pid && Object.keys(_PCM.readyQueue).length != 0) {
                 this.terminatedQueue[pid] = this.runningprocess;
                 this.terminatedQueue[pid].state = "terminated";
+            }
+            else if (Object.keys(_PCM.readyQueue).length == 0) {
+                _CPU.isExecuting = false;
                 this.runningprocess = new DOS.PCB(-1, 0, 0);
                 this.runningprocess.init();
             }
@@ -131,19 +143,6 @@ var DOS;
             }
             else {
                 DOS.Control.hostLog("ERROR " + pid + " NOT FOUND", "os");
-            }
-        };
-        // scheduling stuffff
-        // get any ready processes left
-        processManager.prototype.getReadyProcess = function () {
-            //if there is still a ready proccess run it otherwise shutdown
-            console.log(Object.keys(this.readyQueue).length);
-            if (Object.keys(this.readyQueue).length != 0) {
-                this.runProcess();
-            }
-            else {
-                DOS.Control.hostLog("CPU Shutting down no processes left to run", "os");
-                _CPU.isExecuting = false;
             }
         };
         return processManager;

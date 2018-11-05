@@ -49,11 +49,11 @@ module DOS {
             // Get the next OP Code
             this.IR = _MemoryAccessor.readMemory(this.PC);
             
-            // console.log(`PC: ${this.PC}`, `IR: ${this.IR}`);
-           
+       
             this.runOpCode(this.IR);
+            
+           
             // Increment the program counter
-            _PCM.runningprocess.turnaroundTime++;
             _PCM.runningprocess.PC =  this.PC;
             _PCM.runningprocess.IR =  this.IR;
             _PCM.runningprocess.Acc = this.Acc;

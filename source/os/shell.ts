@@ -648,7 +648,7 @@ module DOS {
                     _PCM.readyQueue[pid] = _PCM.residentQueue[pid];
                     delete _PCM.residentQueue[pid];
                     _PCM.readyQueue[pid].state = `ready`;
-                    _PCM.runProcess();
+                    _PCM.execProcess();
                     _StdOut.putText(`Running program with <pid> ${pid}`);
                     _StdOut.advanceLine();
                 }
