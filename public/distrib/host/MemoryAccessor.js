@@ -12,13 +12,22 @@ var DOS;
         function MemoryAccessor() {
         }
         MemoryAccessor.prototype.readMemory = function (address) {
-            var hex_location = (_PCM.runningProccess.sRegister + address);
-            // console.log(_MEM.memory[3])
+            var hex_location = (_PCM.runningprocess.base + address);
+            this.enforceBoundaries(hex_location);
             return (_MEM.memory[hex_location]);
         };
         MemoryAccessor.prototype.writeMemory = function (address, data) {
-            var hex_location = (_PCM.runningProccess.sRegister + address);
+            var hex_location = (_PCM.runningprocess.base + address);
+            this.enforceBoundaries(hex_location);
             _MEM.memory[hex_location] = data;
+        };
+        MemoryAccessor.prototype.enforceBoundaries = function (hex_location) {
+            if (hex_location > _PCM.runningprocess.limit) {
+                _KernelInterruptQueue.enqueue(new DOS.Interrupt(OUT_OF_BOUNDS, _PCM.runningprocess.pid));
+            }
+            if (hex_location < _PCM.runningprocess.base) {
+                _KernelInterruptQueue.enqueue(new DOS.Interrupt(OUT_OF_BOUNDS, _PCM.runningprocess.pid));
+            }
         };
         return MemoryAccessor;
     }());

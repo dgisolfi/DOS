@@ -9,10 +9,10 @@
 var DOS;
 (function (DOS) {
     var PCB = /** @class */ (function () {
-        function PCB(pid, sRegister, eRegister) {
+        function PCB(pid, base, limit) {
             this.pid = pid;
-            this.sRegister = sRegister;
-            this.eRegister = eRegister;
+            this.base = base;
+            this.limit = limit;
         }
         PCB.prototype.init = function () {
             this.state = "resident";

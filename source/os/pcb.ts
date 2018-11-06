@@ -22,8 +22,8 @@ module DOS {
         public waitTime: number;
         constructor(
             public pid,
-            public sRegister,
-            public eRegister) {      
+            public base,
+            public limit) {      
         }
 
         public init() {
@@ -38,12 +38,5 @@ module DOS {
             this.waitTime = 0;
             
         }
-
-        // public runProccess(pid) {
-            
-        //     this.state = "running";
-        // }
-
-        
     }
 }

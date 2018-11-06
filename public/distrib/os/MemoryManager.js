@@ -40,24 +40,24 @@ var DOS;
                 memIndex++;
             });
             registers[0] = startIndex;
-            registers[1] = memIndex;
+            registers[1] = endIndex; //memIndex;
             return registers;
         };
         MemoryManager.prototype.wipeSeg00 = function () {
             for (var i = 0; i <= 255; i++) {
-                _MEM.memory.splice(i, 0, "00");
+                _MEM.memory[i] = "00";
                 _MEM.isSeg00Full = false;
             }
         };
         MemoryManager.prototype.wipeSeg01 = function () {
             for (var i = 256; i <= 512; i++) {
-                _MEM.memory.splice(i, 0, "00");
+                _MEM.memory[i] = "00";
                 _MEM.isSeg01Full = false;
             }
         };
         MemoryManager.prototype.wipeSeg02 = function () {
             for (var i = 513; i <= 768; i++) {
-                _MEM.memory.splice(i, 0, "00");
+                _MEM.memory[i] = "00";
                 _MEM.isSeg02Full = false;
             }
         };

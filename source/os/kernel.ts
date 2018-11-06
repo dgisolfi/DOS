@@ -1,5 +1,6 @@
 ///<reference path="../globals.ts" />
 ///<reference path="queue.ts" />
+///<reference path="scheduler.ts" />
 
 /* ------------
      Kernel.ts
@@ -33,12 +34,15 @@ module DOS {
             _MEM = new Memory();
             _MEM.init();
 
-            _PCM = new ProccessManager();
+            _PCM = new ProcessManager();
             _PCM.init();
 
+            _SCHED = new Scheduler();
+            _SCHED.init();
+
              // Initialize the console.
-             _Console = new Console();          // The command line interface / console I/O device.
-             _Console.init();
+            _Console = new Console();          // The command line interface / console I/O device.
+            _Console.init();
  
              // Initialize standard input and output to the _Console.
              _StdIn  = _Console;
@@ -101,19 +105,19 @@ module DOS {
             } else if (_CPU.isExecuting) { // If there are no interrupts then run one CPU cycle if there is anything being processed. {
                 if (_SingleStep) {
                     if (_Step === true){
+                        _SCHED.schedule();
                         _CPU.cycle();
                         _Step = false;
                     } else {
                         this.krnTrace("Idle");
                     }
                 } else {
+                    _SCHED.schedule();
                     _CPU.cycle();
-                    // console.log(`cycle`)
                 }                
             } else {                      // If there are no interrupts and there is nothing being executed then just be idle. {
                 this.krnTrace("Idle");
             }
-
             this.updateUI();
         }
 
@@ -150,12 +154,19 @@ module DOS {
                     _krnKeyboardDriver.isr(params);   // Kernel mode device driver
                     _StdIn.handleInput();
                     break;
-                case PROCESS_EXIT:                  // exit proccesses
+                case PROCESS_EXIT:                  // exit processes
                     _PCM.terminateProcess(params)
                     break;
                 case PRINT_IR:
                     _StdOut.putText(params);
-                    break;
+                    break
+                case OUT_OF_BOUNDS:
+                    _PCM.terminateProcess(params)
+                    _StdOut.putText(`Process terminated due to attempt to read or write out of its memory bounds.`);
+                    break
+                case CONTEXT_SWITCH:
+                    _SCHED.contextSwitch(params)
+                    break
 
                 default:
                     this.krnTrapError("Invalid Interrupt Request. irq=" + irq + " params=[" + params + "]");

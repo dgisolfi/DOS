@@ -19,6 +19,8 @@ var KEYBOARD_IRQ = 1;
 // Are these values important???
 var PROCESS_EXIT = 2;
 var PRINT_IR = 3;
+var OUT_OF_BOUNDS = 4;
+var CONTEXT_SWITCH = 5;
 //
 // Global Variables
 // TODO: Make a global object and use that instead of the "_" naming convention in the global namespace.
@@ -28,9 +30,10 @@ var _CPU; // Utilize TypeScript's type annotation system to ensure that _CPU is 
 var _MEM;
 var _MemoryAccessor;
 var _MemoryManager;
-//Proccess control blocks
+//process control blocks
 var _PCB;
 var _PCM;
+var _SCHED;
 var _OSclock = 0; // Page 23.
 var _Mode = 0; // (currently unused)  0 = Kernel Mode, 1 = User Mode.  See page 21.
 var _Canvas; // Initialized in Control.hostInit().

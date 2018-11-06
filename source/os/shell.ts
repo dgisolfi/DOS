@@ -35,112 +35,125 @@ module DOS {
 
             // ver
             sc = new ShellCommand(this.shellVer,
-                                  `ver`,
-                                  `- Displays the current version data.`);
+                `ver`,
+                `- Displays the current version data.`);
             this.commandList[this.commandList.length] = sc;
 
             // help
             sc = new ShellCommand(this.shellHelp,
-                                  `help`,
-                                  `- This is the help command. Seek help.`);
+                `help`,
+                `- This is the help command. Seek help.`);
             this.commandList[this.commandList.length] = sc;
 
             // shutdown
             sc = new ShellCommand(this.shellShutdown,
-                                  `shutdown`,
-                                  `- Shuts down the virtual OS but leaves the underlying host / hardware simulation running.`);
+                `shutdown`,
+                `- Shuts down the virtual OS but leaves the underlying host / hardware simulation running.`);
             this.commandList[this.commandList.length] = sc;
 
             // cls
             sc = new ShellCommand(this.shellCls,
-                                  `cls`,
-                                  `- Clears the screen and resets the cursor position.`);
+                `cls`,
+                `- Clears the screen and resets the cursor position.`);
             this.commandList[this.commandList.length] = sc;
 
             // man <topic>
             sc = new ShellCommand(this.shellMan,
-                                  `man`,
-                                  `<topic> - Displays the MANual page for <topic>.`);
+                `man`,
+                `<topic> - Displays the MANual page for <topic>.`);
             this.commandList[this.commandList.length] = sc;
 
             // trace <on | off>
             sc = new ShellCommand(this.shellTrace,
-                                  `trace`,
-                                  `<on | off> - Turns the OS trace on or off.`);
+                `trace`,
+                `<on | off> - Turns the OS trace on or off.`);
             this.commandList[this.commandList.length] = sc;
 
             // rot13 <string>
             sc = new ShellCommand(this.shellRot13,
-                                  `rot13`,
-                                  `<string> - Does rot13 obfuscation on <string>.`);
+                `rot13`,
+                `<string> - Does rot13 obfuscation on <string>.`);
             this.commandList[this.commandList.length] = sc;
 
             // prompt <string>
             sc = new ShellCommand(this.shellPrompt,
-                                  `prompt`,
-                                  `<string> - Sets the prompt.`);
+                `prompt`,
+                `<string> - Sets the prompt.`);
             this.commandList[this.commandList.length] = sc;
 
             // date
             sc = new ShellCommand(this.shellDate,
-                                  `date`,
-                                  ` - Returns the current date and time`);
+                `date`,
+                ` - Returns the current date and time`);
             this.commandList[this.commandList.length] = sc;
 
             //whereami
             sc = new ShellCommand(this.shellWhereAmI,
-                                  `whereami`,
-                                  ` - Returns user location`);
+                `whereami`,
+                ` - Returns user location`);
             this.commandList[this.commandList.length] = sc;
 
             //sarcasm
             sc = new ShellCommand(this.shellSarcasm,
-                                  `sarcasm`,
-                                  `<on | off> - Turns the OS sarcasm mode on or off.`);
+                `sarcasm`,
+                `<on | off> - Turns the OS sarcasm mode on or off.`);
             this.commandList[this.commandList.length] = sc;
 
-            //get client IP
-            // sc = new ShellCommand(this.shellGetIP,
-            //                       `myip`,
-            //                       `d`);
-            // this.commandList[this.commandList.length] = sc;
-
             sc = new ShellCommand(this.shellStatus,
-                                  `status`,
-                                  ` <string> - Updates the status.`);
+                `status`,
+                ` <string> - Updates the status.`);
             this.commandList[this.commandList.length] = sc;
 
             sc = new ShellCommand(this.shellBSOD,
-                                  `bsod`,
-                                  `- Force break the OS.`);
+                `bsod`,
+                `- Force break the OS.`);
             this.commandList[this.commandList.length] = sc;
 
             sc = new ShellCommand(this.shellDarkMode,
-                                  `darktheme`,
-                                  `<on | off> - enables or disables the dark theme for the UI.`);
+                `darktheme`,
+                `<on | off> - enables or disables the dark theme for the UI.`);
             this.commandList[this.commandList.length] = sc;
 
             sc = new ShellCommand(this.shellLoad,
-                                  `load`,
-                                  `- Validates user code.`);
+                `load`,
+                `- Validates user code.`);
             this.commandList[this.commandList.length] = sc;
             
             sc = new ShellCommand(this.shellRun,
-                                  `run`,
-                                  `<int> - executes a loaded program given a PID.`);
+                `run`,
+                `<int> - executes a loaded program given a PID.`);
             this.commandList[this.commandList.length] = sc;
 
             sc = new ShellCommand(this.verboseMode,
                 `verbose`,
-                `<on | off> - enables or disables verbose mode for running proccessses.`);
+                `<on | off> - enables or disables verbose mode for running processses.`);
             this.commandList[this.commandList.length] = sc;
 
+            sc = new ShellCommand(this.clearMem,
+                `clearmem`,
+                `resets all memory segments`);
+            this.commandList[this.commandList.length] = sc;
 
+            sc = new ShellCommand(this.ps,
+                `ps`,
+                `- list the running processes and their IDs`);
+            this.commandList[this.commandList.length] = sc;
+
+            sc = new ShellCommand(this.kill,
+                `kill`,
+                `<pid> - kills the specified process id.`);
+            this.commandList[this.commandList.length] = sc;
+
+            sc = new ShellCommand(this.runAll,
+                `runall`,
+                `- runs all resident programs.`);
+            this.commandList[this.commandList.length] = sc;
+
+            sc = new ShellCommand(this.setQuantum,
+                `quantum`,
+                `<int> — let the user set the Round Robin quantum.`);
+            this.commandList[this.commandList.length] = sc;
             
-
-            // ps  - list the running processes and their IDs
-            // kill <id> - kills the specified process id.
-
             //
             // Display the initial prompt.
             this.putPrompt();
@@ -366,7 +379,7 @@ module DOS {
                         break;
 
                     case `run`:
-                        _StdOut.putText(`executes the proccess specified with <int> PID.`);
+                        _StdOut.putText(`executes the process specified with <int> PID.`);
                         break;
 
                     case `verbose`:
@@ -602,13 +615,54 @@ module DOS {
             // take only the very first PID and execute it
             if (args.length > 1){
                 _StdOut.putText(`Run takes only 1 PID, running first found, ${args[0]}.`);
-            } else if (args.length < 1) {
+            } else if (args.length == 0) {
                 _StdOut.putText(`Please specify the PID to execute.`);
+            } else{
+                // look to see if the PID is valid
+                var pidFound = false;
+                Object.keys(_PCM.residentQueue).forEach(pid => {
+                    if (pid == args[0]) {
+                        pidFound = true;
+                    }  
+                });
+                // not found, check if its running already
+                if (!pidFound){
+                    Object.keys(_PCM.readyQueue).forEach(pid => {
+                        if (pid == args[0]) {
+                            pidFound = true;
+                        }  
+                    });
+                    if(pidFound){
+                        _StdOut.putText(`PID ${args[0]} is already loaded and in the Ready Queue`);
+                        // finally check if it ded
+                    } else {
+                        Object.keys(_PCM.terminatedQueue).forEach(pid => {
+                            if (pid == args[0]) {
+                                pidFound = true;
+                            }  
+                        });
+                        if(pidFound){
+                            _StdOut.putText(`PID ${args[0]} is terminated and cannot be rerun.`);
+                        } else {
+                            _StdOut.putText(`PID "${args[0]}" not a valid program ID.`);
+                        }
+                    }
+
+                } else {
+                 
+                    var pid = args[0];
+                    _PCM.readyQueue[pid] = _PCM.residentQueue[pid];
+                    delete _PCM.residentQueue[pid];
+                    _PCM.readyQueue[pid].state = `ready`;
+                    _SCHED.CycleQueue.enqueue(pid);
+                    if (_CPU.isExecuting != true){
+                        _PCM.execProcess();
+                    }
+                    _StdOut.putText(`Running program with <pid> ${pid}`);
+                    _StdOut.advanceLine();
+                }
+                
             }
-            _PCM.runProcess(args[0]);
-            _StdOut.putText(`Running program with <pid> ${args[0]}`);
-            _StdOut.advanceLine();
- 
         }
 
         public verboseMode(args) {
@@ -630,6 +684,99 @@ module DOS {
                 }
             } else {
                 _StdOut.putText(`Usage: verbose <on | off>`);
+            }
+        }
+
+        public clearMem() {
+            if (_CPU.isExecuting){
+                _StdOut.putText(`Error: process ${_PCM.runningprocess} is still executing, wait until the process has finished executing`);
+            } else {
+                _MemoryManager.wipeSeg00();
+                _MemoryManager.wipeSeg01();
+                _MemoryManager.wipeSeg02();
+                _StdOut.putText(`Memory Cleared`);
+
+            }
+           
+        }
+
+        public isEmptyObject(obj) {
+            for(var prop in obj) {
+               if (obj.hasOwnProperty(prop)) {
+                  return false;
+               }
+            }
+            return true;
+        }
+
+        public ps() {
+            if (_PCM.runningprocess.pid == -1 && Object.keys(_PCM.residentQueue).length == 0 && Object.keys(_PCM.readyQueue).length == 0){
+                _StdOut.putText(`There are currently no process running, ready or resident`);
+            } else {
+                var outMsg = []
+                if (_PCM.runningprocess.pid != -1 && _PCM.runningprocess.state != `terminated`){
+                    outMsg.push(`[PID]:${_PCM.runningprocess.pid} ${_PCM.runningprocess.state}`)
+                }
+                // resident PIDS
+                if (Object.keys(_PCM.residentQueue).length > 0){
+                    Object.keys(_PCM.residentQueue).forEach(process => {
+                        outMsg.push(`[PID]:${_PCM.residentQueue[process].pid} ${_PCM.residentQueue[process].state}`)
+                    });
+                }
+                
+                // ready PIDS
+                if (Object.keys(_PCM.readyQueue).length > 0){
+                    Object.keys(_PCM.readyQueue).forEach(process => {
+                        outMsg.push(`[PID]:${_PCM.readyQueue[process].pid} ${_PCM.readyQueue[process].state}`)
+                    });
+                }
+                
+                // terminated PIDS
+                if (Object.keys(_PCM.terminatedQueue).length > 0){
+                    Object.keys(_PCM.terminatedQueue).forEach(process => {
+                        outMsg.push(`[PID]:${_PCM.terminatedQueue[process].pid} ${_PCM.terminatedQueue[process].state}`)
+                    });
+                }
+                // _StdOut.advanceLine();
+                outMsg.forEach(msg => {
+                    _StdOut.putText(msg);
+                    _StdOut.advanceLine();
+                });
+            } 
+        }
+
+        public kill(args) {
+            var pid = args[0]
+            if (pid === parseInt(pid, 10)){
+                _StdOut.putText(`not a valid PID, must be of type <int>`);
+            } else {
+                Object.keys(_PCM.terminatedQueue).forEach(currPid => {
+                    if(currPid == pid){
+                        _StdOut.putText(`Error: process ${pid} already terminated`);
+                    }
+                });
+                _PCM.terminateProcess(pid);
+
+            }
+        }
+
+        // load all resident processes into ready queue
+        public runAll() {
+            // load all resident processes into ready queue
+            _PCM.runAll();
+        }
+
+        public setQuantum(args) {
+            var q = args[0]
+            if (q === parseInt(q, 10)){
+                _StdOut.putText(`not a valid quantum, must be of type <int>`);
+                _Console.advanceLine();
+                _StdOut.putText(`quantum => ${_SCHED.quantum}`);
+            } else {
+                _SCHED.quantum = q
+                _StdOut.putText(`quantum updated`);
+                _Console.advanceLine();
+                _StdOut.putText(`quantum => ${_SCHED.quantum}`);
             }
         }
     }
