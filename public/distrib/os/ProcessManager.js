@@ -32,7 +32,7 @@ var DOS;
         };
         processManager.prototype.execProcess = function (pid) {
             if (pid == undefined) {
-                pid = Object.keys(this.readyQueue)[0];
+                pid = _SCHED.CycleQueue.dequeue();
             }
             // move a proccess from the Ready queue onto the CPU
             this.runningprocess = this.readyQueue[pid];
@@ -50,9 +50,12 @@ var DOS;
                 _this.readyQueue[pid] = _this.residentQueue[pid];
                 delete _this.residentQueue[pid];
                 _this.readyQueue[pid].state = "ready";
+                _SCHED.CycleQueue.enqueue(pid);
             });
+            // Pull a ready process and begin running
             this.execProcess();
         };
+        // Load the old process state onto the CPU
         processManager.prototype.loadProcessState = function () {
             _CPU.PC = this.runningprocess.PC;
             _CPU.IR = this.runningprocess.IR;
@@ -67,7 +70,9 @@ var DOS;
             this.runningprocess.XReg = _CPU.Xreg;
             this.runningprocess.YReg = _CPU.Yreg;
             this.runningprocess.ZFlag = _CPU.Zflag;
-            this.runningprocess.state = "Waiting";
+            if (this.runningprocess.state != "terminated") {
+                this.runningprocess.state = "Waiting";
+            }
             this.runningprocess.IR = _MemoryAccessor.readMemory(_CPU.PC);
         };
         processManager.prototype.calcProcessStats = function () {
@@ -129,9 +134,10 @@ var DOS;
                     }
                 });
             }
+            this.runningprocess.state = "terminated";
+            this.terminatedQueue[pid] = this.runningprocess;
             if (this.runningprocess.pid == pid && Object.keys(_PCM.readyQueue).length != 0) {
-                this.terminatedQueue[pid] = this.runningprocess;
-                this.terminatedQueue[pid].state = "terminated";
+                this.execProcess();
             }
             else if (Object.keys(_PCM.readyQueue).length == 0) {
                 _CPU.isExecuting = false;

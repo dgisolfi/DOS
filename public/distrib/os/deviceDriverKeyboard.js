@@ -44,7 +44,6 @@ var DOS;
         DeviceDriverKeyboard.prototype.krnKbdGetSymbol = function (keyCode, isShifted) {
             var requested_symbol = "";
             if (isShifted) {
-                console.log(keyCode);
                 _shiftedSymbols.forEach(function (key) {
                     if (keyCode === key.KeyCode) {
                         requested_symbol = key.Symbol;

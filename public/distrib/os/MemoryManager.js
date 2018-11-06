@@ -40,7 +40,7 @@ var DOS;
                 memIndex++;
             });
             registers[0] = startIndex;
-            registers[1] = memIndex;
+            registers[1] = endIndex; //memIndex;
             return registers;
         };
         MemoryManager.prototype.wipeSeg00 = function () {

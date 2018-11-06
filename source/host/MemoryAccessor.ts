@@ -15,13 +15,22 @@ module DOS {
 
         public readMemory(address): string {
             var hex_location = (_PCM.runningprocess.base + address);
-            // console.log(_MEM.memory[3])
+            //enforceBoundaries(hex_location)
             return(_MEM.memory[hex_location]);
         }
 
         public writeMemory(address, data) {
             var hex_location = (_PCM.runningprocess.base + address);
+            //enforceBoundaries(hex_location)
             _MEM.memory[hex_location] = data;
+        }
+
+        public enforceBoundaries(hex_location){
+            if (hex_location > _PCM.runningprocess.limit) {
+            }
+
+            if (hex_location < _PCM.runningprocess.base) {
+            }
         }
     }
 }

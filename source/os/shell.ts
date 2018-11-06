@@ -148,6 +148,11 @@ module DOS {
                 `runall`,
                 `- runs all resident programs.`);
             this.commandList[this.commandList.length] = sc;
+
+            sc = new ShellCommand(this.setQuantum,
+                `quantum`,
+                `<int> — let the user set the Round Robin quantum.`);
+            this.commandList[this.commandList.length] = sc;
             
             //
             // Display the initial prompt.
@@ -648,7 +653,8 @@ module DOS {
                     _PCM.readyQueue[pid] = _PCM.residentQueue[pid];
                     delete _PCM.residentQueue[pid];
                     _PCM.readyQueue[pid].state = `ready`;
-                    _PCM.execProcess();
+                    _SCHED.CycleQueue.enqueue(pid); 
+                    _CPU.isExecuting = true;
                     _StdOut.putText(`Running program with <pid> ${pid}`);
                     _StdOut.advanceLine();
                 }
@@ -755,6 +761,20 @@ module DOS {
         public runAll() {
             // load all resident processes into ready queue
             _PCM.runAll();
+        }
+
+        public setQuantum(args) {
+            var q = args[0]
+            if (q === parseInt(q, 10)){
+                _StdOut.putText(`not a valid quantum, must be of type <int>`);
+                _Console.advanceLine();
+                _StdOut.putText(`quantum => ${_SCHED.quantum}`);
+            } else {
+                _SCHED.quantum = q
+                _StdOut.putText(`quantum updated`);
+                _Console.advanceLine();
+                _StdOut.putText(`quantum => ${_SCHED.quantum}`);
+            }
         }
     }
 }

@@ -207,7 +207,7 @@ var DOS;
                         var branchAddress = parseInt(branch, 16) + this.PC;
                         // console.log(`PC > ${this.PC}`, ` Branch > ${branchAddress}`);
                         // if the branch will exceed the memory, go back to 0
-                        if (branchAddress > _PCM.runningprocess.limit) {
+                        if (branchAddress > _PCM.runningprocess.limit % 256) {
                             branchAddress = branchAddress % 256;
                         }
                         // Add 2 to account for the branch op and the location

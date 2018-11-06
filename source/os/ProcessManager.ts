@@ -17,8 +17,6 @@
             public terminatedQueue: object;
             public runningprocess: DOS.PCB;
 
-            constructor() {}
-    
             public init() {
                 this.pidCounter = 0; 
                 this.residentQueue = {};         
@@ -43,10 +41,12 @@
                 
             }
 
-            public execProcess(pid?:string):void {
+            public execProcess(pid?:number):void {
+
                 if (pid == undefined) {
-                    pid = Object.keys(this.readyQueue)[0]
+                    pid = _SCHED.CycleQueue.dequeue()
                 }
+
                 // move a proccess from the Ready queue onto the CPU
                 this.runningprocess = this.readyQueue[pid];
                 delete this.readyQueue[pid];
@@ -54,6 +54,8 @@
                 this.loadProcessState();
                 Control.hostLog(`Running Process:${pid}`, `os`);
                 this.runningprocess.state = `running`;
+
+
                 _CPU.isExecuting = true;
             }
 
@@ -62,11 +64,14 @@
                 Object.keys(this.residentQueue).forEach(pid => {
                     this.readyQueue[pid] = this.residentQueue[pid];
                     delete this.residentQueue[pid];
-                    this.readyQueue[pid].state = `ready`;                
+                    this.readyQueue[pid].state = `ready`;   
+                    _SCHED.CycleQueue.enqueue(pid);             
                 });
+                // Pull a ready process and begin running
                 this.execProcess();
             }
 
+            // Load the old process state onto the CPU
             public loadProcessState():void{
                 _CPU.PC = this.runningprocess.PC;
                 _CPU.IR = this.runningprocess.IR;
@@ -76,13 +81,15 @@
                 _CPU.Zflag = this.runningprocess.ZFlag;
             }
 
-            public saveProcessState():void{
+            public saveProcessState():void {
                 this.runningprocess.PC = _CPU.PC;
                 this.runningprocess.Acc = _CPU.Acc;
                 this.runningprocess.XReg = _CPU.Xreg; 
                 this.runningprocess.YReg = _CPU.Yreg;
                 this.runningprocess.ZFlag = _CPU.Zflag;
-                this.runningprocess.state = "Waiting";
+                if (this.runningprocess.state != `terminated`){
+                    this.runningprocess.state = `Waiting`;
+                }
                 this.runningprocess.IR = _MemoryAccessor.readMemory(_CPU.PC);
             }
 
@@ -100,8 +107,6 @@
                 // kill running process
                 
                 Control.hostLog(`Process:${pid} terminated`, `os`);
-
-               
 
                 _StdOut.advanceLine();
                 _StdOut.putText(`process ${pid} finished`);
@@ -151,13 +156,16 @@
                         }
                     });
                 }
+
+                this.runningprocess.state = `terminated`;
+                this.terminatedQueue[pid] = this.runningprocess;
+
                 if (this.runningprocess.pid == pid && Object.keys(_PCM.readyQueue).length != 0){
-                    this.terminatedQueue[pid] = this.runningprocess;
-                    this.terminatedQueue[pid].state = `terminated`;
+                    this.execProcess();
                     
                 } else if (Object.keys(_PCM.readyQueue).length == 0) {
                     _CPU.isExecuting = false;
-                    this.runningprocess =  new PCB(-1,0,0);
+                    this.runningprocess = new PCB(-1,0,0);
                     this.runningprocess.init();
                 }
                 

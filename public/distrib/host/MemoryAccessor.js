@@ -13,11 +13,20 @@ var DOS;
         }
         MemoryAccessor.prototype.readMemory = function (address) {
             var hex_location = (_PCM.runningprocess.base + address);
-            // console.log(_MEM.memory[3])
+            if (hex_location > _PCM.runningprocess.limit) {
+                // console.log(`Attempted access over limit ${hex_location} limit: ${_PCM.runningprocess.limit} `)
+                hex_location = -256;
+            }
+            if (hex_location < _PCM.runningprocess.base) {
+                hex_location = +256;
+            }
             return (_MEM.memory[hex_location]);
         };
         MemoryAccessor.prototype.writeMemory = function (address, data) {
             var hex_location = (_PCM.runningprocess.base + address);
+            if (hex_location > _PCM.runningprocess.limit) {
+                hex_location = -256;
+            }
             _MEM.memory[hex_location] = data;
         };
         return MemoryAccessor;

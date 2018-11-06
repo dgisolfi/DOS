@@ -22,10 +22,9 @@ const TIMER_IRQ: number = 0;  // Pages 23 (timer), 9 (interrupts), and 561 (inte
 const KEYBOARD_IRQ: number = 1;
 
 // Are these values important???
-const PROCESS_EXIT: number = 2
-
-const PRINT_IR: number = 3
-
+const PROCESS_EXIT: number = 2;
+const PRINT_IR: number = 3;
+const OUT_OF_BOUNDS: number = 4;
 
 //
 // Global Variables

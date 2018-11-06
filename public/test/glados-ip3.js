@@ -6,7 +6,7 @@ function Glados() {
    this.version = 2112;
 
    this.init = function() {
-      var msg = "Hello [subject name here]. Let's test project THREE.\n";
+      var msg = "Hello Daniel. Let's test project THREE.\n";
       alert(msg);
    };
 
@@ -99,14 +99,14 @@ function Glados() {
 								     DOS.Kernel.prototype.krnInterruptHandler(KEYBOARD_IRQ, [13, false]);           	   				
 									}, 3000);
 
-		// setTimeout(function(){ _KernelInputQueue.enqueue('r');
-		// 						     _KernelInputQueue.enqueue('u');
-		// 						     _KernelInputQueue.enqueue('n');
-		// 						     _KernelInputQueue.enqueue('a');
-		// 						     _KernelInputQueue.enqueue('l');      
-		// 						     _KernelInputQueue.enqueue('l');            
-		// 						     DOS.Kernel.prototype.krnInterruptHandler(KEYBOARD_IRQ, [13, false]);		
-		// 							}, 4000);
+		setTimeout(function(){ _KernelInputQueue.enqueue('r');
+								     _KernelInputQueue.enqueue('u');
+								     _KernelInputQueue.enqueue('n');
+								     _KernelInputQueue.enqueue('a');
+								     _KernelInputQueue.enqueue('l');      
+								     _KernelInputQueue.enqueue('l');            
+								     DOS.Kernel.prototype.krnInterruptHandler(KEYBOARD_IRQ, [13, false]);		
+									}, 4000);
    };
 		
 }

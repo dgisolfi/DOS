@@ -89,6 +89,7 @@ var DOS;
             else if (_CPU.isExecuting) { // If there are no interrupts then run one CPU cycle if there is anything being processed. {
                 if (_SingleStep) {
                     if (_Step === true) {
+                        _SCHED.schedule();
                         _CPU.cycle();
                         _Step = false;
                     }
