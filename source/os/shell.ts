@@ -649,12 +649,15 @@ module DOS {
                     }
 
                 } else {
+                 
                     var pid = args[0];
                     _PCM.readyQueue[pid] = _PCM.residentQueue[pid];
                     delete _PCM.residentQueue[pid];
                     _PCM.readyQueue[pid].state = `ready`;
-                    _SCHED.CycleQueue.enqueue(pid); 
-                    _CPU.isExecuting = true;
+                    _SCHED.CycleQueue.enqueue(pid);
+                    if (_CPU.isExecuting != true){
+                        _PCM.execProcess();
+                    }
                     _StdOut.putText(`Running program with <pid> ${pid}`);
                     _StdOut.advanceLine();
                 }

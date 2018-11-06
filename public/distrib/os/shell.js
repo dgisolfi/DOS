@@ -543,7 +543,9 @@ var DOS;
                     delete _PCM.residentQueue[pid];
                     _PCM.readyQueue[pid].state = "ready";
                     _SCHED.CycleQueue.enqueue(pid);
-                    _CPU.isExecuting = true;
+                    if (_CPU.isExecuting != true) {
+                        _PCM.execProcess();
+                    }
                     _StdOut.putText("Running program with <pid> " + pid);
                     _StdOut.advanceLine();
                 }

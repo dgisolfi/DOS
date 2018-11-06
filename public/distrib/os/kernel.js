@@ -30,7 +30,7 @@ var DOS;
             _MemoryAccessor = new DOS.MemoryAccessor();
             _MEM = new DOS.Memory();
             _MEM.init();
-            _PCM = new DOS.processManager();
+            _PCM = new DOS.ProcessManager();
             _PCM.init();
             _SCHED = new DOS.Scheduler();
             _SCHED.init();
@@ -141,6 +141,13 @@ var DOS;
                     break;
                 case PRINT_IR:
                     _StdOut.putText(params);
+                    break;
+                case OUT_OF_BOUNDS:
+                    _PCM.terminateProcess(params);
+                    _StdOut.putText("Process terminated due to attempt to read or write out of its memory bounds.");
+                    break;
+                case CONTEXT_SWITCH:
+                    _SCHED.contextSwitch(params);
                     break;
                 default:
                     this.krnTrapError("Invalid Interrupt Request. irq=" + irq + " params=[" + params + "]");

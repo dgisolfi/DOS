@@ -25,7 +25,7 @@ c: intro
 	@/usr/local/lib/node_modules/typescript/bin/tsc --rootDir source/ --outDir public/distrib/  source/*.ts source/host/*.ts source/os/*.ts
 
 #Run the latest deployment of the OS
-os_latest: build_os
+os_latest: build
 	@docker run -it --rm --name $(container)_prod -p48000:48000 $(image)
 
 # build development enviorment

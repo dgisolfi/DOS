@@ -25,6 +25,7 @@ const KEYBOARD_IRQ: number = 1;
 const PROCESS_EXIT: number = 2;
 const PRINT_IR: number = 3;
 const OUT_OF_BOUNDS: number = 4;
+const CONTEXT_SWITCH: number = 5;
 
 //
 // Global Variables
@@ -41,7 +42,7 @@ var _MemoryManager: DOS.MemoryManager;
 
 //process control blocks
 var _PCB: DOS.PCB;
-var _PCM: DOS.processManager;
+var _PCM: DOS.ProcessManager;
 
 var _SCHED: DOS.Scheduler
 

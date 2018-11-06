@@ -28,13 +28,12 @@ module DOS {
         public schedule():void {
             // Update Process Stats
             _PCM.calcProcessStats();
-
             if (this.scheduleMethod == `round robin`){
                 // There are still more ready processes, call for context switch
                 if (this.checkCycle() == true){
                     // Are there any more ready programs
                     if (Object.keys(_PCM.readyQueue).length != 0) {
-                        this.contextSwitch(this.CycleQueue.dequeue());
+                        _KernelInterruptQueue.enqueue(new Interrupt(CONTEXT_SWITCH, this.CycleQueue.dequeue()));
                         this.cycle = 0
                     }
                 }
@@ -52,7 +51,6 @@ module DOS {
             if (_PCM.runningprocess.state != `terminated`) {
                 this.CycleQueue.enqueue(_PCM.runningprocess.pid.toString())
             }
-
             _PCM.readyQueue[_PCM.runningprocess.pid] = _PCM.runningprocess
             
             // take next process off the ready queue

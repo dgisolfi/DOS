@@ -13,21 +13,21 @@ var DOS;
         }
         MemoryAccessor.prototype.readMemory = function (address) {
             var hex_location = (_PCM.runningprocess.base + address);
-            if (hex_location > _PCM.runningprocess.limit) {
-                // console.log(`Attempted access over limit ${hex_location} limit: ${_PCM.runningprocess.limit} `)
-                hex_location = -256;
-            }
-            if (hex_location < _PCM.runningprocess.base) {
-                hex_location = +256;
-            }
+            this.enforceBoundaries(hex_location);
             return (_MEM.memory[hex_location]);
         };
         MemoryAccessor.prototype.writeMemory = function (address, data) {
             var hex_location = (_PCM.runningprocess.base + address);
-            if (hex_location > _PCM.runningprocess.limit) {
-                hex_location = -256;
-            }
+            this.enforceBoundaries(hex_location);
             _MEM.memory[hex_location] = data;
+        };
+        MemoryAccessor.prototype.enforceBoundaries = function (hex_location) {
+            if (hex_location > _PCM.runningprocess.limit) {
+                _KernelInterruptQueue.enqueue(new DOS.Interrupt(OUT_OF_BOUNDS, _PCM.runningprocess.pid));
+            }
+            if (hex_location < _PCM.runningprocess.base) {
+                _KernelInterruptQueue.enqueue(new DOS.Interrupt(OUT_OF_BOUNDS, _PCM.runningprocess.pid));
+            }
         };
         return MemoryAccessor;
     }());

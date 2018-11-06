@@ -70,6 +70,17 @@ function Glados() {
       _KernelInputQueue.enqueue('d');
       DOS.Kernel.prototype.krnInterruptHandler(KEYBOARD_IRQ, [13, false]);
 
+    //   _KernelInputQueue.enqueue('q');
+    //   _KernelInputQueue.enqueue('u');
+    //   _KernelInputQueue.enqueue('a');
+    //   _KernelInputQueue.enqueue('n');
+    //   _KernelInputQueue.enqueue('t');
+    //   _KernelInputQueue.enqueue('u');
+    //   _KernelInputQueue.enqueue('m');
+    //   _KernelInputQueue.enqueue(' ');
+    //   _KernelInputQueue.enqueue('1');
+    //   DOS.Kernel.prototype.krnInterruptHandler(KEYBOARD_IRQ, [13, false]);
+
       // Load THREE (slightly different) valid user programs code and run them. The differences are . . .                                          . . .                                        here                                                        . . .                                                                                                                                   . . . and here.
       var code1 = "A9 00 8D 7B 00 A9 00 8D 7B 00 A9 00 8D 7C 00 A9 00 8D 7C 00 A9 01 8D 7A 00 A2 00 EC 7A 00 D0 39 A0 7D A2 02 FF AC 7B 00 A2 01 FF AD 7B 00 8D 7A 00 A9 01 6D 7A 00 8D 7B 00 A9 03 AE 7B 00 8D 7A 00 A9 00 EC 7A 00 D0 02 A9 01 8D 7A 00 A2 01 EC 7A 00 D0 05 A9 01 8D 7C 00 A9 00 AE 7C 00 8D 7A 00 A9 00 EC 7A 00 D0 02 A9 01 8D 7A 00 A2 00 EC 7A 00 D0 AC A0 7F A2 02 FF 00 00 00 00 61 00 61 64 6F 6E 65 00";
       var code2 = "A9 00 8D 7B 00 A9 00 8D 7B 00 A9 00 8D 7C 00 A9 00 8D 7C 00 A9 01 8D 7A 00 A2 00 EC 7A 00 D0 39 A0 7D A2 02 FF AC 7B 00 A2 01 FF AD 7B 00 8D 7A 00 A9 01 6D 7A 00 8D 7B 00 A9 06 AE 7B 00 8D 7A 00 A9 00 EC 7A 00 D0 02 A9 01 8D 7A 00 A2 01 EC 7A 00 D0 05 A9 01 8D 7C 00 A9 00 AE 7C 00 8D 7A 00 A9 00 EC 7A 00 D0 02 A9 01 8D 7A 00 A2 00 EC 7A 00 D0 AC A0 7F A2 02 FF 00 00 00 00 62 00 62 64 6F 6E 65 00";

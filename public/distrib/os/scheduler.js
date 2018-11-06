@@ -30,7 +30,7 @@ var DOS;
                 if (this.checkCycle() == true) {
                     // Are there any more ready programs
                     if (Object.keys(_PCM.readyQueue).length != 0) {
-                        this.contextSwitch(this.CycleQueue.dequeue());
+                        _KernelInterruptQueue.enqueue(new DOS.Interrupt(CONTEXT_SWITCH, this.CycleQueue.dequeue()));
                         this.cycle = 0;
                     }
                 }

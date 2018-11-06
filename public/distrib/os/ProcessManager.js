@@ -8,10 +8,10 @@
      ------------ */
 var DOS;
 (function (DOS) {
-    var processManager = /** @class */ (function () {
-        function processManager() {
+    var ProcessManager = /** @class */ (function () {
+        function ProcessManager() {
         }
-        processManager.prototype.init = function () {
+        ProcessManager.prototype.init = function () {
             this.pidCounter = 0;
             this.residentQueue = {};
             this.readyQueue = {};
@@ -20,7 +20,7 @@ var DOS;
             this.runningprocess = new DOS.PCB(-1, 0, 0);
             this.runningprocess.init();
         };
-        processManager.prototype.createProcces = function (startIndex, memIndex) {
+        ProcessManager.prototype.createProcces = function (startIndex, memIndex) {
             // Create a new process and add it to the PCB
             var process = new DOS.PCB(this.pidCounter, startIndex, memIndex);
             process.init();
@@ -30,7 +30,7 @@ var DOS;
             DOS.Control.hostLog("Process:" + process.pid + " created", "os");
             return process.pid;
         };
-        processManager.prototype.execProcess = function (pid) {
+        ProcessManager.prototype.execProcess = function (pid) {
             if (pid == undefined) {
                 pid = _SCHED.CycleQueue.dequeue();
             }
@@ -43,7 +43,7 @@ var DOS;
             this.runningprocess.state = "running";
             _CPU.isExecuting = true;
         };
-        processManager.prototype.runAll = function () {
+        ProcessManager.prototype.runAll = function () {
             var _this = this;
             // iterate through all resident processes and move them to the ready queue
             Object.keys(this.residentQueue).forEach(function (pid) {
@@ -56,7 +56,7 @@ var DOS;
             this.execProcess();
         };
         // Load the old process state onto the CPU
-        processManager.prototype.loadProcessState = function () {
+        ProcessManager.prototype.loadProcessState = function () {
             _CPU.PC = this.runningprocess.PC;
             _CPU.IR = this.runningprocess.IR;
             _CPU.Acc = this.runningprocess.Acc;
@@ -64,18 +64,19 @@ var DOS;
             _CPU.Yreg = this.runningprocess.YReg;
             _CPU.Zflag = this.runningprocess.ZFlag;
         };
-        processManager.prototype.saveProcessState = function () {
+        // save the old process state into the PCB
+        ProcessManager.prototype.saveProcessState = function () {
             this.runningprocess.PC = _CPU.PC;
             this.runningprocess.Acc = _CPU.Acc;
             this.runningprocess.XReg = _CPU.Xreg;
             this.runningprocess.YReg = _CPU.Yreg;
             this.runningprocess.ZFlag = _CPU.Zflag;
             if (this.runningprocess.state != "terminated") {
-                this.runningprocess.state = "Waiting";
+                this.runningprocess.state = "ready";
             }
             this.runningprocess.IR = _MemoryAccessor.readMemory(_CPU.PC);
         };
-        processManager.prototype.calcProcessStats = function () {
+        ProcessManager.prototype.calcProcessStats = function () {
             var _this = this;
             // update waittime
             Object.keys(this.readyQueue).forEach(function (process) {
@@ -85,9 +86,9 @@ var DOS;
             // update turnaround time
             this.runningprocess.turnaroundTime++;
         };
-        processManager.prototype.terminateProcess = function (pid) {
-            // kill running process
+        ProcessManager.prototype.terminateProcess = function (pid) {
             var _this = this;
+            // kill running process
             DOS.Control.hostLog("Process:" + pid + " terminated", "os");
             _StdOut.advanceLine();
             _StdOut.putText("process " + pid + " finished");
@@ -151,7 +152,7 @@ var DOS;
                 DOS.Control.hostLog("ERROR " + pid + " NOT FOUND", "os");
             }
         };
-        return processManager;
+        return ProcessManager;
     }());
-    DOS.processManager = processManager;
+    DOS.ProcessManager = ProcessManager;
 })(DOS || (DOS = {}));

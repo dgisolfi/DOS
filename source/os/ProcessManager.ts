@@ -10,7 +10,7 @@
 
      module DOS {
 
-        export class processManager {
+        export class ProcessManager {
             public pidCounter: number;
             public residentQueue: object;
             public readyQueue: object;
@@ -55,7 +55,6 @@
                 Control.hostLog(`Running Process:${pid}`, `os`);
                 this.runningprocess.state = `running`;
 
-
                 _CPU.isExecuting = true;
             }
 
@@ -81,6 +80,7 @@
                 _CPU.Zflag = this.runningprocess.ZFlag;
             }
 
+            // save the old process state into the PCB
             public saveProcessState():void {
                 this.runningprocess.PC = _CPU.PC;
                 this.runningprocess.Acc = _CPU.Acc;
@@ -88,7 +88,7 @@
                 this.runningprocess.YReg = _CPU.Yreg;
                 this.runningprocess.ZFlag = _CPU.Zflag;
                 if (this.runningprocess.state != `terminated`){
-                    this.runningprocess.state = `Waiting`;
+                    this.runningprocess.state = `ready`;
                 }
                 this.runningprocess.IR = _MemoryAccessor.readMemory(_CPU.PC);
             }
@@ -105,7 +105,6 @@
     
             public terminateProcess(pid) {
                 // kill running process
-                
                 Control.hostLog(`Process:${pid} terminated`, `os`);
 
                 _StdOut.advanceLine();
