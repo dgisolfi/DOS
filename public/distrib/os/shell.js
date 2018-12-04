@@ -671,8 +671,8 @@ var DOS;
                 if (status_1 == 0) {
                     _StdOut.putText("File creation successful; <file> " + params + " written to disk");
                 }
-                else {
-                    _StdOut.putText("File creation unsuccessful; <file> " + params + " not written to disk");
+                else if (status_1 == 1) {
+                    _StdOut.putText("File creation unsuccessful; <file> " + params + " file name already in use");
                 }
             }
             else {

@@ -795,8 +795,8 @@ module DOS {
                 let status = _krnDiskDriver.createFile(params)
                 if (status == 0) {
                     _StdOut.putText(`File creation successful; <file> ${params} written to disk`);
-                } else {
-                    _StdOut.putText(`File creation unsuccessful; <file> ${params} not written to disk`);
+                } else if (status == 1) {
+                    _StdOut.putText(`File creation unsuccessful; <file> ${params}, file name already in use`);
                 }
             } else {
                 _StdOut.putText(`File creation unsuccessful; <file> ${params} not a valid file name`);

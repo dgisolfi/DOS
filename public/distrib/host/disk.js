@@ -21,10 +21,10 @@ var DOS;
                             row.push("00");
                         }
                         var fcb = new DOS.FCB(track + ":" + sector + ":" + block, "0:0:0", "0", row);
-                        sessionStorage.setItem(fcb.pointer, JSON.stringify(fcb));
+                        sessionStorage.setItem(fcb.tsb, JSON.stringify(fcb));
                         // Since TS is strict delete fcb will throw an error Instead, free
                         // the contents of a variable so it can be garbage collected  
-                        fcb = null;
+                        // fcb = null;
                     }
                 }
             }

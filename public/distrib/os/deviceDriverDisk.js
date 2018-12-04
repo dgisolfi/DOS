@@ -40,7 +40,6 @@ var DOS;
             // Initialization routine for this, the kernel-mode Disk Device Driver.
             this.status = "loaded";
             // More?
-            this.createFile("fish");
         };
         DeviceDriverDisk.prototype.getBlock = function (TSB) {
             return sessionStorage.getItem(TSB);
@@ -55,6 +54,9 @@ var DOS;
         // Create a file, dont put nothin in it yet tho besides FCB stuff
         DeviceDriverDisk.prototype.createFile = function (file_name) {
             // Check if that file is already in use
+            if (this.checkFileName(file_name)) {
+                return 1;
+            }
             // Find a free set of blocks for the file
             // Write new file
             // Convert filename to a arrary of hex values
@@ -65,7 +67,7 @@ var DOS;
             }
             // Write the data to the session
             var fcb = new DOS.FCB("0:1:0", "0:1:0", "1", hex_name);
-            sessionStorage.setItem(fcb.pointer, JSON.stringify(fcb));
+            sessionStorage.setItem(fcb.tsb, JSON.stringify(fcb));
             // Since TS is strict delete fcb will throw an error Instead, free
             // the contents of a variable so it can be garbage collected  
             fcb = null;
@@ -80,26 +82,35 @@ var DOS;
             var hex_file = parseInt(file_name, 16);
             for (var track = 0; track < _DISK.tracks; track++) {
                 for (var sector = 0; sector < _DISK.sectors; sector++) {
-                    for (var block = 0; block < _DISK.blocks; block++) {
+                    var _loop_1 = function (block) {
                         if (sector == 0 && block == 0) { // skip Master boot record
-                            continue;
+                            return "continue";
                         }
                         // build the pointer and get the block
-                        var file_block = sessionStorage.getItem(track + ":" + sector + ":" + block);
+                        var file_block = JSON.parse(sessionStorage.getItem(track + ":" + sector + ":" + block));
                         // check blocks in use
-                        if (file_block["freeBit"] != "0") {
-                            console.log(hex_file, file_block["data"]);
-                            // let name_data = 
-                            // if (hex_file == ) {
-                            //     return true;
-                            // }
+                        // console.log(file_block)
+                        if (file_block.freeBit != "0") {
+                            // Build the name from the memory and compare
+                            var hex_name_1 = "";
+                            file_block.data.forEach(function (char) {
+                                if (char != "00") {
+                                    hex_name_1 += String.fromCharCode(parseInt(char, 16));
+                                }
+                            });
+                            if (file_name == hex_name_1) {
+                                return { value: true };
+                            }
                         }
-                        else {
-                            return false;
-                        }
+                    };
+                    for (var block = 0; block < _DISK.blocks; block++) {
+                        var state_1 = _loop_1(block);
+                        if (typeof state_1 === "object")
+                            return state_1.value;
                     }
                 }
             }
+            return false;
         };
         return DeviceDriverDisk;
     }(DOS.DeviceDriver));
