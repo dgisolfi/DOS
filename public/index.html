@@ -32,6 +32,7 @@
    <script type="text/javascript" src="distrib/os/userCommand.js"></script>
    <script type="text/javascript" src="distrib/os/kernel.js"></script>
    <script type="text/javascript" src="distrib/os/pcb.js"></script>
+   <script type="text/javascript" src="distrib/os/fcb.js"></script>
    <script type="text/javascript" src="distrib/os/ProcessManager.js"></script>
    <script type="text/javascript" src="distrib/os/MemoryManager.js"></script>
    <script type="text/javascript" src="distrib/os/scheduler.js"></script>
@@ -245,12 +246,14 @@
                 <div class="card-header bg-primary text-center" id="divPCB" style="color:#ffffff;">
                     Disk
                 </div>
-                <div class="card-body text-center" >
+                <div class="card-body text-center" style="height:164px; overflow-y:auto; width: 100%;" >
                     <table class="table table-borderless table-hover table-sm" style="font-size: 12px;">
-                        <th>
-                            <tr>TSB</tr>
-                            <tr>Data</tr>
-                        </th>
+                        <thead>
+                            <tr>
+                                <th>TSB</th>
+                                <th>Data</th>
+                            </tr>
+                        </thead>
                         <tbody id="disk_data">
                         </tbody>
                     </table>

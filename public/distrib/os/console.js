@@ -349,18 +349,23 @@ var DOS;
                     for (var block = 0; block < _DISK.blocks; block++) {
                         var tsb = track + ":" + sector + ":" + block;
                         var bits = _krnDiskDriver.getBlock(tsb);
+                        var arr = bits['data'];
                         var row = "";
                         console.log(bits);
-                        // Object.keys(bits).forEach(key => {
-                        //     // row += key;
-                        //     console.log(key);
+                        console.log(bits['data']);
+                        // arr.forEach(val => {
+                        //     row += val;
                         // });
-                        data +=
-                            "<tr>\n                            <td>" + tsb + "</td>\n                            <td>" + row + "</td>\n                        </tr>";
+                        // console.log(row);
+                        // data += 
+                        // `<tr>
+                        //     <td>${tsb}</td>
+                        //     <td>${row}</td>
+                        // </tr>`
                     }
                 }
             }
-            document.getElementById("disk_data").innerHTML = data;
+            // document.getElementById(`disk_data`).innerHTML = data;
         };
         return Console;
     }());

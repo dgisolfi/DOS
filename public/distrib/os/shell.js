@@ -83,6 +83,8 @@ var DOS;
             this.commandList[this.commandList.length] = sc;
             sc = new DOS.ShellCommand(this.setQuantum, "quantum", "<int> \u2014 let the user set the Round Robin quantum.");
             this.commandList[this.commandList.length] = sc;
+            sc = new DOS.ShellCommand(this.createFile, "create", "<string> \u2014 given a string a new file will be created and given that name.");
+            this.commandList[this.commandList.length] = sc;
             //
             // Display the initial prompt.
             this.putPrompt();
@@ -656,6 +658,25 @@ var DOS;
                 _StdOut.putText("quantum updated");
                 _Console.advanceLine();
                 _StdOut.putText("quantum => " + _SCHED.quantum);
+            }
+        };
+        Shell.prototype.createFile = function (args) {
+            var params = "";
+            args.forEach(function (arg) {
+                params += arg;
+            });
+            params = params.trim();
+            if (!/[^a-zA-Z]/.test(params)) {
+                var status_1 = _krnDiskDriver.createFile(params);
+                if (status_1 == 0) {
+                    _StdOut.putText("File creation successful; <file> " + params + " written to disk");
+                }
+                else {
+                    _StdOut.putText("File creation unsuccessful; <file> " + params + " not written to disk");
+                }
+            }
+            else {
+                _StdOut.putText("File creation unsuccessful; <file> " + params + " not a valid file name");
             }
         };
         return Shell;

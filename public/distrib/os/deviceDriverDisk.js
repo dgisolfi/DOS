@@ -26,12 +26,13 @@ var DOS;
     var DeviceDriverDisk = /** @class */ (function (_super) {
         __extends(DeviceDriverDisk, _super);
         function DeviceDriverDisk() {
-            // Override the base method pointers.
             var _this = 
+            // Override the base method pointers.
             // The code below cannot run because "this" can only be
             // accessed after calling super.
             //super(this.krnKbdDriverEntry, this.krnKbdDispatchKeyPress);
             _super.call(this) || this;
+            _this.files = [];
             _this.driverEntry = _this.krnDiskDriverEntry;
             return _this;
         }
@@ -39,28 +40,64 @@ var DOS;
             // Initialization routine for this, the kernel-mode Disk Device Driver.
             this.status = "loaded";
             // More?
-            this.createFile("test");
+            this.createFile("fish");
         };
         DeviceDriverDisk.prototype.getBlock = function (TSB) {
             return sessionStorage.getItem(TSB);
         };
-        DeviceDriverDisk.prototype.createFile = function (file_name) {
-            // if (!this.checkFileName()) {
-            // }
-            var data = [];
-            for (var i = 0; i < 60; i++) {
-                data[i] = 3;
-            }
-            sessionStorage.setItem("0:1:0", JSON.stringify(data));
+        DeviceDriverDisk.prototype.hexOfString = function (file_name) {
+            var arr = [];
+            file_name.split('').forEach(function (letter) {
+                arr.push(letter.charCodeAt(0).toString(16));
+            });
+            return arr;
         };
-        DeviceDriverDisk.prototype.checkFileName = function (file_name, track_num) {
-            for (var sector = 0; sector < _DISK.sectors; sector++) {
-                for (var block = 0; block < _DISK.blocks; block++) {
-                    if (sector == 0 && block == 0) { // check for Master boot record
-                        continue;
+        // Create a file, dont put nothin in it yet tho besides FCB stuff
+        DeviceDriverDisk.prototype.createFile = function (file_name) {
+            // Check if that file is already in use
+            // Find a free set of blocks for the file
+            // Write new file
+            // Convert filename to a arrary of hex values
+            var hex_name = this.hexOfString(file_name);
+            // Fill the remaning block with 00's
+            for (var i = 0; hex_name.length < (_DISK.blockSize); i++) {
+                hex_name.push("00");
+            }
+            // Write the data to the session
+            var fcb = new DOS.FCB("0:1:0", "0:1:0", "1", hex_name);
+            sessionStorage.setItem(fcb.pointer, JSON.stringify(fcb));
+            // Since TS is strict delete fcb will throw an error Instead, free
+            // the contents of a variable so it can be garbage collected  
+            fcb = null;
+            return 0;
+            // let str = ``
+            // string.forEach(char => {
+            //    str +=  String.fromCharCode(parseInt(char, 16))
+            // });
+        };
+        DeviceDriverDisk.prototype.checkFileName = function (file_name) {
+            // convert string to hex
+            var hex_file = parseInt(file_name, 16);
+            for (var track = 0; track < _DISK.tracks; track++) {
+                for (var sector = 0; sector < _DISK.sectors; sector++) {
+                    for (var block = 0; block < _DISK.blocks; block++) {
+                        if (sector == 0 && block == 0) { // skip Master boot record
+                            continue;
+                        }
+                        // build the pointer and get the block
+                        var file_block = sessionStorage.getItem(track + ":" + sector + ":" + block);
+                        // check blocks in use
+                        if (file_block["freeBit"] != "0") {
+                            console.log(hex_file, file_block["data"]);
+                            // let name_data = 
+                            // if (hex_file == ) {
+                            //     return true;
+                            // }
+                        }
+                        else {
+                            return false;
+                        }
                     }
-                    // var TSB = `${track_num}:${sector}:${block}`;
-                    // let  = JSON.parse(sessionStorage.getItem(TSB));
                 }
             }
         };

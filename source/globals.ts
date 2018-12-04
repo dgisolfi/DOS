@@ -43,6 +43,7 @@ var _MemoryManager: DOS.MemoryManager;
 //process control blocks
 var _PCB: DOS.PCB;
 var _PCM: DOS.ProcessManager;
+var _FCB: DOS.FCB;
 
 var _SCHED: DOS.Scheduler;
 

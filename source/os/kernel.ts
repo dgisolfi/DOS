@@ -241,7 +241,7 @@ module DOS {
             _Console.updateCPU();
             _Console.updatePCB();
             _Console.updateMemory();
-            _Console.updateDisk();
+            // _Console.updateDisk();
         }
     }
 }

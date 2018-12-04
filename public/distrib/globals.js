@@ -33,6 +33,7 @@ var _MemoryManager;
 //process control blocks
 var _PCB;
 var _PCM;
+var _FCB;
 var _SCHED;
 var _DISK;
 var _OSclock = 0; // Page 23.

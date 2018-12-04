@@ -395,24 +395,26 @@ module DOS {
                     for (let block = 0; block < _DISK.blocks; block++) {
                         let tsb = `${track}:${sector}:${block}`;
                         let bits = _krnDiskDriver.getBlock(tsb);
+                        let arr = bits['data']
                         let row = ``;
-
-                        console.log(bits);
-                        // Object.keys(bits).forEach(key => {
-                        //     // row += key;
-                        //     console.log(key);
+                        console.log(bits)
+                        console.log(bits['data'])
+                       
+                        // arr.forEach(val => {
+                        //     row += val;
                         // });
 
-                        data += 
-                        `<tr>
-                            <td>${tsb}</td>
-                            <td>${row}</td>
-                        </tr>`
+                        // console.log(row);
+                        // data += 
+                        // `<tr>
+                        //     <td>${tsb}</td>
+                        //     <td>${row}</td>
+                        // </tr>`
                     }
                 }
             }                    
 
-            document.getElementById(`disk_data`).innerHTML = data;
+            // document.getElementById(`disk_data`).innerHTML = data;
 
         }
     }

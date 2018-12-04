@@ -153,6 +153,11 @@ module DOS {
                 `quantum`,
                 `<int> — let the user set the Round Robin quantum.`);
             this.commandList[this.commandList.length] = sc;
+
+            sc = new ShellCommand(this.createFile,
+                `create`,
+                `<string> — given a string a new file will be created and given that name.`);
+            this.commandList[this.commandList.length] = sc;
             
             //
             // Display the initial prompt.
@@ -777,6 +782,24 @@ module DOS {
                 _StdOut.putText(`quantum updated`);
                 _Console.advanceLine();
                 _StdOut.putText(`quantum => ${_SCHED.quantum}`);
+            }
+        }
+
+        public createFile(args) {
+            let params = ``
+            args.forEach(arg => {
+                params +=  arg  
+            });
+            params = params.trim()
+            if (!/[^a-zA-Z]/.test(params)) {
+                let status = _krnDiskDriver.createFile(params)
+                if (status == 0) {
+                    _StdOut.putText(`File creation successful; <file> ${params} written to disk`);
+                } else {
+                    _StdOut.putText(`File creation unsuccessful; <file> ${params} not written to disk`);
+                }
+            } else {
+                _StdOut.putText(`File creation unsuccessful; <file> ${params} not a valid file name`);
             }
         }
     }
