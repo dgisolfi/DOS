@@ -386,5 +386,34 @@ module DOS {
             var datetime = _date + ` | ` + _time;
             document.getElementById(`datetime`).innerHTML = datetime;
         }
+
+        public updateDisk(): void {
+            
+            var data = ``;
+            for (let track = 0; track < _DISK.tracks; track++) {
+                for (let sector = 0; sector < _DISK.sectors; sector++) {
+                    for (let block = 0; block < _DISK.blocks; block++) {
+                        let tsb = `${track}:${sector}:${block}`;
+                        let bits = _krnDiskDriver.getBlock(tsb);
+                        let row = ``;
+
+                        console.log(bits);
+                        // Object.keys(bits).forEach(key => {
+                        //     // row += key;
+                        //     console.log(key);
+                        // });
+
+                        data += 
+                        `<tr>
+                            <td>${tsb}</td>
+                            <td>${row}</td>
+                        </tr>`
+                    }
+                }
+            }                    
+
+            document.getElementById(`disk_data`).innerHTML = data;
+
+        }
     }
  }

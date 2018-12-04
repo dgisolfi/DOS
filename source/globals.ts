@@ -44,7 +44,9 @@ var _MemoryManager: DOS.MemoryManager;
 var _PCB: DOS.PCB;
 var _PCM: DOS.ProcessManager;
 
-var _SCHED: DOS.Scheduler
+var _SCHED: DOS.Scheduler;
+
+var _DISK: DOS.Disk;
 
 var _OSclock: number = 0;  // Page 23.
 
@@ -85,6 +87,8 @@ var _SarcasticMode: boolean = false;
 
 // Global Device Driver Objects - page 12
 var _krnKeyboardDriver; //  = null;
+
+var _krnDiskDriver;
 
 var _hardwareClockID: number = null;
 

@@ -40,6 +40,9 @@ module DOS {
             _SCHED = new Scheduler();
             _SCHED.init();
 
+            _DISK = new Disk();
+            _DISK.init();
+
              // Initialize the console.
             _Console = new Console();          // The command line interface / console I/O device.
             _Console.init();
@@ -53,6 +56,11 @@ module DOS {
             _krnKeyboardDriver = new DeviceDriverKeyboard();     // Construct it.
             _krnKeyboardDriver.driverEntry();                    // Call the driverEntry() initialization routine.
             this.krnTrace(_krnKeyboardDriver.status);
+
+            this.krnTrace("Loading the disk device driver.");
+            _krnDiskDriver = new DeviceDriverDisk();     // Construct it.
+            _krnDiskDriver.driverEntry();                    // Call the driverEntry() initialization routine.
+            this.krnTrace(_krnDiskDriver.status);
             
             // Set the default status
             document.getElementById("status").innerHTML = "Status: OS Online";
@@ -230,11 +238,10 @@ module DOS {
             _date = new Date().toLocaleDateString();
             _time = new Date().toLocaleTimeString();
             _Console.updateDateTime();
-
             _Console.updateCPU();
             _Console.updatePCB();
-
             _Console.updateMemory();
+            _Console.updateDisk();
         }
     }
 }

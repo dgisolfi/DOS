@@ -14,6 +14,7 @@
    <!-- Host (Virtual Machine / Hardware Simulation) Routines -->
    <script type="text/javascript" src="distrib/host/control.js"></script>
    <script type="text/javascript" src="distrib/host/devices.js"></script>
+   <script type="text/javascript" src="distrib/host/disk.js"></script>
    <script type="text/javascript" src="distrib/host/cpu.js"></script>
    <script type="text/javascript" src="distrib/host/memory.js"></script>
    <script type="text/javascript" src="distrib/host/MemoryAccessor.js"></script>
@@ -24,6 +25,7 @@
    <script type="text/javascript" src="distrib/os/console.js"></script>
    <script type="text/javascript" src="distrib/os/deviceDriver.js"></script>
    <script type="text/javascript" src="distrib/os/deviceDriverKeyboard.js"></script>
+   <script type="text/javascript" src="distrib/os/deviceDriverDisk.js"></script>
    <script type="text/javascript" src="distrib/os/queue.js"></script>
    <script type="text/javascript" src="distrib/os/shell.js"></script>
    <script type="text/javascript" src="distrib/os/shellCommand.js"></script>
@@ -37,7 +39,7 @@
    <!-- Other Routines -->
    <script type="text/javascript" src="distrib/utils.js"></script>
    <!-- Uncomment the line below to enable GLaDOS testing. -->
-   <script type="text/javascript" src="test/glados-ip3.js"></script>
+   <!-- <script type="text/javascript" src="test/glados-ip4.js"></script> -->
 
    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
    <script src="vendors/jquery.min.js"></script>
@@ -241,27 +243,15 @@
             <br>
             <div class="card mx-auto" >
                 <div class="card-header bg-primary text-center" id="divPCB" style="color:#ffffff;">
-                    Disk - Comming soon
+                    Disk
                 </div>
                 <div class="card-body text-center" >
                     <table class="table table-borderless table-hover table-sm" style="font-size: 12px;">
-                        <tbody>
-                            <tr>
-                                <td>0:0:0</td>
-                                <td>000000000000000000000000000000000000000</td>
-                            </tr>
-                            <tr>
-                                <td>0:0:1</td>
-                                <td>000000000000000000000000000000000000000</td>
-                            </tr>
-                            <tr>
-                                <td>0:0:2</td>
-                                <td>000000000000000000000000000000000000000</td>
-                            </tr>
-                            <tr>
-                                <td>0:0:3</td>
-                                <td>000000000000000000000000000000000000000</td>
-                            </tr>
+                        <th>
+                            <tr>TSB</tr>
+                            <tr>Data</tr>
+                        </th>
+                        <tbody id="disk_data">
                         </tbody>
                     </table>
                 </div>

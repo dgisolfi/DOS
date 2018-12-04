@@ -342,6 +342,26 @@ var DOS;
             var datetime = _date + " | " + _time;
             document.getElementById("datetime").innerHTML = datetime;
         };
+        Console.prototype.updateDisk = function () {
+            var data = "";
+            for (var track = 0; track < _DISK.tracks; track++) {
+                for (var sector = 0; sector < _DISK.sectors; sector++) {
+                    for (var block = 0; block < _DISK.blocks; block++) {
+                        var tsb = track + ":" + sector + ":" + block;
+                        var bits = _krnDiskDriver.getBlock(tsb);
+                        var row = "";
+                        console.log(bits);
+                        // Object.keys(bits).forEach(key => {
+                        //     // row += key;
+                        //     console.log(key);
+                        // });
+                        data +=
+                            "<tr>\n                            <td>" + tsb + "</td>\n                            <td>" + row + "</td>\n                        </tr>";
+                    }
+                }
+            }
+            document.getElementById("disk_data").innerHTML = data;
+        };
         return Console;
     }());
     DOS.Console = Console;

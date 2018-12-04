@@ -34,6 +34,8 @@ var DOS;
             _PCM.init();
             _SCHED = new DOS.Scheduler();
             _SCHED.init();
+            _DISK = new DOS.Disk();
+            _DISK.init();
             // Initialize the console.
             _Console = new DOS.Console(); // The command line interface / console I/O device.
             _Console.init();
@@ -45,6 +47,10 @@ var DOS;
             _krnKeyboardDriver = new DOS.DeviceDriverKeyboard(); // Construct it.
             _krnKeyboardDriver.driverEntry(); // Call the driverEntry() initialization routine.
             this.krnTrace(_krnKeyboardDriver.status);
+            this.krnTrace("Loading the disk device driver.");
+            _krnDiskDriver = new DOS.DeviceDriverDisk(); // Construct it.
+            _krnDiskDriver.driverEntry(); // Call the driverEntry() initialization routine.
+            this.krnTrace(_krnDiskDriver.status);
             // Set the default status
             document.getElementById("status").innerHTML = "Status: OS Online";
             //
@@ -208,6 +214,7 @@ var DOS;
             _Console.updateCPU();
             _Console.updatePCB();
             _Console.updateMemory();
+            _Console.updateDisk();
         };
         return Kernel;
     }());

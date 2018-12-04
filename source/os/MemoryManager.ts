@@ -69,5 +69,7 @@
                     _MEM.isSeg02Full = false;
                 }
             }
+
+            
         }
     }
