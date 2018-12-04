@@ -27,7 +27,15 @@ module DOS {
                             row.push(`00`);
                         }
 
-                        let fcb = new FCB(`${track}:${sector}:${block}`,`0:0:0`, `0`, row);
+                        let tsb = `${track}:${sector}:${block}`
+                        let inUse = `0`
+                        if (tsb == `O:O:O`) { // Master Boot record
+                            let inUse = `1`
+                        } else {
+                            let inUse = `0`
+                        }
+
+                        let fcb = new FCB(`${track}:${sector}:${block}`,`0:0:0`, inUse, row);
                         sessionStorage.setItem(fcb.tsb, JSON.stringify(fcb));
                         // Since TS is strict delete fcb will throw an error Instead, free
                         // the contents of a variable so it can be garbage collected  

@@ -20,7 +20,15 @@ var DOS;
                         for (var index = 0; index < this.blockSize; index++) {
                             row.push("00");
                         }
-                        var fcb = new DOS.FCB(track + ":" + sector + ":" + block, "0:0:0", "0", row);
+                        var tsb = track + ":" + sector + ":" + block;
+                        var inUse = "0";
+                        if (tsb == "O:O:O") { // Master Boot record
+                            var inUse_1 = "1";
+                        }
+                        else {
+                            var inUse_2 = "0";
+                        }
+                        var fcb = new DOS.FCB(track + ":" + sector + ":" + block, "0:0:0", inUse, row);
                         sessionStorage.setItem(fcb.tsb, JSON.stringify(fcb));
                         // Since TS is strict delete fcb will throw an error Instead, free
                         // the contents of a variable so it can be garbage collected  

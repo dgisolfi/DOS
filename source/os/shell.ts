@@ -158,6 +158,11 @@ module DOS {
                 `create`,
                 `<string> — given a string a new file will be created and given that name.`);
             this.commandList[this.commandList.length] = sc;
+
+            sc = new ShellCommand(this.readFile,
+                `read`,
+                `<string> — given a string a file will be read from the disk.`);
+            this.commandList[this.commandList.length] = sc;
             
             //
             // Display the initial prompt.
@@ -796,6 +801,28 @@ module DOS {
                 if (status == 0) {
                     _StdOut.putText(`File creation successful; <file> ${params} written to disk`);
                 } else if (status == 1) {
+                    _StdOut.putText(`File creation unsuccessful; <file> ${params}, file name already in use`);
+                } else if (status == 2) {
+                    _StdOut.putText(`File creation unsuccessful; <file> ${params}, Disk Full!`);
+                }
+            } else {
+                _StdOut.putText(`File creation unsuccessful; <file> ${params} not a valid file name`);
+            }
+        }
+
+        public readFile(args) {
+            let params = ``;
+            args.forEach(arg => {
+                params +=  arg ;
+            });
+            params = params.trim()
+            if (!/[^a-zA-Z]/.test(params)) {
+                let status = _krnDiskDriver.readFile(params)
+                if (status[0] == 0) {
+                    _StdOut.putText(`File read successful; <file> ${params} contents:`);
+                    _Console.advanceLine();
+                    _StdOut.putText(`${status[1]}`);
+                } else if (status[0] == 1) {
                     _StdOut.putText(`File creation unsuccessful; <file> ${params}, file name already in use`);
                 }
             } else {

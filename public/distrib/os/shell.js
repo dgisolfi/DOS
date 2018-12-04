@@ -85,6 +85,8 @@ var DOS;
             this.commandList[this.commandList.length] = sc;
             sc = new DOS.ShellCommand(this.createFile, "create", "<string> \u2014 given a string a new file will be created and given that name.");
             this.commandList[this.commandList.length] = sc;
+            sc = new DOS.ShellCommand(this.readFile, "read", "<string> \u2014 given a string a file will be read from the disk.");
+            this.commandList[this.commandList.length] = sc;
             //
             // Display the initial prompt.
             this.putPrompt();
@@ -672,7 +674,30 @@ var DOS;
                     _StdOut.putText("File creation successful; <file> " + params + " written to disk");
                 }
                 else if (status_1 == 1) {
-                    _StdOut.putText("File creation unsuccessful; <file> " + params + " file name already in use");
+                    _StdOut.putText("File creation unsuccessful; <file> " + params + ", file name already in use");
+                }
+                else if (status_1 == 2) {
+                    _StdOut.putText("File creation unsuccessful; <file> " + params + ", Disk Full!");
+                }
+            }
+            else {
+                _StdOut.putText("File creation unsuccessful; <file> " + params + " not a valid file name");
+            }
+        };
+        Shell.prototype.readFile = function (args) {
+            var params = "";
+            args.forEach(function (arg) {
+                params += arg;
+            });
+            params = params.trim();
+            if (!/[^a-zA-Z]/.test(params)) {
+                var status_2 = _krnDiskDriver.readFile(params);
+                if (status_2[0] == 0) {
+                    _StdOut.putText("File read successful; <file> " + params + " contents:");
+                    _StdOut.putText("" + status_2[1]);
+                }
+                else if (status_2[0] == 1) {
+                    _StdOut.putText("File creation unsuccessful; <file> " + params + ", file name already in use");
                 }
             }
             else {
