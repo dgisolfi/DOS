@@ -32,6 +32,7 @@ var DOS;
             // accessed after calling super.
             //super(this.krnKbdDriverEntry, this.krnKbdDispatchKeyPress);
             _super.call(this) || this;
+            _this.file_names = [];
             _this.driverEntry = _this.krnDiskDriverEntry;
             return _this;
         }
@@ -41,7 +42,10 @@ var DOS;
             // More?
         };
         DeviceDriverDisk.prototype.getBlock = function (TSB) {
-            return sessionStorage.getItem(TSB);
+            return JSON.parse(sessionStorage.getItem(TSB));
+        };
+        DeviceDriverDisk.prototype.listFiles = function () {
+            return this.file_names;
         };
         DeviceDriverDisk.prototype.hexOfString = function (file_name) {
             var arr = [];
@@ -93,7 +97,7 @@ var DOS;
                             continue;
                         }
                         // build the pointer and get the block
-                        var file_block = JSON.parse(sessionStorage.getItem(track + ":" + sector + ":" + block));
+                        var file_block = this.getBlock(track + ":" + sector + ":" + block);
                         // return the first one
                         if (file_block.freeBit == "0") {
                             return track + ":" + sector + ":" + block;
@@ -108,16 +112,21 @@ var DOS;
         DeviceDriverDisk.prototype.createFile = function (file_name) {
             // Check if that file is already in use
             if (this.checkFileName(file_name)[0] == 0) {
-                return 1;
+                return [1, "file name already in use."];
             }
             // Find a free set of blocks for the file
             var block_tsb = this.getEmptyBlock();
             if (block_tsb == "-1:-1:-1") {
-                return 2;
+                return [1, "Disk full"];
             }
+            // add file name to global list
+            this.file_names.push(file_name);
             // Write new file
             // Convert filename to a arrary of hex values
             var hex_name = this.hexOfString(file_name);
+            if (hex_name.length >= _DISK.blockSize) {
+                return [1, "file name to long. (make it 30 or less chars)"];
+            }
             // Fill the remaning block with 00's
             for (var i = 0; hex_name.length < (_DISK.blockSize); i++) {
                 hex_name.push("00");
@@ -128,7 +137,45 @@ var DOS;
             // Since TS is strict delete fcb will throw an error Instead, free
             // the contents of a variable so it can be garbage collected  
             fcb = null;
-            return 0;
+            return [0, "file written to disk"];
+        };
+        DeviceDriverDisk.prototype.writeFile = function (file_name, data) {
+            // check if the file even exists
+            var results = this.checkFileName(file_name);
+            if (results[0] == 1) {
+                return [1, "file not found"];
+            }
+            // get rid of the quotes
+            data = data.replace('\"', '');
+            // get a new block
+            var block_tsb = this.getEmptyBlock();
+            if (block_tsb == "-1:-1:-1") {
+                return [1, "Disk full"];
+            }
+            // get the file name block to give it a pointer
+            var file_block = this.getBlock(results[1]);
+            // set the file name block to the next block pointer
+            var fcb = new DOS.FCB(results[1], block_tsb, "1", file_block.data);
+            sessionStorage.setItem(fcb.tsb, JSON.stringify(fcb));
+            fcb = null;
+            // Convert data into ascii then hex and get the array
+            var hex_data = this.hexOfString(data);
+            if (hex_data.length >= _DISK.blockSize) {
+                var write = true;
+                while (write) {
+                }
+            }
+            else {
+                // Fill the remaning block with 00's
+                for (var i = 0; hex_data.length < (_DISK.blockSize); i++) {
+                    hex_data.push("00");
+                }
+                // Write the data to the session
+                var fcb_1 = new DOS.FCB(block_tsb, "0:0:0", "1", hex_data);
+                sessionStorage.setItem(fcb_1.tsb, JSON.stringify(fcb_1));
+                fcb_1 = null;
+            }
+            return [0, "data written to disk."];
         };
         DeviceDriverDisk.prototype.readFile = function (file_name) {
             // check if the file even exists
@@ -137,14 +184,14 @@ var DOS;
                 return [1, "file not found"];
             }
             // build the pointer and get the block
-            var file_block = JSON.parse(sessionStorage.getItem(results[1]));
+            var file_block = this.getBlock(results[1]);
             var hex_string = file_block.data;
             // theres more blocks
             if (file_block.pointer != "0:0:0") {
                 var search = true;
                 var next_block = file_block.pointer;
                 while (search) {
-                    var new_block = JSON.parse(sessionStorage.getItem(next_block));
+                    var new_block = this.getBlock(next_block);
                     hex_string += new_block.data;
                     if (file_block.pointer == "0:0:0") {
                         search = false;
@@ -158,19 +205,13 @@ var DOS;
             });
             return [0, decoded];
         };
-        DeviceDriverDisk.prototype.writeFile = function (file_name, data) {
-            // check if the file even exists
-            var results = this.checkFileName(file_name);
-            if (results[0] == 1) {
-                return [1, "file not found"];
-            }
-            console.log(data);
-        };
         DeviceDriverDisk.prototype.delFile = function (file_name) {
             var results = this.checkFileName(file_name);
             if (results[0] == 1) {
                 return [1, "file not found"];
             }
+            // remove file name from global list
+            delete this.file_names[this.file_names.indexOf(file_name)];
             // build the pointer and get the block
             var file_block = JSON.parse(sessionStorage.getItem(results[1]));
             // create a new instance of a file block to re write it all.
@@ -185,7 +226,7 @@ var DOS;
                 _DISK.init();
                 return 0;
             }
-            else {
+            else if (method == "quick") {
                 for (var track = 0; track < _DISK.tracks; track++) {
                     for (var sector = 0; sector < _DISK.sectors; sector++) {
                         for (var block = 0; block < _DISK.blocks; block++) {
@@ -203,6 +244,9 @@ var DOS;
                     }
                 }
                 return 0;
+            }
+            else {
+                return 1;
             }
         };
         return DeviceDriverDisk;

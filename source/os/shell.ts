@@ -178,6 +178,11 @@ module DOS {
                 `format`,
                 `<tag> — given a tag either quick or full, will format the tsb's of the disk.`);
             this.commandList[this.commandList.length] = sc;
+
+            sc = new ShellCommand(this.ls,
+                `ls`,
+                `will list all files stored on the disk.`);
+            this.commandList[this.commandList.length] = sc;
             
             //
             // Display the initial prompt.
@@ -813,12 +818,10 @@ module DOS {
             params = params.trim()
             if (!/[^a-zA-Z\s]/.test(params)) {
                 let status = _krnDiskDriver.createFile(params)
-                if (status == 0) {
-                    _StdOut.putText(`File creation successful; <file> ${params} written to disk`);
-                } else if (status == 1) {
-                    _StdOut.putText(`File creation unsuccessful; <file> ${params}, file name already in use`);
-                } else if (status == 2) {
-                    _StdOut.putText(`File creation unsuccessful; <file> ${params}, Disk Full!`);
+                if (status[0] == 0) {
+                    _StdOut.putText(`File creation successful; <file> ${params}, ${status[1]}`);
+                } else {
+                    _StdOut.putText(`File creation unsuccessful; <file> ${params}, ${status[1]}`);
                 }
             } else {
                 _StdOut.putText(`File creation unsuccessful; <file> ${params} not a valid file name`);
@@ -849,8 +852,11 @@ module DOS {
             let params = ``;
             let data = ``
             args.forEach(arg => {
-                if (arg == `\"`)
-                params += arg ;
+                if (arg.includes(`\"`)) {
+                    data += arg;
+                } else {
+                    params += arg;
+                }
             });
             params = params.trim()
             if (!/[^a-zA-Z\s]/.test(params)) {
@@ -909,6 +915,14 @@ module DOS {
             } else {
                 _StdOut.putText(`Usage: format <method>`);
             }  
+        }
+
+        public ls(args) {
+            let files = _krnDiskDriver.listFiles();
+            files.forEach(file => {
+                _StdOut.putText(file);
+                _Console.advanceLine();
+            });
         }
     }
 }

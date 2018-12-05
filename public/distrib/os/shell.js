@@ -93,6 +93,8 @@ var DOS;
             this.commandList[this.commandList.length] = sc;
             sc = new DOS.ShellCommand(this.format, "format", "<tag> \u2014 given a tag either quick or full, will format the tsb's of the disk.");
             this.commandList[this.commandList.length] = sc;
+            sc = new DOS.ShellCommand(this.ls, "ls", "will list all files stored on the disk.");
+            this.commandList[this.commandList.length] = sc;
             //
             // Display the initial prompt.
             this.putPrompt();
@@ -676,14 +678,11 @@ var DOS;
             params = params.trim();
             if (!/[^a-zA-Z\s]/.test(params)) {
                 var status_1 = _krnDiskDriver.createFile(params);
-                if (status_1 == 0) {
-                    _StdOut.putText("File creation successful; <file> " + params + " written to disk");
+                if (status_1[0] == 0) {
+                    _StdOut.putText("File creation successful; <file> " + params + ", " + status_1[1]);
                 }
-                else if (status_1 == 1) {
-                    _StdOut.putText("File creation unsuccessful; <file> " + params + ", file name already in use");
-                }
-                else if (status_1 == 2) {
-                    _StdOut.putText("File creation unsuccessful; <file> " + params + ", Disk Full!");
+                else {
+                    _StdOut.putText("File creation unsuccessful; <file> " + params + ", " + status_1[1]);
                 }
             }
             else {
@@ -715,8 +714,12 @@ var DOS;
             var params = "";
             var data = "";
             args.forEach(function (arg) {
-                if (arg == "\"")
+                if (arg.includes("\"")) {
+                    data += arg;
+                }
+                else {
                     params += arg;
+                }
             });
             params = params.trim();
             if (!/[^a-zA-Z\s]/.test(params)) {
@@ -780,6 +783,13 @@ var DOS;
             else {
                 _StdOut.putText("Usage: format <method>");
             }
+        };
+        Shell.prototype.ls = function (args) {
+            var files = _krnDiskDriver.listFiles();
+            files.forEach(function (file) {
+                _Console.advanceLine();
+                _StdOut.putText(file);
+            });
         };
         return Shell;
     }());
