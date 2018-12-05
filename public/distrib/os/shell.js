@@ -785,6 +785,7 @@ var DOS;
             }
         };
         Shell.prototype.ls = function (args) {
+            console.log(String.fromCharCode(parseInt("64", 16)));
             var files = _krnDiskDriver.listFiles();
             files.forEach(function (file) {
                 _StdOut.putText(file);

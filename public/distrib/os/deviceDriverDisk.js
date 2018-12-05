@@ -47,9 +47,9 @@ var DOS;
         DeviceDriverDisk.prototype.listFiles = function () {
             return this.file_names;
         };
-        DeviceDriverDisk.prototype.hexOfString = function (file_name) {
+        DeviceDriverDisk.prototype.hexOfString = function (str) {
             var arr = [];
-            file_name.split('').forEach(function (letter) {
+            str.split('').forEach(function (letter) {
                 arr.push(letter.charCodeAt(0).toString(16));
             });
             return arr;
@@ -210,23 +210,35 @@ var DOS;
             }
             // build the pointer and get the block
             var file_block = this.getBlock(results[1]);
-            var hex_string = file_block.data;
             // theres more blocks
             if (file_block.pointer != "0:0:0") {
                 var search = true;
+                var hex_string = "";
                 var next_block = file_block.pointer;
                 while (search) {
                     var new_block = this.getBlock(next_block);
                     hex_string += new_block.data;
-                    if (file_block.pointer == "0:0:0") {
+                    next_block = new_block.pointer;
+                    if (new_block.pointer == "0:0:0") {
                         search = false;
                     }
                 }
             }
+            else {
+                return [0, "file empty"];
+            }
+            if (hex_string.length == 0) {
+                return [0, "file empty"];
+            }
             // finally wether 1 or n blocks long, make the data readable
             var decoded = "";
-            hex_string.forEach(function (char) {
-                decoded += String.fromCharCode(parseInt(char, 16));
+            var hex_digit = "";
+            hex_string.split('').forEach(function (char) {
+                hex_digit += char;
+                if (hex_digit.length == 2) {
+                    decoded += String.fromCharCode(parseInt(hex_digit, 16));
+                    hex_digit = "";
+                }
             });
             return [0, decoded];
         };

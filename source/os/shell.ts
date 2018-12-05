@@ -918,6 +918,7 @@ module DOS {
         }
 
         public ls(args) {
+            console.log(String.fromCharCode(parseInt(`64`, 16)))
             let files = _krnDiskDriver.listFiles();
             files.forEach(file => {
                 _StdOut.putText(file);

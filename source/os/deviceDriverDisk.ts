@@ -37,10 +37,10 @@
             return this.file_names;
         }
 
-        private hexOfString(file_name: string):Array<string> {
+        private hexOfString(str: string):Array<string> {
             let arr = [];
 
-            file_name.split('').forEach(letter => {
+            str.split('').forEach(letter => {
                 arr.push(letter.charCodeAt(0).toString(16));
             });
 
@@ -61,6 +61,7 @@
                         if (file_block.freeBit != `0`) {
                             // Build the name from the memory and compare
                             let hex_name = ``
+                           
                             file_block.data.forEach(char => {
                                 if (char != `00`) {
                                     hex_name +=  String.fromCharCode(parseInt(char, 16))
@@ -218,27 +219,40 @@
 
             // build the pointer and get the block
             let file_block = this.getBlock(results[1]);
-            let hex_string = file_block.data
-
+           
             // theres more blocks
             if (file_block.pointer != `0:0:0`) {
                 let search = true;
+                var hex_string = ``;
                 let next_block = file_block.pointer;
                 while(search) {
                     let new_block = this.getBlock(next_block);
-                    hex_string += new_block.data
+                    hex_string += new_block.data;
+                    next_block = new_block.pointer;
 
-                    if (file_block.pointer == `0:0:0`) {
+                    if (new_block.pointer == `0:0:0`) {
                         search = false;
                     }
                 }
+            } else{
+                return [0, `file empty`];
+            }
+
+            if (hex_string.length == 0) {
+                return [0, `file empty`];
             }
 
             // finally wether 1 or n blocks long, make the data readable
             let decoded = ``
-            hex_string.forEach(char => {
-                decoded += String.fromCharCode(parseInt(char, 16))
+            let hex_digit = ``
+            hex_string.split('').forEach(char => {
+                hex_digit += char;
+                if (hex_digit.length == 2) {
+                    decoded += String.fromCharCode(parseInt(hex_digit, 16));
+                    hex_digit = ``;
+                }                
             });
+
             return [0, decoded]
         }
 
