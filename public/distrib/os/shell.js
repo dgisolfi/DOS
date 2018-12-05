@@ -787,8 +787,8 @@ var DOS;
         Shell.prototype.ls = function (args) {
             var files = _krnDiskDriver.listFiles();
             files.forEach(function (file) {
-                _Console.advanceLine();
                 _StdOut.putText(file);
+                _Console.advanceLine();
             });
         };
         return Shell;

@@ -82,7 +82,11 @@
             return [1, `-1:-1:-1`];
         }   
 
-        public getEmptyBlock():string {
+        public getEmptyBlock(skip_block:boolean):string {
+            let next_block = true;
+            if (skip_block) {
+                next_block = false;
+            }
             for (let track = 0; track < _DISK.tracks; track++) {
                 for (let sector = 0; sector < _DISK.sectors; sector++) {
                     for (let block = 0; block < _DISK.blocks; block++) {
@@ -93,7 +97,12 @@
                         let file_block = this.getBlock(`${track}:${sector}:${block}`);
                         // return the first one
                         if (file_block.freeBit == `0`) {
-                            return `${track}:${sector}:${block}`;
+                            if (next_block) {
+                                return `${track}:${sector}:${block}`;
+                            } else {
+                                next_block = true;
+                                continue
+                            }
                         }
                     }
                 }
@@ -109,7 +118,7 @@
                 return [1, `file name already in use.`];
             }
             // Find a free set of blocks for the file
-            let block_tsb = this.getEmptyBlock()
+            let block_tsb = this.getEmptyBlock(false)
             if (block_tsb == `-1:-1:-1`) {
                 return [1, `Disk full`]
             }
@@ -142,39 +151,61 @@
             if (results[0] == 1){
                 return [1, `file not found`] 
             }
+
             // get rid of the quotes
-            data = data.replace('\"','');
-            // get a new block
-            let block_tsb = this.getEmptyBlock()
-            if (block_tsb == `-1:-1:-1`) {
-                return [1, `Disk full`];
+            data = data.split('"').join('');
+            // Convert data into ascii then hex and get the array
+            let hex_data = this.hexOfString(data);
+
+            let block_data = [];
+            let block = ``;
+            hex_data.forEach(hex => {
+                block += hex
+                if (block.length == _DISK.blockSize) {
+                    block_data.push(block)
+                    block = ``;
+                }
+            });
+
+            for (let i = 0; block.length < (_DISK.blockSize); i++) {
+                block += `00`
             }
+
+            block_data.push(block)
+            // block_data.reverse();
+            let next_block_pointer = ``
+            let file_pointer = this.getEmptyBlock(false);
+            block_data.forEach(block => {
+                // for first(or in reality last one block)
+                let block_tsb = this.getEmptyBlock(false)
+                if (block_tsb == `-1:-1:-1`) {
+                    return [1, `Disk full`]
+                }
+
+                if (block == block_data[block_data.length-1]) {
+                    next_block_pointer = `0:0:0`;
+                } else {
+                    next_block_pointer = this.getEmptyBlock(true)
+                }
+
+                 
+                // Write the data to the session
+                let fcb = new FCB(block_tsb, next_block_pointer, `1`, block);
+                sessionStorage.setItem(fcb.tsb, JSON.stringify(fcb));             
+                
+                console.log(`block: at ${block_tsb}: ${block}`, next_block_pointer);
+                fcb = null;
+
+                
+            });
+
             // get the file name block to give it a pointer
             let file_block = this.getBlock(results[1]);
             // set the file name block to the next block pointer
-            let fcb = new FCB(results[1], block_tsb, `1`, file_block.data);
+            let fcb = new FCB(results[1], file_pointer, `1`, file_block.data);
             sessionStorage.setItem(fcb.tsb, JSON.stringify(fcb));             
             fcb = null;
-
-            // Convert data into ascii then hex and get the array
-            let hex_data = this.hexOfString(data);
-         
-            if (hex_data.length >= _DISK.blockSize) {
-                let write = true;
-                while(write) {
-
-                }
-            } else {
-                // Fill the remaning block with 00's
-                for (let i = 0; hex_data.length < (_DISK.blockSize); i++) {
-                    hex_data.push(`00`)
-                }
-                // Write the data to the session
-                let fcb = new FCB(block_tsb, `0:0:0`, `1`, hex_data);
-                sessionStorage.setItem(fcb.tsb, JSON.stringify(fcb));             
-                fcb = null;
-            }
-
+            
             return [0, "data written to disk."]
         }
 
@@ -259,3 +290,5 @@
         }
     }
 }
+
+

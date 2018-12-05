@@ -4,7 +4,7 @@
 image=dos
 hub_image=dgisolfi/dos
 container=dos
-version=3.0
+version=4.0
 
 all: clean build os_latest
 

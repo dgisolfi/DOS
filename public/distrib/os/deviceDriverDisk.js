@@ -89,7 +89,11 @@ var DOS;
             }
             return [1, "-1:-1:-1"];
         };
-        DeviceDriverDisk.prototype.getEmptyBlock = function () {
+        DeviceDriverDisk.prototype.getEmptyBlock = function (skip_block) {
+            var next_block = true;
+            if (skip_block) {
+                next_block = false;
+            }
             for (var track = 0; track < _DISK.tracks; track++) {
                 for (var sector = 0; sector < _DISK.sectors; sector++) {
                     for (var block = 0; block < _DISK.blocks; block++) {
@@ -100,7 +104,13 @@ var DOS;
                         var file_block = this.getBlock(track + ":" + sector + ":" + block);
                         // return the first one
                         if (file_block.freeBit == "0") {
-                            return track + ":" + sector + ":" + block;
+                            if (next_block) {
+                                return track + ":" + sector + ":" + block;
+                            }
+                            else {
+                                next_block = true;
+                                continue;
+                            }
                         }
                     }
                 }
@@ -115,7 +125,7 @@ var DOS;
                 return [1, "file name already in use."];
             }
             // Find a free set of blocks for the file
-            var block_tsb = this.getEmptyBlock();
+            var block_tsb = this.getEmptyBlock(false);
             if (block_tsb == "-1:-1:-1") {
                 return [1, "Disk full"];
             }
@@ -140,41 +150,56 @@ var DOS;
             return [0, "file written to disk"];
         };
         DeviceDriverDisk.prototype.writeFile = function (file_name, data) {
+            var _this = this;
             // check if the file even exists
             var results = this.checkFileName(file_name);
             if (results[0] == 1) {
                 return [1, "file not found"];
             }
             // get rid of the quotes
-            data = data.replace('\"', '');
-            // get a new block
-            var block_tsb = this.getEmptyBlock();
-            if (block_tsb == "-1:-1:-1") {
-                return [1, "Disk full"];
+            data = data.split('"').join('');
+            // Convert data into ascii then hex and get the array
+            var hex_data = this.hexOfString(data);
+            var block_data = [];
+            var block = "";
+            hex_data.forEach(function (hex) {
+                block += hex;
+                if (block.length == _DISK.blockSize) {
+                    block_data.push(block);
+                    block = "";
+                }
+            });
+            for (var i = 0; block.length < (_DISK.blockSize); i++) {
+                block += "00";
             }
+            block_data.push(block);
+            // block_data.reverse();
+            var next_block_pointer = "";
+            var file_pointer = this.getEmptyBlock(false);
+            block_data.forEach(function (block) {
+                // for first(or in reality last one block)
+                var block_tsb = _this.getEmptyBlock(false);
+                if (block_tsb == "-1:-1:-1") {
+                    return [1, "Disk full"];
+                }
+                if (block == block_data[block_data.length - 1]) {
+                    next_block_pointer = "0:0:0";
+                }
+                else {
+                    next_block_pointer = _this.getEmptyBlock(true);
+                }
+                // Write the data to the session
+                var fcb = new DOS.FCB(block_tsb, next_block_pointer, "1", block);
+                sessionStorage.setItem(fcb.tsb, JSON.stringify(fcb));
+                console.log("block: at " + block_tsb + ": " + block, next_block_pointer);
+                fcb = null;
+            });
             // get the file name block to give it a pointer
             var file_block = this.getBlock(results[1]);
             // set the file name block to the next block pointer
-            var fcb = new DOS.FCB(results[1], block_tsb, "1", file_block.data);
+            var fcb = new DOS.FCB(results[1], file_pointer, "1", file_block.data);
             sessionStorage.setItem(fcb.tsb, JSON.stringify(fcb));
             fcb = null;
-            // Convert data into ascii then hex and get the array
-            var hex_data = this.hexOfString(data);
-            if (hex_data.length >= _DISK.blockSize) {
-                var write = true;
-                while (write) {
-                }
-            }
-            else {
-                // Fill the remaning block with 00's
-                for (var i = 0; hex_data.length < (_DISK.blockSize); i++) {
-                    hex_data.push("00");
-                }
-                // Write the data to the session
-                var fcb_1 = new DOS.FCB(block_tsb, "0:0:0", "1", hex_data);
-                sessionStorage.setItem(fcb_1.tsb, JSON.stringify(fcb_1));
-                fcb_1 = null;
-            }
             return [0, "data written to disk."];
         };
         DeviceDriverDisk.prototype.readFile = function (file_name) {
