@@ -182,5 +182,31 @@
             fcb = null;
             return [0, `removed from disk`]
         }
+
+        public formatDisk(method:string) {
+            if (method == `full`) {
+                // why make it hard?...codes already there
+                _DISK.init();
+                return 0
+            } else {
+                for (let track = 0; track < _DISK.tracks; track++) {
+                    for (let sector = 0; sector < _DISK.sectors; sector++) {
+                        for (let block = 0; block < _DISK.blocks; block++) {
+                            if(track == 0 && sector == 0 && block == 0) { // skip Master boot record
+                                continue;
+                            }
+                            let tsb = `${track}:${sector}:${block}`
+                            // build the pointer and get the block
+                            let file_block = JSON.parse(sessionStorage.getItem(tsb));
+                            // create a new instance of a file block to re write it all.
+                            let fcb = new FCB(tsb, `0:0:0`, `0`, file_block.data);
+                            sessionStorage.setItem(fcb.tsb, JSON.stringify(fcb));
+                            fcb = null;
+                        }
+                    }
+                }
+                return 0
+            }
+        }
     }
 }

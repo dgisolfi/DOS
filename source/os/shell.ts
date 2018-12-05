@@ -173,6 +173,11 @@ module DOS {
                 `delete`,
                 `<string> — given a filename, will remove the fie from disk.`);
             this.commandList[this.commandList.length] = sc;
+
+            sc = new ShellCommand(this.format,
+                `format`,
+                `<tag> — given a tag either quick or full, will format the tsb's of the disk.`);
+            this.commandList[this.commandList.length] = sc;
             
             //
             // Display the initial prompt.
@@ -878,5 +883,32 @@ module DOS {
             }
         }
 
+        public format(args) {
+            if (args.length > 0) {
+                var setting = args[0];
+                switch (setting) {
+                    case `-quick`:
+                        var status = _krnDiskDriver.formatDisk(`quick`)
+                        if (status == 0) {
+                            _StdOut.putText(`quick format successful.`);
+                        } else {
+                            _StdOut.putText(`quick format unsuccessful.`);
+                        }
+                        break;
+                    case `-full`:
+                        var status = _krnDiskDriver.formatDisk(`full`)
+                        if (status == 0) {
+                            _StdOut.putText(`full format successful.`);
+                        } else {
+                            _StdOut.putText(`full format unsuccessful.`);
+                        }
+                        break;
+                    default:
+                        _StdOut.putText(`Invalid arguement.  Usage: format <method>.`);
+                }
+            } else {
+                _StdOut.putText(`Usage: format <method>`);
+            }  
+        }
     }
 }

@@ -179,6 +179,32 @@ var DOS;
             fcb = null;
             return [0, "removed from disk"];
         };
+        DeviceDriverDisk.prototype.formatDisk = function (method) {
+            if (method == "full") {
+                // why make it hard?...codes already there
+                _DISK.init();
+                return 0;
+            }
+            else {
+                for (var track = 0; track < _DISK.tracks; track++) {
+                    for (var sector = 0; sector < _DISK.sectors; sector++) {
+                        for (var block = 0; block < _DISK.blocks; block++) {
+                            if (track == 0 && sector == 0 && block == 0) { // skip Master boot record
+                                continue;
+                            }
+                            var tsb = track + ":" + sector + ":" + block;
+                            // build the pointer and get the block
+                            var file_block = JSON.parse(sessionStorage.getItem(tsb));
+                            // create a new instance of a file block to re write it all.
+                            var fcb = new DOS.FCB(tsb, "0:0:0", "0", file_block.data);
+                            sessionStorage.setItem(fcb.tsb, JSON.stringify(fcb));
+                            fcb = null;
+                        }
+                    }
+                }
+                return 0;
+            }
+        };
         return DeviceDriverDisk;
     }(DOS.DeviceDriver));
     DOS.DeviceDriverDisk = DeviceDriverDisk;
