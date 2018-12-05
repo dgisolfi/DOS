@@ -87,6 +87,10 @@ var DOS;
             this.commandList[this.commandList.length] = sc;
             sc = new DOS.ShellCommand(this.readFile, "read", "<string> \u2014 given a string a file will be read from the disk.");
             this.commandList[this.commandList.length] = sc;
+            sc = new DOS.ShellCommand(this.writeFile, "write", "<string> <data> \u2014 given a filename and data inside of \"<data>\" the data will be written to file.");
+            this.commandList[this.commandList.length] = sc;
+            sc = new DOS.ShellCommand(this.deleteFile, "delete", "<string> \u2014 given a filename, will remove the fie from disk.");
+            this.commandList[this.commandList.length] = sc;
             //
             // Display the initial prompt.
             this.putPrompt();
@@ -668,7 +672,7 @@ var DOS;
                 params += arg;
             });
             params = params.trim();
-            if (!/[^a-zA-Z]/.test(params)) {
+            if (!/[^a-zA-Z\s]/.test(params)) {
                 var status_1 = _krnDiskDriver.createFile(params);
                 if (status_1 == 0) {
                     _StdOut.putText("File creation successful; <file> " + params + " written to disk");
@@ -690,18 +694,59 @@ var DOS;
                 params += arg;
             });
             params = params.trim();
-            if (!/[^a-zA-Z]/.test(params)) {
+            if (!/[^a-zA-Z\s]/.test(params)) {
                 var status_2 = _krnDiskDriver.readFile(params);
                 if (status_2[0] == 0) {
                     _StdOut.putText("File read successful; <file> " + params + " contents:");
+                    _Console.advanceLine();
                     _StdOut.putText("" + status_2[1]);
                 }
                 else if (status_2[0] == 1) {
-                    _StdOut.putText("File creation unsuccessful; <file> " + params + ", file name already in use");
+                    _StdOut.putText("File read unsuccessful; <file> " + params + ", " + status_2[1]);
                 }
             }
             else {
-                _StdOut.putText("File creation unsuccessful; <file> " + params + " not a valid file name");
+                _StdOut.putText("File read unsuccessful; <file> " + params + " not a valid file name");
+            }
+        };
+        Shell.prototype.writeFile = function (args) {
+            var params = "";
+            var data = "";
+            args.forEach(function (arg) {
+                if (arg == "\"")
+                    params += arg;
+            });
+            params = params.trim();
+            if (!/[^a-zA-Z\s]/.test(params)) {
+                var status_3 = _krnDiskDriver.writeFile(params, data);
+                if (status_3[0] == 0) {
+                    _StdOut.putText("File write successful; <file> " + params);
+                }
+                else if (status_3[0] == 1) {
+                    _StdOut.putText("File write unsuccessful; <file> " + params + ", " + status_3[1]);
+                }
+            }
+            else {
+                _StdOut.putText("File write unsuccessful; <file> " + params + " not a valid file name");
+            }
+        };
+        Shell.prototype.deleteFile = function (args) {
+            var params = "";
+            args.forEach(function (arg) {
+                params += arg;
+            });
+            params = params.trim();
+            if (!/[^a-zA-Z\s]/.test(params)) {
+                var status_4 = _krnDiskDriver.delFile(params);
+                if (status_4[0] == 0) {
+                    _StdOut.putText("File deletion successful; <file> " + params + " " + status_4[1]);
+                }
+                else if (status_4[0] == 1) {
+                    _StdOut.putText("File deletion unsuccessful; <file> " + params + ", " + status_4[1]);
+                }
+            }
+            else {
+                _StdOut.putText("File deletion unsuccessful; <file> " + params + " not a valid file name");
             }
         };
         return Shell;

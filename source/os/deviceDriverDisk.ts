@@ -157,5 +157,30 @@
             });
             return [0, decoded]
         }
+
+        public writeFile(file_name:string, data: string): [number, string] {
+            // check if the file even exists
+            let results = this.checkFileName(file_name)
+            if (results[0] == 1){
+                return [1, `file not found`] 
+            }
+            console.log(data)
+        }
+
+        public delFile(file_name:string): [number, string] {
+            let results = this.checkFileName(file_name)
+            if (results[0] == 1){
+                return [1, `file not found`] 
+            }
+
+            // build the pointer and get the block
+            let file_block = JSON.parse(sessionStorage.getItem(results[1]));
+
+            // create a new instance of a file block to re write it all.
+            let fcb = new FCB(results[1], `0:0:0`, `0`, file_block.data);
+            sessionStorage.setItem(fcb.tsb, JSON.stringify(fcb));
+            fcb = null;
+            return [0, `removed from disk`]
+        }
     }
 }

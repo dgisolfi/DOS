@@ -139,7 +139,6 @@ var DOS;
             // build the pointer and get the block
             var file_block = JSON.parse(sessionStorage.getItem(results[1]));
             var hex_string = file_block.data;
-            console.log(file_block.pointer);
             // theres more blocks
             if (file_block.pointer != "0:0:0") {
                 var search = true;
@@ -158,6 +157,27 @@ var DOS;
                 decoded += String.fromCharCode(parseInt(char, 16));
             });
             return [0, decoded];
+        };
+        DeviceDriverDisk.prototype.writeFile = function (file_name, data) {
+            // check if the file even exists
+            var results = this.checkFileName(file_name);
+            if (results[0] == 1) {
+                return [1, "file not found"];
+            }
+            console.log(data);
+        };
+        DeviceDriverDisk.prototype.delFile = function (file_name) {
+            var results = this.checkFileName(file_name);
+            if (results[0] == 1) {
+                return [1, "file not found"];
+            }
+            // build the pointer and get the block
+            var file_block = JSON.parse(sessionStorage.getItem(results[1]));
+            // create a new instance of a file block to re write it all.
+            var fcb = new DOS.FCB(results[1], "0:0:0", "0", file_block.data);
+            sessionStorage.setItem(fcb.tsb, JSON.stringify(fcb));
+            fcb = null;
+            return [0, "removed from disk"];
         };
         return DeviceDriverDisk;
     }(DOS.DeviceDriver));
