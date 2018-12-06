@@ -15,7 +15,6 @@ var DOS;
             var registers = [];
             var startIndex = 0;
             var endIndex = 0;
-            var location = "memory";
             // Find the first open segment of memory
             if (!_MEM.isSeg00Full) {
                 startIndex = 0;
@@ -33,14 +32,23 @@ var DOS;
                 _MEM.isSeg02Full = true;
             }
             else {
-                // Load into Disk;
+                // Load into Disk
+                return [1, startIndex, endIndex, "memory"];
             }
             var memIndex = startIndex;
             code.forEach(function (hex) {
                 _MEM.memory[memIndex] = hex;
                 memIndex++;
             });
-            return [startIndex, endIndex, location];
+            return [0, startIndex, endIndex, "memory"];
+        };
+        //                                      success? strReg  endReg   loc
+        MemoryManager.prototype.loadOnDisk = function (code) {
+            status = _krnDiskDriver.rollOut(code);
+            // if (status[0] == 1) {
+            //     return [1, 0, 0, `disk`];
+            // }
+            return [0, 0, 0, "disk"];
         };
         MemoryManager.prototype.wipeSeg00 = function () {
             for (var i = 0; i <= 255; i++) {

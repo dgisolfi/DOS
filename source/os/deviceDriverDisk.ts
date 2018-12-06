@@ -16,7 +16,7 @@
         public file_names = [];
         constructor() {
             // Override the base method pointers.
-            // The code below cannot run because "this" can only be
+            // The code below cannot run because `this` can only be
             // accessed after calling super.
             //super(this.krnKbdDriverEntry, this.krnKbdDispatchKeyPress);
             super();
@@ -25,7 +25,7 @@
 
         public krnDiskDriverEntry() {
             // Initialization routine for this, the kernel-mode Disk Device Driver.
-            this.status = "loaded";
+            this.status = `loaded`;
             _Console.updateDisk();
             // More?
         }
@@ -59,7 +59,7 @@
                         // build the pointer and get the block
                         let file_block = JSON.parse(sessionStorage.getItem(`${track}:${sector}:${block}`));
                         // check blocks in use
-                        if (file_block.freeBit != `0`) {
+                        if (file_block.inUse != `0`) {
                             // Build the name from the memory and compare
                             let hex_name = ``
                            
@@ -98,7 +98,7 @@
                         // build the pointer and get the block
                         let file_block = this.getBlock(`${track}:${sector}:${block}`);
                         // return the first one
-                        if (file_block.freeBit == `0`) {
+                        if (file_block.inUse == `0`) {
                             if (next_block) {
                                 return `${track}:${sector}:${block}`;
                             } else {
@@ -114,29 +114,27 @@
         }
 
         // Take a process and put it on the DISK
+        // Autobots ROLL OUT!
         public rollOut(userCode:Array<String>): [number, string, string] {
             // Find a free set of blocks for the file
             let initial_block = this.getEmptyBlock(false)
             if (initial_block == `-1:-1:-1`) {
                 return [1,`-1:-1:-1`, `Disk full`]
             }
-
+           
             // 
-
-
-
             let block_data = [];
             let block = ``;
             userCode.forEach(hex => {
                 block += hex
-                if (block.length == _DISK.blockSize) {
+                if (block.length/2 == _DISK.blockSize) {
                     block_data.push(block)
                     block = ``;
                 }
             });
 
-            for (let i = 0; (block.length/2) < (_DISK.blockSize); i++) {
-                block += `00`
+            for (let i = 0; block.length/2 < _DISK.blockSize; i++) {
+                block += `00`;
             }
 
             block_data.push(block)
@@ -156,7 +154,6 @@
                     next_block_pointer = this.getEmptyBlock(true)
                 }
 
-
                 let char = ``
                 let new_block_data = [];
                 block.split('').forEach(ch => {
@@ -170,15 +167,65 @@
                 // Write the data to the session
                 let fcb = new FCB(block_tsb, next_block_pointer, `1`, new_block_data);
                 sessionStorage.setItem(fcb.tsb, JSON.stringify(fcb));             
-                // console.log(`block: at ${block_tsb}: ${block}`, next_block_pointer);
                 fcb = null;                
             });
-
-            
                         
             _Console.updateDisk();
-            return [0, initial_block,"data written to disk."]
+            return [0, initial_block, `data written to disk.`]
 
+        }
+
+         // Take a process and put it on the DISK
+        // Autobots ROLL IN?
+        public rollIn(processTSB:string): [number, Array<String>, string] {
+            let hex_code = [];
+
+            let file_block = this.getBlock(processTSB)
+            if (file_block.inUse == 0) {
+                return [0, hex_code, `given block not valid, inUse bit = 0.`]
+            }
+
+            // theres more blocks
+            if (file_block.pointer != `0:0:0`) {
+                let search = true;
+                var hex = [];
+                let next_block = file_block.pointer;
+                while(search) {
+                    let new_block = this.getBlock(next_block);
+                    hex.push(new_block.data);
+                    next_block = new_block.pointer;
+
+                    if (new_block.pointer == `0:0:0`) {
+                        search = false;
+                    }
+                }
+
+                console.log(hex)
+                
+            } else{
+                return [0, hex_code, `file empty`];
+            }
+
+            if (hex.length == 0) {
+                return [0, hex_code, `file empty`];
+            }
+
+            // finally wether 1 or n blocks long, make the data readable
+            // let decoded = ``
+            // let hex_digit = ``
+            // hex_string.split('').forEach(char => {
+            //     hex_digit += char;
+            //     if (hex_digit.length == 2) {
+            //         decoded += String.fromCharCode(parseInt(hex_digit, 16));
+            //         hex_digit = ``;
+            //     }                
+            // });
+
+            // return [0, hex_code]
+
+
+
+            return [0, hex_code, `data written to disk.`]
         }
 
         // Create a file, dont put nothin in it yet tho besides FCB stuff
@@ -224,7 +271,7 @@
             }
 
             // get rid of the quotes
-            data = data.split('"').join('');
+            data = data.split('`').join('');
             // Convert data into ascii then hex and get the array
             let hex_data = this.hexOfString(data);
 
@@ -284,7 +331,7 @@
             sessionStorage.setItem(fcb.tsb, JSON.stringify(fcb));             
             fcb = null;
             _Console.updateDisk();
-            return [0, "data written to disk."]
+            return [0, `data written to disk.`]
         }
 
         public readFile(file_name:string): [number, string] { // yes i am returning a tuple, tuples are the best

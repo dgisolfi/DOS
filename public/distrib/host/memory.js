@@ -9,11 +9,15 @@
 var DOS;
 (function (DOS) {
     var Memory = /** @class */ (function () {
-        function Memory(memory, isSeg00Full, isSeg01Full, isSeg02Full) {
+        function Memory(memory, 
+        // public isSeg00Full: boolean = false,
+        // public isSeg01Full: boolean = false,
+        // public isSeg02Full: boolean = false
+        isSeg00Full, isSeg01Full, isSeg02Full) {
             if (memory === void 0) { memory = []; }
-            if (isSeg00Full === void 0) { isSeg00Full = false; }
-            if (isSeg01Full === void 0) { isSeg01Full = false; }
-            if (isSeg02Full === void 0) { isSeg02Full = false; }
+            if (isSeg00Full === void 0) { isSeg00Full = true; }
+            if (isSeg01Full === void 0) { isSeg01Full = true; }
+            if (isSeg02Full === void 0) { isSeg02Full = true; }
             this.memory = memory;
             this.isSeg00Full = isSeg00Full;
             this.isSeg01Full = isSeg01Full;

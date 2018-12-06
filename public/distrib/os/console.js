@@ -349,7 +349,6 @@ var DOS;
                     var _loop_1 = function (block) {
                         var tsb = track + ":" + sector + ":" + block;
                         var file_block = _krnDiskDriver.getBlock(tsb);
-                        console.log(file_block);
                         var arr = file_block.data;
                         var row = "";
                         arr.forEach(function (val) {

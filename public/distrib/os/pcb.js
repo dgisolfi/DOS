@@ -26,6 +26,7 @@ var DOS;
             this.ZFlag = 0;
             this.turnaroundTime = 0;
             this.waitTime = 0;
+            this.tsb = "-1:-1:-1"; // location on disk
         };
         return PCB;
     }());

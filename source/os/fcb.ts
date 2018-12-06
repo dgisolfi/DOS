@@ -13,7 +13,7 @@
             constructor(
                 public tsb,
                 public pointer,
-                public freeBit,
+                public inUse,
                 public data
                 ) {      
             }

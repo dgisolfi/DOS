@@ -9,10 +9,10 @@
 var DOS;
 (function (DOS) {
     var FCB = /** @class */ (function () {
-        function FCB(tsb, pointer, freeBit, data) {
+        function FCB(tsb, pointer, inUse, data) {
             this.tsb = tsb;
             this.pointer = pointer;
-            this.freeBit = freeBit;
+            this.inUse = inUse;
             this.data = data;
         }
         return FCB;

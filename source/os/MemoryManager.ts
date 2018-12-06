@@ -34,8 +34,8 @@
                     _MEM.isSeg02Full = true;
 
                 } else {
-                    // Load into Disk;
-                   
+                    // Load into Disk
+                    return [1, startIndex, endIndex, `memory`];
                 }
 
                 var memIndex = startIndex;
@@ -44,7 +44,7 @@
                     memIndex++;
                 });
 
-                return [1, startIndex, endIndex, `memory`];
+                return [0, startIndex, endIndex, `memory`];
                 
             }
 
@@ -52,9 +52,9 @@
             public loadOnDisk(code: Array<String>): [number, number, number, string] {
 
                 status = _krnDiskDriver.rollOut(code);
-                if (status[0] == 1) {
-                    return [1, 0, 0, `disk`];
-                }
+                // if (status[0] == 1) {
+                //     return [1, 0, 0, `disk`];
+                // }
                 return [0, 0, 0, `disk`];
 
             }

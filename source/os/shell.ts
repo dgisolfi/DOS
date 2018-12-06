@@ -638,7 +638,8 @@ module DOS {
                 // If the check passes load the program to memory or disk
                 var results = _MemoryManager.loadInMem(userCodeArr);
                 if (results[0] == 1) { // memory full load into disk
-                    
+                    console.log(`Mem Full load into disk`)
+                    var results = _MemoryManager.loadOnDisk(userCodeArr);
                 } 
                 //Create a new PCB
                 

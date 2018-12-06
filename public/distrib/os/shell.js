@@ -501,8 +501,12 @@ var DOS;
                     _StdOut.putText("Program to Large, program is " + userCodeArr.length + " bytes. Max is 256 per program.");
                     throw new Error("Program to Large, program is " + userCodeArr.length + " bytes.");
                 }
-                // If the check passes load the program to memory
+                // If the check passes load the program to memory or disk
                 var results = _MemoryManager.loadInMem(userCodeArr);
+                if (results[0] == 1) { // memory full load into disk
+                    console.log("Mem Full load into disk");
+                    var results = _MemoryManager.loadOnDisk(userCodeArr);
+                }
                 //Create a new PCB
                 var pid = _PCM.createProcces(results[0], results[1], 0, results[2]);
                 _StdOut.putText("Program load successful; <pid> " + pid + " created");
@@ -818,8 +822,7 @@ var DOS;
                 _StdOut.putText("Usage: format <method>");
             }
         };
-        Shell.prototype.ls = function (args) {
-            console.log(String.fromCharCode(parseInt("64", 16)));
+        Shell.prototype.ls = function () {
             var files = _krnDiskDriver.listFiles();
             files.forEach(function (file) {
                 _StdOut.putText(file);
