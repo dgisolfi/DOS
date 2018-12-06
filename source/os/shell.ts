@@ -635,9 +635,11 @@ module DOS {
                     throw new Error(`Program to Large, program is ${userCodeArr.length} bytes.`);
                 }
 
-                // If the check passes load the program to memory
+                // If the check passes load the program to memory or disk
                 var results = _MemoryManager.loadInMem(userCodeArr);
-
+                if (results[0] == 1) { // memory full load into disk
+                    
+                } 
                 //Create a new PCB
                 
                 var pid = _PCM.createProcces(results[0], results[1], 0, results[2]);

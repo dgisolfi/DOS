@@ -13,11 +13,10 @@
         export class MemoryManager {
             constructor() {}
     
-            public loadInMem(code): [number, number, string] {
+            public loadInMem(code): [number, number, number, string] {
                 var registers = [];
                 var startIndex = 0;
                 var endIndex = 0; 
-                var location = `memory`;
                 // Find the first open segment of memory
                  if (!_MEM.isSeg00Full) {
                     startIndex = 0;
@@ -36,6 +35,7 @@
 
                 } else {
                     // Load into Disk;
+                   
                 }
 
                 var memIndex = startIndex;
@@ -44,8 +44,19 @@
                     memIndex++;
                 });
 
-                return [startIndex, endIndex, location];
+                return [1, startIndex, endIndex, `memory`];
                 
+            }
+
+            //                                      success? strReg  endReg   loc
+            public loadOnDisk(code: Array<String>): [number, number, number, string] {
+
+                status = _krnDiskDriver.rollOut(code);
+                if (status[0] == 1) {
+                    return [1, 0, 0, `disk`];
+                }
+                return [0, 0, 0, `disk`];
+
             }
 
             public wipeSeg00() {
@@ -69,6 +80,6 @@
                 }
             }
 
-            
+           
         }
     }

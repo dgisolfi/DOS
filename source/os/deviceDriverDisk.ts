@@ -113,9 +113,73 @@
             return `-1:-1:-1`
         }
 
-        // public rollOut(): [number, string] {
+        // Take a process and put it on the DISK
+        public rollOut(userCode:Array<String>): [number, string, string] {
+            // Find a free set of blocks for the file
+            let initial_block = this.getEmptyBlock(false)
+            if (initial_block == `-1:-1:-1`) {
+                return [1,`-1:-1:-1`, `Disk full`]
+            }
 
-        // }
+            // 
+
+
+
+            let block_data = [];
+            let block = ``;
+            userCode.forEach(hex => {
+                block += hex
+                if (block.length == _DISK.blockSize) {
+                    block_data.push(block)
+                    block = ``;
+                }
+            });
+
+            for (let i = 0; (block.length/2) < (_DISK.blockSize); i++) {
+                block += `00`
+            }
+
+            block_data.push(block)
+            // block_data.reverse();
+            let next_block_pointer = ``
+            let file_pointer = this.getEmptyBlock(false);
+            block_data.forEach(block => {
+                // for first(or in reality last one block)
+                let block_tsb = this.getEmptyBlock(false)
+                if (block_tsb == `-1:-1:-1`) {
+                    return [1, `Disk full`]
+                }
+
+                if (block == block_data[block_data.length-1]) {
+                    next_block_pointer = `0:0:0`;
+                } else {
+                    next_block_pointer = this.getEmptyBlock(true)
+                }
+
+
+                let char = ``
+                let new_block_data = [];
+                block.split('').forEach(ch => {
+                    char += ch;
+                    if (char.length == 2) {
+                        new_block_data.push(char)
+                        char = ``;
+                    }                
+                });
+                 
+                // Write the data to the session
+                let fcb = new FCB(block_tsb, next_block_pointer, `1`, new_block_data);
+                sessionStorage.setItem(fcb.tsb, JSON.stringify(fcb));             
+                // console.log(`block: at ${block_tsb}: ${block}`, next_block_pointer);
+                fcb = null;                
+            });
+
+            
+                        
+            _Console.updateDisk();
+            return [0, initial_block,"data written to disk."]
+
+        }
 
         // Create a file, dont put nothin in it yet tho besides FCB stuff
         public createFile(file_name:string): [number, string] {
@@ -210,9 +274,7 @@
                 let fcb = new FCB(block_tsb, next_block_pointer, `1`, new_block_data);
                 sessionStorage.setItem(fcb.tsb, JSON.stringify(fcb));             
                 // console.log(`block: at ${block_tsb}: ${block}`, next_block_pointer);
-                fcb = null;
-
-                
+                fcb = null;                
             });
 
             // get the file name block to give it a pointer
