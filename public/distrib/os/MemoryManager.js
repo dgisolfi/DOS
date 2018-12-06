@@ -15,6 +15,7 @@ var DOS;
             var registers = [];
             var startIndex = 0;
             var endIndex = 0;
+            var location = "memory";
             // Find the first open segment of memory
             if (!_MEM.isSeg00Full) {
                 startIndex = 0;
@@ -32,16 +33,14 @@ var DOS;
                 _MEM.isSeg02Full = true;
             }
             else {
-                // Handle memory swapping
+                // Load into Disk;
             }
             var memIndex = startIndex;
             code.forEach(function (hex) {
                 _MEM.memory[memIndex] = hex;
                 memIndex++;
             });
-            registers[0] = startIndex;
-            registers[1] = endIndex; //memIndex;
-            return registers;
+            return [startIndex, endIndex, location];
         };
         MemoryManager.prototype.wipeSeg00 = function () {
             for (var i = 0; i <= 255; i++) {

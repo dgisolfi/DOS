@@ -13,10 +13,11 @@
         export class MemoryManager {
             constructor() {}
     
-            public loadInMem(code) {
+            public loadInMem(code): [number, number, string] {
                 var registers = [];
                 var startIndex = 0;
                 var endIndex = 0; 
+                var location = `memory`;
                 // Find the first open segment of memory
                  if (!_MEM.isSeg00Full) {
                     startIndex = 0;
@@ -34,7 +35,7 @@
                     _MEM.isSeg02Full = true;
 
                 } else {
-                    // Handle memory swapping
+                    // Load into Disk;
                 }
 
                 var memIndex = startIndex;
@@ -42,10 +43,8 @@
                     _MEM.memory[memIndex] = hex;
                     memIndex++;
                 });
-                registers[0] = startIndex;
-                registers[1] = endIndex; //memIndex;
 
-                return registers;
+                return [startIndex, endIndex, location];
                 
             }
 

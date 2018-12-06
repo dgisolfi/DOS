@@ -154,6 +154,16 @@ module DOS {
                 `<int> — let the user set the Round Robin quantum.`);
             this.commandList[this.commandList.length] = sc;
 
+            sc = new ShellCommand(this.setSchedule,
+                `setschedule`,
+                `<algorithim> — given a valid algorithim the scheduler will start using the desired one on the next cycle.`);
+            this.commandList[this.commandList.length] = sc;
+
+            sc = new ShellCommand(this.getSchedule,
+                `getschedule`,
+                `<int> — returns the scheduling algorithim currently in use.`);
+            this.commandList[this.commandList.length] = sc;
+
             sc = new ShellCommand(this.createFile,
                 `create`,
                 `<string> — given a string a new file will be created and given that name.`);
@@ -626,11 +636,11 @@ module DOS {
                 }
 
                 // If the check passes load the program to memory
-                var registers = _MemoryManager.loadInMem(userCodeArr);
+                var results = _MemoryManager.loadInMem(userCodeArr);
 
                 //Create a new PCB
                 
-                var pid = _PCM.createProcces(registers[0], registers[1]);
+                var pid = _PCM.createProcces(results[0], results[1], 0, results[2]);
                 _StdOut.putText(`Program load successful; <pid> ${pid} created`);
 
              
@@ -809,6 +819,37 @@ module DOS {
                 _StdOut.putText(`quantum => ${_SCHED.quantum}`);
             }
         }
+        public setSchedule(args) {
+            if (args.length > 0) {
+                var setting = args[0];
+                switch (setting) {
+                    case `rr`:
+                        _SCHED.scheduleMethod = setting;
+                        _SCHED.quantum = 6;
+                        _StdOut.putText(`Scheduling algorithm updated; now using ${_SCHED.scheduleMethod}`);
+                        break;
+                    case `fcfs`:
+                        _SCHED.scheduleMethod = setting;
+                        _SCHED.quantum = 10000;
+                        _StdOut.putText(`Scheduling algorithm updated; now using ${_SCHED.scheduleMethod}`);
+                        break;
+                    case `priority`:
+                        _SCHED.scheduleMethod = setting;
+                        _StdOut.putText(`Scheduling algorithm updated; now using ${_SCHED.scheduleMethod}`);
+                        break;
+                    default:
+                        _StdOut.putText(`Invalid arguement.  Usage: setschedule <algorithim>`);
+                        _StdOut.putText(`Valid algorithims: [rr, fcfs, priority]`);
+                }
+            } else {
+                _StdOut.putText(`Usage: setschedule <algorithim>`);
+            }
+        }
+
+        public getSchedule(args) {
+            _StdOut.putText(`scheduling algorithim in use: ${_SCHED.scheduleMethod}`);
+        }
+
 
         public createFile(args) {
             let params = ``
@@ -917,8 +958,7 @@ module DOS {
             }  
         }
 
-        public ls(args) {
-            console.log(String.fromCharCode(parseInt(`64`, 16)))
+        public ls() {
             let files = _krnDiskDriver.listFiles();
             files.forEach(file => {
                 _StdOut.putText(file);

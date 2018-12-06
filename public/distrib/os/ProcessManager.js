@@ -17,12 +17,15 @@ var DOS;
             this.readyQueue = {};
             this.terminatedQueue = {};
             // create a initial instance to avoid errors
-            this.runningprocess = new DOS.PCB(-1, 0, 0);
+            this.runningprocess = new DOS.PCB(-1, 0, 0, 0, "memory");
             this.runningprocess.init();
         };
-        ProcessManager.prototype.createProcces = function (startIndex, memIndex) {
+        ProcessManager.prototype.createProcces = function (startIndex, memIndex, priority, location) {
             // Create a new process and add it to the PCB
-            var process = new DOS.PCB(this.pidCounter, startIndex, memIndex);
+            if (priority == undefined) {
+                priority = 0;
+            }
+            var process = new DOS.PCB(this.pidCounter, startIndex, memIndex, priority, location);
             process.init();
             this.residentQueue[this.pidCounter] = process;
             this.residentQueue[this.pidCounter].state = "resident";
@@ -142,7 +145,7 @@ var DOS;
             }
             else if (Object.keys(_PCM.readyQueue).length == 0) {
                 _CPU.isExecuting = false;
-                this.runningprocess = new DOS.PCB(-1, 0, 0);
+                this.runningprocess = new DOS.PCB(-1, 0, 0, 0, "memory");
                 this.runningprocess.init();
             }
             if (processFound) {

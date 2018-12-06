@@ -12,7 +12,7 @@ module DOS {
         public CycleQueue = new Queue();
 
         public init() {
-            this.scheduleMethod = "round robin";
+            this.scheduleMethod = `RR`;
             this.quantum = 6;
             this.cycle = 0;
         }
@@ -28,7 +28,7 @@ module DOS {
         public schedule():void {
             // Update Process Stats
             _PCM.calcProcessStats();
-            if (this.scheduleMethod == `round robin`){
+            if (this.scheduleMethod == `rr` || this.scheduleMethod == `fcfs`){
                 // There are still more ready processes, call for context switch
                 if (this.checkCycle() == true){
                     // Are there any more ready programs
@@ -37,6 +37,8 @@ module DOS {
                         this.cycle = 0
                     }
                 }
+            } else if (this.scheduleMethod == `priority`) {
+
             }
             this.cycle++;
         }

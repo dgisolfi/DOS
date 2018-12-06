@@ -343,29 +343,28 @@ var DOS;
             document.getElementById("datetime").innerHTML = datetime;
         };
         Console.prototype.updateDisk = function () {
-            var data = "";
+            var data = "\n            <table class=\"table table-borderless table-hover table\">\n            <thead>\n                <tr>\n                    <th>TSB</th>\n                    <th>Pointer</th>\n                    <th>Data</th>\n                </tr>\n            </thead>\n            <tbody id=\"disk_data\">";
             for (var track = 0; track < _DISK.tracks; track++) {
                 for (var sector = 0; sector < _DISK.sectors; sector++) {
-                    for (var block = 0; block < _DISK.blocks; block++) {
+                    var _loop_1 = function (block) {
                         var tsb = track + ":" + sector + ":" + block;
-                        var bits = _krnDiskDriver.getBlock(tsb);
-                        var arr = bits['data'];
+                        var file_block = _krnDiskDriver.getBlock(tsb);
+                        console.log(file_block);
+                        var arr = file_block.data;
                         var row = "";
-                        console.log(bits);
-                        console.log(bits['data']);
-                        // arr.forEach(val => {
-                        //     row += val;
-                        // });
-                        // console.log(row);
-                        // data += 
-                        // `<tr>
-                        //     <td>${tsb}</td>
-                        //     <td>${row}</td>
-                        // </tr>`
+                        arr.forEach(function (val) {
+                            row += val;
+                        });
+                        data +=
+                            "<tr>\n                            <td>" + file_block.tsb + "</td>\n                            <td>" + file_block.pointer + "</td>\n                            <td>" + row + "</td>\n                        </tr>";
+                    };
+                    for (var block = 0; block < _DISK.blocks; block++) {
+                        _loop_1(block);
                     }
                 }
             }
-            // document.getElementById(`disk_data`).innerHTML = data;
+            data += "</tbody></table>";
+            document.getElementById("disk_table").innerHTML = data;
         };
         return Console;
     }());

@@ -23,7 +23,9 @@ module DOS {
         constructor(
             public pid,
             public base,
-            public limit) {      
+            public limit,
+            public priority,
+            public location) {      
         }
 
         public init() {
@@ -36,7 +38,6 @@ module DOS {
             this.ZFlag = 0;
             this.turnaroundTime = 0;
             this.waitTime = 0;
-            
         }
     }
 }

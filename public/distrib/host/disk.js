@@ -8,7 +8,7 @@ var DOS;
             this.tracks = 4;
             this.sectors = 8;
             this.blocks = 8;
-            this.blockSize = 60;
+            this.blockSize = 30;
         }
         Disk.prototype.init = function () {
             // initialize and set storage to 0's

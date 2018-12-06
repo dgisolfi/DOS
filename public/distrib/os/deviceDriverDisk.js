@@ -39,6 +39,7 @@ var DOS;
         DeviceDriverDisk.prototype.krnDiskDriverEntry = function () {
             // Initialization routine for this, the kernel-mode Disk Device Driver.
             this.status = "loaded";
+            _Console.updateDisk();
             // More?
         };
         DeviceDriverDisk.prototype.getBlock = function (TSB) {
@@ -118,6 +119,8 @@ var DOS;
             // ERROR or full
             return "-1:-1:-1";
         };
+        // public rollOut(): [number, string] {
+        // }
         // Create a file, dont put nothin in it yet tho besides FCB stuff
         DeviceDriverDisk.prototype.createFile = function (file_name) {
             // Check if that file is already in use
@@ -147,6 +150,7 @@ var DOS;
             // Since TS is strict delete fcb will throw an error Instead, free
             // the contents of a variable so it can be garbage collected  
             fcb = null;
+            _Console.updateDisk();
             return [0, "file written to disk"];
         };
         DeviceDriverDisk.prototype.writeFile = function (file_name, data) {
@@ -169,7 +173,7 @@ var DOS;
                     block = "";
                 }
             });
-            for (var i = 0; block.length < (_DISK.blockSize); i++) {
+            for (var i = 0; (block.length / 2) < (_DISK.blockSize); i++) {
                 block += "00";
             }
             block_data.push(block);
@@ -188,10 +192,19 @@ var DOS;
                 else {
                     next_block_pointer = _this.getEmptyBlock(true);
                 }
+                var char = "";
+                var new_block_data = [];
+                block.split('').forEach(function (ch) {
+                    char += ch;
+                    if (char.length == 2) {
+                        new_block_data.push(char);
+                        char = "";
+                    }
+                });
                 // Write the data to the session
-                var fcb = new DOS.FCB(block_tsb, next_block_pointer, "1", block);
+                var fcb = new DOS.FCB(block_tsb, next_block_pointer, "1", new_block_data);
                 sessionStorage.setItem(fcb.tsb, JSON.stringify(fcb));
-                console.log("block: at " + block_tsb + ": " + block, next_block_pointer);
+                // console.log(`block: at ${block_tsb}: ${block}`, next_block_pointer);
                 fcb = null;
             });
             // get the file name block to give it a pointer
@@ -200,6 +213,7 @@ var DOS;
             var fcb = new DOS.FCB(results[1], file_pointer, "1", file_block.data);
             sessionStorage.setItem(fcb.tsb, JSON.stringify(fcb));
             fcb = null;
+            _Console.updateDisk();
             return [0, "data written to disk."];
         };
         DeviceDriverDisk.prototype.readFile = function (file_name) {
@@ -255,6 +269,7 @@ var DOS;
             var fcb = new DOS.FCB(results[1], "0:0:0", "0", file_block.data);
             sessionStorage.setItem(fcb.tsb, JSON.stringify(fcb));
             fcb = null;
+            _Console.updateDisk();
             return [0, "removed from disk"];
         };
         DeviceDriverDisk.prototype.formatDisk = function (method) {
@@ -280,6 +295,7 @@ var DOS;
                         }
                     }
                 }
+                _Console.updateDisk();
                 return 0;
             }
             else {

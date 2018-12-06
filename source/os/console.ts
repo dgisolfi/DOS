@@ -388,33 +388,41 @@ module DOS {
         }
 
         public updateDisk(): void {
-            
-            var data = ``;
+            var data = `
+            <table class="table table-borderless table-hover table">
+            <thead>
+                <tr>
+                    <th>TSB</th>
+                    <th>Pointer</th>
+                    <th>Data</th>
+                </tr>
+            </thead>
+            <tbody id="disk_data">`;
+
             for (let track = 0; track < _DISK.tracks; track++) {
                 for (let sector = 0; sector < _DISK.sectors; sector++) {
                     for (let block = 0; block < _DISK.blocks; block++) {
                         let tsb = `${track}:${sector}:${block}`;
-                        let bits = _krnDiskDriver.getBlock(tsb);
-                        let arr = bits['data']
+                        let file_block = _krnDiskDriver.getBlock(tsb);
+                        let arr = file_block.data
                         let row = ``;
-                        console.log(bits)
-                        console.log(bits['data'])
                        
-                        // arr.forEach(val => {
-                        //     row += val;
-                        // });
+                        arr.forEach(val => {
+                            row += val;
+                        });
 
-                        // console.log(row);
-                        // data += 
-                        // `<tr>
-                        //     <td>${tsb}</td>
-                        //     <td>${row}</td>
-                        // </tr>`
+                        data += 
+                        `<tr>
+                            <td>${file_block.tsb}</td>
+                            <td>${file_block.pointer}</td>
+                            <td>${row}</td>
+                        </tr>`
                     }
                 }
             }                    
 
-            // document.getElementById(`disk_data`).innerHTML = data;
+            data += `</tbody></table>`
+            document.getElementById(`disk_table`).innerHTML = data;
 
         }
     }

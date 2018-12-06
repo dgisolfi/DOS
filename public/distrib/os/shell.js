@@ -83,6 +83,10 @@ var DOS;
             this.commandList[this.commandList.length] = sc;
             sc = new DOS.ShellCommand(this.setQuantum, "quantum", "<int> \u2014 let the user set the Round Robin quantum.");
             this.commandList[this.commandList.length] = sc;
+            sc = new DOS.ShellCommand(this.setSchedule, "setschedule", "<algorithim> \u2014 given a valid algorithim the scheduler will start using the desired one on the next cycle.");
+            this.commandList[this.commandList.length] = sc;
+            sc = new DOS.ShellCommand(this.getSchedule, "getschedule", "<int> \u2014 returns the scheduling algorithim currently in use.");
+            this.commandList[this.commandList.length] = sc;
             sc = new DOS.ShellCommand(this.createFile, "create", "<string> \u2014 given a string a new file will be created and given that name.");
             this.commandList[this.commandList.length] = sc;
             sc = new DOS.ShellCommand(this.readFile, "read", "<string> \u2014 given a string a file will be read from the disk.");
@@ -498,9 +502,9 @@ var DOS;
                     throw new Error("Program to Large, program is " + userCodeArr.length + " bytes.");
                 }
                 // If the check passes load the program to memory
-                var registers = _MemoryManager.loadInMem(userCodeArr);
+                var results = _MemoryManager.loadInMem(userCodeArr);
                 //Create a new PCB
-                var pid = _PCM.createProcces(registers[0], registers[1]);
+                var pid = _PCM.createProcces(results[0], results[1], 0, results[2]);
                 _StdOut.putText("Program load successful; <pid> " + pid + " created");
             }
             catch (e) {
@@ -669,6 +673,36 @@ var DOS;
                 _Console.advanceLine();
                 _StdOut.putText("quantum => " + _SCHED.quantum);
             }
+        };
+        Shell.prototype.setSchedule = function (args) {
+            if (args.length > 0) {
+                var setting = args[0];
+                switch (setting) {
+                    case "rr":
+                        _SCHED.scheduleMethod = setting;
+                        _SCHED.quantum = 6;
+                        _StdOut.putText("Scheduling algorithm updated; now using " + _SCHED.scheduleMethod);
+                        break;
+                    case "fcfs":
+                        _SCHED.scheduleMethod = setting;
+                        _SCHED.quantum = 10000;
+                        _StdOut.putText("Scheduling algorithm updated; now using " + _SCHED.scheduleMethod);
+                        break;
+                    case "priority":
+                        _SCHED.scheduleMethod = setting;
+                        _StdOut.putText("Scheduling algorithm updated; now using " + _SCHED.scheduleMethod);
+                        break;
+                    default:
+                        _StdOut.putText("Invalid arguement.  Usage: setschedule <algorithim>");
+                        _StdOut.putText("Valid algorithims: [rr, fcfs, priority]");
+                }
+            }
+            else {
+                _StdOut.putText("Usage: setschedule <algorithim>");
+            }
+        };
+        Shell.prototype.getSchedule = function (args) {
+            _StdOut.putText("scheduling algorithim in use: " + _SCHED.scheduleMethod);
         };
         Shell.prototype.createFile = function (args) {
             var params = "";

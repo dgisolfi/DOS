@@ -24,13 +24,16 @@
                 this.terminatedQueue = {};
                
                 // create a initial instance to avoid errors
-                this.runningprocess =  new PCB(-1,0,0);
+                this.runningprocess =  new PCB(-1,0,0, 0, `memory`);
                 this.runningprocess.init();                    
             }
 
-            public createProcces(startIndex, memIndex): number {
+            public createProcces(startIndex, memIndex, priority, location): number {
                 // Create a new process and add it to the PCB
-                let process = new PCB(this.pidCounter, startIndex, memIndex);
+                if (priority == undefined) {
+                    priority = 0
+                }
+                let process = new PCB(this.pidCounter, startIndex, memIndex, priority, location);
                 process.init();
                 
                 this.residentQueue[this.pidCounter] = process;
@@ -164,7 +167,7 @@
                     
                 } else if (Object.keys(_PCM.readyQueue).length == 0) {
                     _CPU.isExecuting = false;
-                    this.runningprocess = new PCB(-1,0,0);
+                    this.runningprocess = new PCB(-1,0,0, 0,`memory`);
                     this.runningprocess.init();
                 }
                 

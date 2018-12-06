@@ -13,7 +13,7 @@ module DOS {
             this.tracks = 4;
             this.sectors = 8;
             this.blocks = 8;
-            this.blockSize = 60;
+            this.blockSize = 30;
         }
 
         public init() {

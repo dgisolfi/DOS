@@ -26,6 +26,7 @@
         public krnDiskDriverEntry() {
             // Initialization routine for this, the kernel-mode Disk Device Driver.
             this.status = "loaded";
+            _Console.updateDisk();
             // More?
         }
 
@@ -112,6 +113,10 @@
             return `-1:-1:-1`
         }
 
+        // public rollOut(): [number, string] {
+
+        // }
+
         // Create a file, dont put nothin in it yet tho besides FCB stuff
         public createFile(file_name:string): [number, string] {
             // Check if that file is already in use
@@ -143,6 +148,7 @@
             // Since TS is strict delete fcb will throw an error Instead, free
             // the contents of a variable so it can be garbage collected  
             fcb = null;
+            _Console.updateDisk();
             return [0, `file written to disk`];
         }
 
@@ -168,7 +174,7 @@
                 }
             });
 
-            for (let i = 0; block.length < (_DISK.blockSize); i++) {
+            for (let i = 0; (block.length/2) < (_DISK.blockSize); i++) {
                 block += `00`
             }
 
@@ -189,12 +195,21 @@
                     next_block_pointer = this.getEmptyBlock(true)
                 }
 
+
+                let char = ``
+                let new_block_data = [];
+                block.split('').forEach(ch => {
+                    char += ch;
+                    if (char.length == 2) {
+                        new_block_data.push(char)
+                        char = ``;
+                    }                
+                });
                  
                 // Write the data to the session
-                let fcb = new FCB(block_tsb, next_block_pointer, `1`, block);
+                let fcb = new FCB(block_tsb, next_block_pointer, `1`, new_block_data);
                 sessionStorage.setItem(fcb.tsb, JSON.stringify(fcb));             
-                
-                console.log(`block: at ${block_tsb}: ${block}`, next_block_pointer);
+                // console.log(`block: at ${block_tsb}: ${block}`, next_block_pointer);
                 fcb = null;
 
                 
@@ -206,7 +221,7 @@
             let fcb = new FCB(results[1], file_pointer, `1`, file_block.data);
             sessionStorage.setItem(fcb.tsb, JSON.stringify(fcb));             
             fcb = null;
-            
+            _Console.updateDisk();
             return [0, "data written to disk."]
         }
 
@@ -272,6 +287,7 @@
             let fcb = new FCB(results[1], `0:0:0`, `0`, file_block.data);
             sessionStorage.setItem(fcb.tsb, JSON.stringify(fcb));
             fcb = null;
+            _Console.updateDisk();
             return [0, `removed from disk`]
         }
 
@@ -297,6 +313,7 @@
                         }
                     }
                 }
+                _Console.updateDisk();
                 return 0;
             } else {
                 return 1;
