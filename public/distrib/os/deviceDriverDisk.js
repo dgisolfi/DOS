@@ -180,7 +180,7 @@ var DOS;
             var hex_code = [];
             var file_block = this.getBlock(processTSB);
             if (file_block.inUse == 0) {
-                return [0, hex_code, "given block not valid, inUse bit = 0."];
+                return [1, hex_code, "given block not valid, inUse bit = 0."];
             }
             // theres more blocks
             if (file_block.pointer != "0:0:0") {
@@ -205,20 +205,9 @@ var DOS;
                 hex_code = file_block.data;
             }
             if (hex_blocks.length == 0) {
-                return [0, hex_code, "file empty"];
+                return [1, hex_code, "file empty"];
             }
-            // finally wether 1 or n blocks long, make the data readable
-            // let decoded = ``
-            // let hex_digit = ``
-            // hex_string.split('').forEach(char => {
-            //     hex_digit += char;
-            //     if (hex_digit.length == 2) {
-            //         decoded += String.fromCharCode(parseInt(hex_digit, 16));
-            //         hex_digit = ``;
-            //     }                
-            // });
-            // return [0, hex_code]
-            return [0, hex_code, "data retrieved to disk."];
+            return [0, hex_code, "data retrieved from disk."];
         };
         // Create a file, dont put nothin in it yet tho besides FCB stuff
         DeviceDriverDisk.prototype.createFile = function (file_name) {

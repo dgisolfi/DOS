@@ -32,7 +32,7 @@ var DOS;
                 _MEM.isSeg02Full = true;
             }
             else {
-                // Load into Diskxw
+                // Load into Disk
                 return [1, startIndex, endIndex, "memory"];
             }
             var memIndex = startIndex;

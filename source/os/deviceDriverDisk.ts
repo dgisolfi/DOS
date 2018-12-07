@@ -182,7 +182,7 @@
 
             let file_block = this.getBlock(processTSB)
             if (file_block.inUse == 0) {
-                return [0, hex_code, `given block not valid, inUse bit = 0.`]
+                return [1, hex_code, `given block not valid, inUse bit = 0.`]
             }
 
             // theres more blocks
@@ -211,10 +211,10 @@
             }
 
             if (hex_blocks.length == 0) {
-                return [0, hex_code, `file empty`];
+                return [1, hex_code, `file empty`];
             }
 
-            return [0, hex_code, `data retrieved to disk.`]
+            return [0, hex_code, `data retrieved from disk.`]
         }
 
         // Create a file, dont put nothin in it yet tho besides FCB stuff
