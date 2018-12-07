@@ -12,7 +12,7 @@ module DOS {
         public CycleQueue = new Queue();
 
         public init() {
-            this.scheduleMethod = `RR`;
+            this.scheduleMethod = `rr`;
             this.quantum = 6;
             this.cycle = 0;
         }
@@ -47,13 +47,22 @@ module DOS {
         // store the state
         public contextSwitch(pid) {
             Control.hostLog(`context switch on process:${pid}`, `os`);
+            
             // Save the state of the PCB
             _PCM.saveProcessState();
 
             if (_PCM.runningprocess.state != `terminated`) {
                 this.CycleQueue.enqueue(_PCM.runningprocess.pid.toString())
             }
+            // add running back to ready queue
             _PCM.readyQueue[_PCM.runningprocess.pid] = _PCM.runningprocess
+
+            // SWAPPING
+            // check the location of the process
+            if (_PCM.readyQueue[pid].location == `disk`) {
+                // AUTOBOTS ROLL OUT THIS PROCESS!
+                _SWAP.swapProcess(pid);
+            }
             
             // take next process off the ready queue
             _PCM.execProcess(pid);

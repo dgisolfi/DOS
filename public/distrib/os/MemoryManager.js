@@ -32,7 +32,7 @@ var DOS;
                 _MEM.isSeg02Full = true;
             }
             else {
-                // Load into Disk
+                // Load into Diskxw
                 return [1, startIndex, endIndex, "memory"];
             }
             var memIndex = startIndex;
@@ -42,13 +42,13 @@ var DOS;
             });
             return [0, startIndex, endIndex, "memory"];
         };
-        //                                      success? strReg  endReg   loc
+        //                                      success? strReg  endReg   loc     tsb
         MemoryManager.prototype.loadOnDisk = function (code) {
-            status = _krnDiskDriver.rollOut(code);
-            // if (status[0] == 1) {
-            //     return [1, 0, 0, `disk`];
-            // }
-            return [0, 0, 0, "disk"];
+            var status = _krnDiskDriver.rollOut(code);
+            if (status[0] == 1) {
+                return [1, 0, 0, "disk", "0:0:0"];
+            }
+            return [0, 0, 0, "disk", status[1]];
         };
         MemoryManager.prototype.wipeSeg00 = function () {
             for (var i = 0; i <= 255; i++) {

@@ -185,22 +185,26 @@ var DOS;
             // theres more blocks
             if (file_block.pointer != "0:0:0") {
                 var search = true;
-                var hex = [];
+                var hex_blocks = [];
                 var next_block = file_block.pointer;
                 while (search) {
                     var new_block = this.getBlock(next_block);
-                    hex.push(new_block.data);
+                    hex_blocks.push(new_block.data);
                     next_block = new_block.pointer;
                     if (new_block.pointer == "0:0:0") {
                         search = false;
                     }
                 }
-                console.log(hex);
+                hex_blocks.forEach(function (block) {
+                    block.forEach(function (hex_char) {
+                        hex_code.push(hex_char);
+                    });
+                });
             }
             else {
-                return [0, hex_code, "file empty"];
+                hex_code = file_block.data;
             }
-            if (hex.length == 0) {
+            if (hex_blocks.length == 0) {
                 return [0, hex_code, "file empty"];
             }
             // finally wether 1 or n blocks long, make the data readable
@@ -214,7 +218,7 @@ var DOS;
             //     }                
             // });
             // return [0, hex_code]
-            return [0, hex_code, "data written to disk."];
+            return [0, hex_code, "data retrieved to disk."];
         };
         // Create a file, dont put nothin in it yet tho besides FCB stuff
         DeviceDriverDisk.prototype.createFile = function (file_name) {

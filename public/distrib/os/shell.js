@@ -504,12 +504,22 @@ var DOS;
                 // If the check passes load the program to memory or disk
                 var results = _MemoryManager.loadInMem(userCodeArr);
                 if (results[0] == 1) { // memory full load into disk
-                    console.log("Mem Full load into disk");
-                    var results = _MemoryManager.loadOnDisk(userCodeArr);
+                    var status = _MemoryManager.loadOnDisk(userCodeArr);
+                    if (status[0] == 1) {
+                        _StdOut.putText("Program not loaded, Disk and Memory Full!");
+                        throw new Error("Program not loaded, Disk and Memory Full!");
+                    }
+                    else {
+                        //Create a new PCB
+                        var pid = _PCM.createProcces(status[0], status[1], 0, status[3], status[4]);
+                        _StdOut.putText("Program load successful; <pid> " + pid + " created");
+                    }
                 }
-                //Create a new PCB
-                var pid = _PCM.createProcces(results[0], results[1], 0, results[2]);
-                _StdOut.putText("Program load successful; <pid> " + pid + " created");
+                else {
+                    //Create a new PCB
+                    var pid = _PCM.createProcces(results[1], results[2], 0, results[3], "0:0:0");
+                    _StdOut.putText("Program load successful; <pid> " + pid + " created");
+                }
             }
             catch (e) {
                 // Log the detailed error message

@@ -20,13 +20,16 @@ var DOS;
             this.runningprocess = new DOS.PCB(-1, 0, 0, 0, "memory");
             this.runningprocess.init();
         };
-        ProcessManager.prototype.createProcces = function (startIndex, memIndex, priority, location) {
-            // Create a new process and add it to the PCB
+        ProcessManager.prototype.createProcces = function (startIndex, memIndex, priority, location, tsb) {
             if (priority == undefined) {
                 priority = 0;
             }
+            // Create a new process and add it to the PCB
             var process = new DOS.PCB(this.pidCounter, startIndex, memIndex, priority, location);
             process.init();
+            if (process.location == "disk") {
+                process.tsb = tsb;
+            }
             this.residentQueue[this.pidCounter] = process;
             this.residentQueue[this.pidCounter].state = "resident";
             this.pidCounter++;

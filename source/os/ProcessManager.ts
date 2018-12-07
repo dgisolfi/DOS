@@ -28,13 +28,17 @@
                 this.runningprocess.init();                    
             }
 
-            public createProcces(startIndex, memIndex, priority, location): number {
-                // Create a new process and add it to the PCB
+            public createProcces(startIndex, memIndex, priority, location, tsb): number {
                 if (priority == undefined) {
-                    priority = 0
+                    priority = 0;
                 }
+                // Create a new process and add it to the PCB
                 let process = new PCB(this.pidCounter, startIndex, memIndex, priority, location);
                 process.init();
+
+                if (process.location == `disk`) {
+                    process.tsb = tsb;
+                }
                 
                 this.residentQueue[this.pidCounter] = process;
                 this.residentQueue[this.pidCounter].state = `resident`;
@@ -45,7 +49,6 @@
             }
 
             public execProcess(pid?:number):void {
-
                 if (pid == undefined) {
                     pid = _SCHED.CycleQueue.dequeue()
                 }

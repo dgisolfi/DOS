@@ -188,11 +188,11 @@
             // theres more blocks
             if (file_block.pointer != `0:0:0`) {
                 let search = true;
-                var hex = [];
+                var hex_blocks = [];
                 let next_block = file_block.pointer;
                 while(search) {
                     let new_block = this.getBlock(next_block);
-                    hex.push(new_block.data);
+                    hex_blocks.push(new_block.data);
                     next_block = new_block.pointer;
 
                     if (new_block.pointer == `0:0:0`) {
@@ -200,32 +200,21 @@
                     }
                 }
 
-                console.log(hex)
-                
-            } else{
+                hex_blocks.forEach(block => {
+                    block.forEach(hex_char => {
+                        hex_code.push(hex_char);
+                    });
+                });
+
+            } else {
+                hex_code = file_block.data;
+            }
+
+            if (hex_blocks.length == 0) {
                 return [0, hex_code, `file empty`];
             }
 
-            if (hex.length == 0) {
-                return [0, hex_code, `file empty`];
-            }
-
-            // finally wether 1 or n blocks long, make the data readable
-            // let decoded = ``
-            // let hex_digit = ``
-            // hex_string.split('').forEach(char => {
-            //     hex_digit += char;
-            //     if (hex_digit.length == 2) {
-            //         decoded += String.fromCharCode(parseInt(hex_digit, 16));
-            //         hex_digit = ``;
-            //     }                
-            // });
-
-            // return [0, hex_code]
-
-
-
-            return [0, hex_code, `data written to disk.`]
+            return [0, hex_code, `data retrieved to disk.`]
         }
 
         // Create a file, dont put nothin in it yet tho besides FCB stuff

@@ -35,6 +35,7 @@ var _PCB;
 var _PCM;
 var _FCB;
 var _SCHED;
+var _SWAP;
 var _DISK;
 var _OSclock = 0; // Page 23.
 var _Mode = 0; // (currently unused)  0 = Kernel Mode, 1 = User Mode.  See page 21.

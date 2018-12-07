@@ -14,12 +14,12 @@ module DOS {
 
         constructor(
             public memory: string[] = [],
-            // public isSeg00Full: boolean = false,
-            // public isSeg01Full: boolean = false,
-            // public isSeg02Full: boolean = false
-            public isSeg00Full: boolean = true,
-            public isSeg01Full: boolean = true,
-            public isSeg02Full: boolean = true
+            public isSeg00Full: boolean = false,
+            public isSeg01Full: boolean = false,
+            public isSeg02Full: boolean = false
+            // public isSeg00Full: boolean = true,
+            // public isSeg01Full: boolean = true,
+            // public isSeg02Full: boolean = true
             ){
         }
         

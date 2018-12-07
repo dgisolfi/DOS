@@ -34,6 +34,8 @@ var DOS;
             _PCM.init();
             _SCHED = new DOS.Scheduler();
             _SCHED.init();
+            _SWAP = new DOS.Swapper();
+            _SWAP.init();
             _DISK = new DOS.Disk();
             _DISK.init();
             // Initialize the console.

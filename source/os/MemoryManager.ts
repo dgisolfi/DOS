@@ -18,7 +18,7 @@
                 var startIndex = 0;
                 var endIndex = 0; 
                 // Find the first open segment of memory
-                 if (!_MEM.isSeg00Full) {
+                if (!_MEM.isSeg00Full) {
                     startIndex = 0;
                     endIndex = 255;
                     _MEM.isSeg00Full = true;
@@ -34,7 +34,7 @@
                     _MEM.isSeg02Full = true;
 
                 } else {
-                    // Load into Disk
+                    // Load into Diskxw
                     return [1, startIndex, endIndex, `memory`];
                 }
 
@@ -48,15 +48,13 @@
                 
             }
 
-            //                                      success? strReg  endReg   loc
-            public loadOnDisk(code: Array<String>): [number, number, number, string] {
-
-                status = _krnDiskDriver.rollOut(code);
-                // if (status[0] == 1) {
-                //     return [1, 0, 0, `disk`];
-                // }
-                return [0, 0, 0, `disk`];
-
+            //                                      success? strReg  endReg   loc     tsb
+            public loadOnDisk(code: Array<String>): [number, number, number, string, string] {
+                let status = _krnDiskDriver.rollOut(code);
+                if (status[0] == 1) {
+                    return [1, 0, 0, `disk`, `0:0:0`];
+                }
+                return [0, 0, 0, `disk`, status[1]];
             }
 
             public wipeSeg00() {
@@ -79,7 +77,6 @@
                     _MEM.isSeg02Full = false;
                 }
             }
-
            
         }
     }

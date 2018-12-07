@@ -46,6 +46,7 @@ var _PCM: DOS.ProcessManager;
 var _FCB: DOS.FCB;
 
 var _SCHED: DOS.Scheduler;
+var _SWAP: DOS.Swapper;
 
 var _DISK: DOS.Disk;
 

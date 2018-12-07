@@ -40,6 +40,9 @@ module DOS {
             _SCHED = new Scheduler();
             _SCHED.init();
 
+            _SWAP = new Swapper();
+            _SWAP.init();
+
             _DISK = new Disk();
             _DISK.init();
 
