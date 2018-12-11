@@ -139,7 +139,6 @@ var DOS;
         DeviceDriverDisk.prototype.rollOut = function (pid, userCode) {
             var _this = this;
             // Find a free set of blocks for the file
-            console.log("usercode", userCode);
             var process_file = this.getEmptyFileBlock();
             if (process_file == "-1:-1:-1") {
                 return [1, "-1:-1:-1", "Disk full"];
@@ -187,7 +186,7 @@ var DOS;
                 if (block == block_data[block_data.length - 1]) {
                     next_block_pointer = "0:0:0";
                     if ((block.length / 2) > _DISK.blockSize) {
-                        block = block.substring(0, _DISK.blockSize);
+                        block = block.substring(0, (_DISK.blockSize * 2));
                     }
                 }
                 else {
@@ -236,7 +235,6 @@ var DOS;
                 while (search) {
                     // console.log(next_block)
                     var new_block = this.getBlock(next_block);
-                    // console.log(new_block)
                     hex_blocks.push(new_block.data);
                     next_block = new_block.pointer;
                     // turn the useBit to 0 and remove the pointer
@@ -258,7 +256,6 @@ var DOS;
                 for (var i = 0; hex_code.length <= 255; i++) {
                     hex_code.push("00");
                 }
-                console.log(hex_code);
             }
             else {
                 hex_code = file_block.data;

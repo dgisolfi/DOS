@@ -133,7 +133,6 @@
         // Autobots ROLL OUT!
         public rollOut(pid:number, userCode:Array<String>): [number, string, string] {
             // Find a free set of blocks for the file
-            console.log(`usercode`, userCode)
             let process_file = this.getEmptyFileBlock()
             if (process_file == `-1:-1:-1`) {
                 return [1,`-1:-1:-1`, `Disk full`]
@@ -189,7 +188,7 @@
                 if (block == block_data[block_data.length-1]) {
                     next_block_pointer = `0:0:0`;
                     if ((block.length/2) > _DISK.blockSize) {
-                        block = block.substring(0, _DISK.blockSize)
+                        block = block.substring(0, (_DISK.blockSize*2))
 
                     }
                 } else {
@@ -203,9 +202,11 @@
                     if (char.length == 2) {
                         new_block_data.push(char)
                         char = ``;
-                    }                
+                    }
+                    
                 });
-                console.log(block_data)
+
+                console.log(block_data);
                  
                 // Write the data to the session
                 let fcb = new FCB(block_tsb, next_block_pointer, `1`, new_block_data);
@@ -247,7 +248,6 @@
                 while(search) {
                     // console.log(next_block)
                     let new_block = this.getBlock(next_block);
-                    // console.log(new_block)
                     hex_blocks.push(new_block.data);
                     next_block = new_block.pointer;
                     // turn the useBit to 0 and remove the pointer
@@ -273,7 +273,7 @@
                 for (let i = 0; hex_code.length <= 255; i++) {
                     hex_code.push(`00`);
                 }
-                console.log(hex_code)
+             
 
             } else {
                 hex_code = file_block.data;
