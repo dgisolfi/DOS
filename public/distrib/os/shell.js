@@ -728,21 +728,26 @@ var DOS;
         };
         Shell.prototype.createFile = function (args) {
             var params = "";
-            args.forEach(function (arg) {
-                params += arg;
-            });
-            params = params.trim();
-            if (!/[^a-zA-Z\s]/.test(params)) {
-                var status_1 = _krnDiskDriver.createFile(params);
-                if (status_1[0] == 0) {
-                    _StdOut.putText("File creation successful; <file> " + params + ", " + status_1[1]);
-                }
-                else {
-                    _StdOut.putText("File creation unsuccessful; <file> " + params + ", " + status_1[1]);
-                }
+            if (args.length == 0) {
+                _StdOut.putText("File creation unsuccessful; please provide a file name.");
             }
             else {
-                _StdOut.putText("File creation unsuccessful; <file> " + params + " not a valid file name");
+                args.forEach(function (arg) {
+                    params += arg;
+                });
+                params = params.trim();
+                if (!/[^a-zA-Z\s]/.test(params)) {
+                    var status_1 = _krnDiskDriver.createFile(params);
+                    if (status_1[0] == 0) {
+                        _StdOut.putText("File creation successful; <file> " + params + ", " + status_1[1]);
+                    }
+                    else {
+                        _StdOut.putText("File creation unsuccessful; <file> " + params + ", " + status_1[1]);
+                    }
+                }
+                else {
+                    _StdOut.putText("File creation unsuccessful; <file> " + params + " not a valid file name");
+                }
             }
         };
         Shell.prototype.readFile = function (args) {
@@ -751,7 +756,8 @@ var DOS;
                 params += arg;
             });
             params = params.trim();
-            if (!/[^a-zA-Z\s]/.test(params)) {
+            console.log(params);
+            if (!/[^a-zA-Z\d*\s]/.test(params)) {
                 var status_2 = _krnDiskDriver.readFile(params);
                 if (status_2[0] == 0) {
                     _StdOut.putText("File read successful; <file> " + params + " contents:");
@@ -769,23 +775,28 @@ var DOS;
         Shell.prototype.writeFile = function (args) {
             var file = args[0];
             var data = "";
-            args.forEach(function (arg, index) {
-                if (index == 0) {
-                    return;
-                }
-                data += arg.replace("\"", "") + " ";
-            });
-            if (!/[^a-zA-Z\s]/.test(data)) {
-                var status_3 = _krnDiskDriver.writeFile(file, data);
-                if (status_3[0] == 0) {
-                    _StdOut.putText("File write successful; <file> " + file);
-                }
-                else if (status_3[0] == 1) {
-                    _StdOut.putText("File write unsuccessful; <file> " + file + ", " + status_3[1]);
-                }
+            if (args.length < 2) {
+                _StdOut.putText("File write unsuccessful; <file> " + file + ", no data provided");
             }
             else {
-                _StdOut.putText("File write unsuccessful; <file> " + file + " Data can only contain characters and spaces");
+                args.forEach(function (arg, index) {
+                    if (index == 0) {
+                        return;
+                    }
+                    data += arg.replace(/"/g, "") + " ";
+                });
+                if (!/[^a-zA-Z\s]/.test(data)) {
+                    var status_3 = _krnDiskDriver.writeFile(file, data);
+                    if (status_3[0] == 0) {
+                        _StdOut.putText("File write successful; <file> " + file);
+                    }
+                    else if (status_3[0] == 1) {
+                        _StdOut.putText("File write unsuccessful; <file> " + file + ", " + status_3[1]);
+                    }
+                }
+                else {
+                    _StdOut.putText("File write unsuccessful; <file> " + file + " Data can only contain characters and spaces");
+                }
             }
         };
         Shell.prototype.deleteFile = function (args) {

@@ -869,20 +869,25 @@ module DOS {
 
         public createFile(args) {
             let params = ``
-            args.forEach(arg => {
-                params +=  arg  
-            });
-            params = params.trim()
-            if (!/[^a-zA-Z\s]/.test(params)) {
-                let status = _krnDiskDriver.createFile(params)
-                if (status[0] == 0) {
-                    _StdOut.putText(`File creation successful; <file> ${params}, ${status[1]}`);
-                } else {
-                    _StdOut.putText(`File creation unsuccessful; <file> ${params}, ${status[1]}`);
-                }
+            if (args.length == 0) {
+                _StdOut.putText(`File creation unsuccessful; please provide a file name.`);
             } else {
-                _StdOut.putText(`File creation unsuccessful; <file> ${params} not a valid file name`);
+                args.forEach(arg => {
+                    params +=  arg  
+                });
+                params = params.trim()
+                if (!/[^a-zA-Z\s]/.test(params)) {
+                    let status = _krnDiskDriver.createFile(params)
+                    if (status[0] == 0) {
+                        _StdOut.putText(`File creation successful; <file> ${params}, ${status[1]}`);
+                    } else {
+                        _StdOut.putText(`File creation unsuccessful; <file> ${params}, ${status[1]}`);
+                    }
+                } else {
+                    _StdOut.putText(`File creation unsuccessful; <file> ${params} not a valid file name`);
+                }
             }
+            
         }
 
         public readFile(args) {
@@ -891,7 +896,8 @@ module DOS {
                 params +=  arg ;
             });
             params = params.trim()
-            if (!/[^a-zA-Z\s]/.test(params)) {
+            console.log(params)
+            if (!/[^a-zA-Z\d*\s]/.test(params)) {
                 let status = _krnDiskDriver.readFile(params)
                 if (status[0] == 0) {
                     _StdOut.putText(`File read successful; <file> ${params} contents:`);
@@ -908,24 +914,28 @@ module DOS {
         public writeFile(args) {
             let file = args[0];
             let data = ``
+            if (args.length < 2) {
+                _StdOut.putText(`File write unsuccessful; <file> ${file}, no data provided`);
 
-            args.forEach((arg, index) => {
-                if (index == 0) {
-                    return;
-                }
-                data += arg.replace(`\"`, ``) + " "
-
-            });
-
-            if (!/[^a-zA-Z\s]/.test(data)) {
-                let status = _krnDiskDriver.writeFile(file, data)
-                if (status[0] == 0) {
-                    _StdOut.putText(`File write successful; <file> ${file}`);
-                } else if (status[0] == 1) {
-                    _StdOut.putText(`File write unsuccessful; <file> ${file}, ${status[1]}`);
-                }
             } else {
-                _StdOut.putText(`File write unsuccessful; <file> ${file} Data can only contain characters and spaces`);
+                args.forEach((arg, index) => {
+                    if (index == 0) {
+                        return;
+                    }
+                    data += arg.replace(/"/g,``) + ` `
+    
+                });
+    
+                if (!/[^a-zA-Z\s]/.test(data)) {
+                    let status = _krnDiskDriver.writeFile(file, data)
+                    if (status[0] == 0) {
+                        _StdOut.putText(`File write successful; <file> ${file}`);
+                    } else if (status[0] == 1) {
+                        _StdOut.putText(`File write unsuccessful; <file> ${file}, ${status[1]}`);
+                    }
+                } else {
+                    _StdOut.putText(`File write unsuccessful; <file> ${file} Data can only contain characters and spaces`);
+                }
             }
         }
 

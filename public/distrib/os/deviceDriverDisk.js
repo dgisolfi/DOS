@@ -362,7 +362,9 @@ var DOS;
                 var next_block = file_block.pointer;
                 while (search) {
                     var new_block = this.getBlock(next_block);
-                    hex_string += new_block.data;
+                    new_block.data.forEach(function (hex) {
+                        hex_string += hex;
+                    });
                     next_block = new_block.pointer;
                     if (new_block.pointer == "0:0:0") {
                         search = false;
@@ -378,9 +380,11 @@ var DOS;
             // finally wether 1 or n blocks long, make the data readable
             var decoded = "";
             var hex_digit = "";
+            console.log(typeof (hex_string));
             hex_string.split('').forEach(function (char) {
                 hex_digit += char;
                 if (hex_digit.length == 2) {
+                    console.log(hex_digit, decoded);
                     decoded += String.fromCharCode(parseInt(hex_digit, 16));
                     hex_digit = "";
                 }
