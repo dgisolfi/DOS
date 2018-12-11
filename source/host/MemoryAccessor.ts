@@ -22,13 +22,11 @@ module DOS {
         // returns all user code of a block
         public readMemoryBlock(process:DOS.PCB): Array<string> {
             let hex_code = [];
-            for (let i = process.base; i < process.limit; i++) {
-                let num = (process.base + i);
-                console.log(_MEM.memory[process.base])
-                let hex = _MEM.memory[num]
-                hex_code.push(hex);
-            }
-            console.log(`TEST`,process,hex_code)
+            _MEM.memory.forEach((hex, index) => {
+                if (index >= process.base  && index <= process.limit ) {
+                    hex_code.push(hex);
+                }
+            });
             return hex_code
         }
 

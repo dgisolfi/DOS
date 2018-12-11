@@ -19,13 +19,11 @@ var DOS;
         // returns all user code of a block
         MemoryAccessor.prototype.readMemoryBlock = function (process) {
             var hex_code = [];
-            for (var i = process.base; i < process.limit; i++) {
-                var num = (process.base + i);
-                console.log(_MEM.memory[process.base]);
-                var hex = _MEM.memory[num];
-                hex_code.push(hex);
-            }
-            console.log("TEST", process, hex_code);
+            _MEM.memory.forEach(function (hex, index) {
+                if (index >= process.base && index <= process.limit) {
+                    hex_code.push(hex);
+                }
+            });
             return hex_code;
         };
         MemoryAccessor.prototype.writeMemory = function (address, data) {

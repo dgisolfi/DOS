@@ -224,6 +224,10 @@
                 return [1, hex_code, `given block not valid, inUse bit = 0.`]
             }
 
+            let fcb = new FCB(file_block.tsb, `0:0:0`, `0`, file_block.data);
+            sessionStorage.setItem(fcb.tsb, JSON.stringify(fcb));
+            fcb = null;
+
             // theres more blocks
             if (file_block.pointer != `0:0:0`) {
                 let search = true;
@@ -235,8 +239,10 @@
                     // console.log(new_block)
                     hex_blocks.push(new_block.data);
                     next_block = new_block.pointer;
-                    // turn the useBit to 0
-                    new_block.inUse = `0`;
+                    // turn the useBit to 0 and remove the pointer
+                    let fcb = new FCB(new_block.tsb, `0:0:0`, `0`, new_block.data);
+                    sessionStorage.setItem(fcb.tsb, JSON.stringify(fcb));
+                    fcb = null;
 
                     if (new_block.pointer == `0:0:0`) {
                         search = false;

@@ -513,7 +513,6 @@ var DOS;
                 }
                 else {
                     var priority = 0;
-                    console.log(isNaN(args[0]), isNaN(Number(args[0])));
                     if (args.length > 0) {
                         if (isNaN(Number(args[0]))) {
                             _StdOut.putText("Program load unsuccessful; priority must be a numeric variable");
@@ -526,7 +525,6 @@ var DOS;
                     //Create a new PCB
                     var pid = _PCM.createProcces(results[1], results[2], 0, results[3], "0:0:0");
                     _PCM.residentQueue[pid].priority = priority;
-                    console.log(_PCM.residentQueue[pid]);
                     _StdOut.putText("Program load successful; <pid> " + pid + " created");
                 }
             }
