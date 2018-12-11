@@ -17,10 +17,10 @@ var DOS;
             return (_MEM.memory[hex_location]);
         };
         // returns all user code of a block
-        MemoryAccessor.prototype.readMemoryBlock = function (process) {
+        MemoryAccessor.prototype.readMemoryBlock = function (process, base, lim) {
             var hex_code = [];
             _MEM.memory.forEach(function (hex, index) {
-                if (index >= process.base && index <= process.limit) {
+                if (base <= index && index <= lim) {
                     hex_code.push(hex);
                 }
             });

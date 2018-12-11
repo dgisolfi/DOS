@@ -20,10 +20,10 @@ module DOS {
         }
 
         // returns all user code of a block
-        public readMemoryBlock(process:DOS.PCB): Array<string> {
+        public readMemoryBlock(process:DOS.PCB, base, lim): Array<string> {
             let hex_code = [];
             _MEM.memory.forEach((hex, index) => {
-                if (index >= process.base  && index <= process.limit ) {
+                if (base <= index && index <= lim) {
                     hex_code.push(hex);
                 }
             });

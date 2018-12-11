@@ -133,6 +133,7 @@
         // Autobots ROLL OUT!
         public rollOut(pid:number, userCode:Array<String>): [number, string, string] {
             // Find a free set of blocks for the file
+            console.log(`usercode`, userCode)
             let process_file = this.getEmptyFileBlock()
             if (process_file == `-1:-1:-1`) {
                 return [1,`-1:-1:-1`, `Disk full`]
@@ -155,18 +156,17 @@
             let block = ``;
             userCode.forEach(hex => {
                 block += hex
-                if (block.length/2 == _DISK.blockSize) {
+                if ((block.length/2) == _DISK.blockSize) {
                     block_data.push(block)
                     block = ``;
                 }
             });
 
-            for (let i = 0; block.length/2 < _DISK.blockSize; i++) {
+            for (let i = 0; (block.length/2) < _DISK.blockSize; i++) {
                 block += `00`;
             }
 
             block_data.push(block)
-            // block_data.reverse();
             let next_block_pointer = ``
             let file_pointer = this.getEmptyBlock(false);
             block_data.forEach((block,index) => {
@@ -180,8 +180,18 @@
                     initial_pointer = block_tsb
                 }
 
+                // TODO: make a better fix for this...
+                if (block == `000000000000000000000000000000000000000000000000000000000000`) {
+                    block_data.splice(index,1);
+                    return;
+                }
+
                 if (block == block_data[block_data.length-1]) {
                     next_block_pointer = `0:0:0`;
+                    if ((block.length/2) > _DISK.blockSize) {
+                        block = block.substring(0, _DISK.blockSize)
+
+                    }
                 } else {
                     next_block_pointer = this.getEmptyBlock(true)
                 }
@@ -195,6 +205,7 @@
                         char = ``;
                     }                
                 });
+                console.log(block_data)
                  
                 // Write the data to the session
                 let fcb = new FCB(block_tsb, next_block_pointer, `1`, new_block_data);
@@ -257,12 +268,17 @@
 
                 if (hex_blocks.length == 0) {
                     return [1, hex_code, `file empty`];
-                }    
+                }
+                
+                for (let i = 0; hex_code.length <= 255; i++) {
+                    hex_code.push(`00`);
+                }
+                console.log(hex_code)
 
             } else {
                 hex_code = file_block.data;
             }
-            console.log(`ROLL IN`, hex_code);
+            // console.log(`ROLL IN`, hex_code);
             _Console.updateDisk();
             return [0, hex_code, `data retrieved from disk.`]
         }
@@ -409,11 +425,9 @@
             // finally wether 1 or n blocks long, make the data readable
             let decoded = ``
             let hex_digit = ``
-            console.log(typeof(hex_string));
             hex_string.split('').forEach(char => {
                 hex_digit += char;
                 if (hex_digit.length == 2) {
-                    console.log(hex_digit, decoded)
                     decoded += String.fromCharCode(parseInt(hex_digit, 16));
                     hex_digit = ``;
                 }                

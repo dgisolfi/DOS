@@ -978,7 +978,12 @@ module DOS {
                         }
                         break;
                     default:
-                        _StdOut.putText(`Invalid arguement.  Usage: format <method>.`);
+                        var status = _krnDiskDriver.formatDisk(`full`)
+                        if (status == 0) {
+                            _StdOut.putText(`full format successful.`);
+                        } else {
+                            _StdOut.putText(`full format unsuccessful.`);
+                        }
                 }
             } else {
                 _StdOut.putText(`Usage: format <method>`);

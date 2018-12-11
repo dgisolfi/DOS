@@ -17,25 +17,25 @@ function Glados() {
       _KernelInputQueue.enqueue('e');
       _KernelInputQueue.enqueue('l');
       _KernelInputQueue.enqueue('p');
-      TSOS.Kernel.prototype.krnInterruptHandler(KEYBOARD_IRQ, [13, false]);
+      DOS.Kernel.prototype.krnInterruptHandler(KEYBOARD_IRQ, [13, false]);
       _KernelInputQueue.enqueue('h');
       _KernelInputQueue.enqueue('e');
       _KernelInputQueue.enqueue('l');
       _KernelInputQueue.enqueue('p');
-      TSOS.Kernel.prototype.krnInterruptHandler(KEYBOARD_IRQ, [13, false]);
+      DOS.Kernel.prototype.krnInterruptHandler(KEYBOARD_IRQ, [13, false]);
 
       // Test the 'ver' command.
       _KernelInputQueue.enqueue('v');
       _KernelInputQueue.enqueue('e');
       _KernelInputQueue.enqueue('r');
-      TSOS.Kernel.prototype.krnInterruptHandler(KEYBOARD_IRQ, [13, false]);
+      DOS.Kernel.prototype.krnInterruptHandler(KEYBOARD_IRQ, [13, false]);
 
       // Test the 'date' command.
       _KernelInputQueue.enqueue('d');
       _KernelInputQueue.enqueue('a');
       _KernelInputQueue.enqueue('t');
       _KernelInputQueue.enqueue('e');
-      TSOS.Kernel.prototype.krnInterruptHandler(KEYBOARD_IRQ, [13, false]);
+      DOS.Kernel.prototype.krnInterruptHandler(KEYBOARD_IRQ, [13, false]);
 
       // Test the 'whereami' command.
       _KernelInputQueue.enqueue('w');
@@ -46,7 +46,7 @@ function Glados() {
       _KernelInputQueue.enqueue('a');
       _KernelInputQueue.enqueue('m');
       _KernelInputQueue.enqueue('i');
-      TSOS.Kernel.prototype.krnInterruptHandler(KEYBOARD_IRQ, [13, false]);
+      DOS.Kernel.prototype.krnInterruptHandler(KEYBOARD_IRQ, [13, false]);
      
       // Test the 'status' command.
       _KernelInputQueue.enqueue('S');
@@ -61,7 +61,7 @@ function Glados() {
       _KernelInputQueue.enqueue('N');
       _KernelInputQueue.enqueue('a');
       _KernelInputQueue.enqueue('L');
-      TSOS.Kernel.prototype.krnInterruptHandler(KEYBOARD_IRQ, [13, false]);
+      DOS.Kernel.prototype.krnInterruptHandler(KEYBOARD_IRQ, [13, false]);
       
       // Load some invalid user program code
       document.getElementById("taProgramInput").value="This is NOT hex.";
@@ -69,7 +69,7 @@ function Glados() {
       _KernelInputQueue.enqueue('o');
       _KernelInputQueue.enqueue('a');
       _KernelInputQueue.enqueue('d');
-      TSOS.Kernel.prototype.krnInterruptHandler(KEYBOARD_IRQ, [13, false]);
+      DOS.Kernel.prototype.krnInterruptHandler(KEYBOARD_IRQ, [13, false]);
 
       // Format the hard drive so we can load FOUR or more programs.
       _KernelInputQueue.enqueue('f');
@@ -78,7 +78,7 @@ function Glados() {
       _KernelInputQueue.enqueue('m');
       _KernelInputQueue.enqueue('a');
       _KernelInputQueue.enqueue('t');
-      TSOS.Kernel.prototype.krnInterruptHandler(KEYBOARD_IRQ, [13, false]);
+      DOS.Kernel.prototype.krnInterruptHandler(KEYBOARD_IRQ, [13, false]);
 
       // getschedule
       _KernelInputQueue.enqueue('g');
@@ -92,7 +92,7 @@ function Glados() {
       _KernelInputQueue.enqueue('u');
       _KernelInputQueue.enqueue('l');
       _KernelInputQueue.enqueue('e');
-      TSOS.Kernel.prototype.krnInterruptHandler(KEYBOARD_IRQ, [13, false]);
+      DOS.Kernel.prototype.krnInterruptHandler(KEYBOARD_IRQ, [13, false]);
 
       // Load FOUR different valid user programs code and run them.                                                                                                           . . . and here.
       var code1 = "A9 00 8D 7B 00 A9 00 8D 7B 00 A9 00 8D 7C 00 A9 00 8D 7C 00 A9 01 8D 7A 00 A2 00 EC 7A 00 D0 39 A0 7D A2 02 FF AC 7B 00 A2 01 FF AD 7B 00 8D 7A 00 A9 01 6D 7A 00 8D 7B 00 A9 03 AE 7B 00 8D 7A 00 A9 00 EC 7A 00 D0 02 A9 01 8D 7A 00 A2 01 EC 7A 00 D0 05 A9 01 8D 7C 00 A9 00 AE 7C 00 8D 7A 00 A9 00 EC 7A 00 D0 02 A9 01 8D 7A 00 A2 00 EC 7A 00 D0 AC A0 7F A2 02 FF 00 00 00 00 61 00 61 64 6F 6E 65 00";
@@ -105,7 +105,7 @@ function Glados() {
 								     _KernelInputQueue.enqueue('o');
 								     _KernelInputQueue.enqueue('a');
 								     _KernelInputQueue.enqueue('d');
-								     TSOS.Kernel.prototype.krnInterruptHandler(KEYBOARD_IRQ, [13, false]);           	   				
+								     DOS.Kernel.prototype.krnInterruptHandler(KEYBOARD_IRQ, [13, false]);           	   				
 									}, 1000);
 
 		setTimeout(function(){ document.getElementById("taProgramInput").value = code2;
@@ -113,7 +113,7 @@ function Glados() {
 								     _KernelInputQueue.enqueue('o');
 								     _KernelInputQueue.enqueue('a');
 								     _KernelInputQueue.enqueue('d');
-								     TSOS.Kernel.prototype.krnInterruptHandler(KEYBOARD_IRQ, [13, false]);           	   				
+								     DOS.Kernel.prototype.krnInterruptHandler(KEYBOARD_IRQ, [13, false]);           	   				
 									}, 2000);
 
 		setTimeout(function(){ document.getElementById("taProgramInput").value = code3;
@@ -121,7 +121,7 @@ function Glados() {
 								     _KernelInputQueue.enqueue('o');
 								     _KernelInputQueue.enqueue('a');
 								     _KernelInputQueue.enqueue('d');
-								     TSOS.Kernel.prototype.krnInterruptHandler(KEYBOARD_IRQ, [13, false]);           	   				
+								     DOS.Kernel.prototype.krnInterruptHandler(KEYBOARD_IRQ, [13, false]);           	   				
 									}, 3000);
 
 		setTimeout(function(){ document.getElementById("taProgramInput").value = code4;
@@ -129,7 +129,7 @@ function Glados() {
 								     _KernelInputQueue.enqueue('o');
 								     _KernelInputQueue.enqueue('a');
 								     _KernelInputQueue.enqueue('d');
-								     TSOS.Kernel.prototype.krnInterruptHandler(KEYBOARD_IRQ, [13, false]);           	   				
+								     DOS.Kernel.prototype.krnInterruptHandler(KEYBOARD_IRQ, [13, false]);           	   				
 									}, 3000);
 
 		setTimeout(function(){ _KernelInputQueue.enqueue('r');
@@ -138,7 +138,7 @@ function Glados() {
 								     _KernelInputQueue.enqueue('a');
 								     _KernelInputQueue.enqueue('l');      
 								     _KernelInputQueue.enqueue('l');            
-								     TSOS.Kernel.prototype.krnInterruptHandler(KEYBOARD_IRQ, [13, false]);		
+								     DOS.Kernel.prototype.krnInterruptHandler(KEYBOARD_IRQ, [13, false]);		
 									}, 4000);
 
 	   // Remind myself to test the file system.
@@ -169,7 +169,7 @@ function Glados() {
 	   _KernelInputQueue.enqueue('t');
 	   _KernelInputQueue.enqueue('e');
 	   _KernelInputQueue.enqueue('m');
-	   TSOS.Kernel.prototype.krnInterruptHandler(KEYBOARD_IRQ, [13, false]);
+	   DOS.Kernel.prototype.krnInterruptHandler(KEYBOARD_IRQ, [13, false]);
    };
 		
 }

@@ -37,7 +37,23 @@ var DOS;
             // console.log(`${victim.pid} => Disk | ${diskPID} => Mem`)
             // console.log(victim.pid, victim.state)
             // get the victim's user code
-            var victimCode = _MemoryAccessor.readMemoryBlock(victim);
+            var base = 0;
+            var lim = 0;
+            switch (victim.base) {
+                case 0:
+                    base = 0;
+                    lim = 255;
+                    break;
+                case 256:
+                    base = 256;
+                    lim = 511;
+                    break;
+                case 512:
+                    base = 512;
+                    lim = 767;
+                    break;
+            }
+            var victimCode = _MemoryAccessor.readMemoryBlock(victim, base, lim);
             DOS.Control.hostLog("Roll Out on process:" + victimPID, "os");
             var outStatus = _krnDiskDriver.rollOut(victim.pid, victimCode);
             _PCM.readyQueue[victimPID].location = "disk";
@@ -64,6 +80,7 @@ var DOS;
                 DOS.Control.hostLog("SWAP ERROR: " + status[2], "os");
                 return [1];
             }
+            console.log("TESTIT", status[1]);
             var mem_status = _MemoryManager.loadInMem(status[1]);
             if (mem_status[0] == 1) {
                 DOS.Control.hostLog("SWAP ERROR: Memory Full!", "os");
