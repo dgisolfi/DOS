@@ -62,6 +62,7 @@
                 // get usercode from disk...
                 // Call roll in to return userCode
                 Control.hostLog(`Roll In on process:${diskPID}`, `os`);
+                console.log(diskPID)
                 let status = _krnDiskDriver.rollIn(_PCM.readyQueue[diskPID].tsb);
                 if (status[0] == 1) {
                     Control.hostLog(`SWAP ERROR: ${status[2]}`, `os`);

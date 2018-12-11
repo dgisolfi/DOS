@@ -664,7 +664,7 @@ var DOS;
         };
         Shell.prototype.kill = function (args) {
             var pid = args[0];
-            if (pid === parseInt(pid, 10)) {
+            if (isNaN(Number(pid))) {
                 _StdOut.putText("not a valid PID, must be of type <int>");
             }
             else {

@@ -248,6 +248,7 @@
                         search = false;
                     }
                 }
+
                 hex_blocks.forEach(block => {
                     block.forEach(hex_char => {
                         hex_code.push(hex_char);

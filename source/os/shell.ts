@@ -801,8 +801,8 @@ module DOS {
         }
 
         public kill(args) {
-            var pid = args[0]
-            if (pid === parseInt(pid, 10)){
+            var pid = args[0];
+            if (isNaN(Number(pid))) {
                 _StdOut.putText(`not a valid PID, must be of type <int>`);
             } else {
                 Object.keys(_PCM.terminatedQueue).forEach(currPid => {

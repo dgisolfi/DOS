@@ -58,6 +58,7 @@ var DOS;
             // get usercode from disk...
             // Call roll in to return userCode
             DOS.Control.hostLog("Roll In on process:" + diskPID, "os");
+            console.log(diskPID);
             var status = _krnDiskDriver.rollIn(_PCM.readyQueue[diskPID].tsb);
             if (status[0] == 1) {
                 DOS.Control.hostLog("SWAP ERROR: " + status[2], "os");
