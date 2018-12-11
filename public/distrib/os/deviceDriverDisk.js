@@ -288,8 +288,6 @@ var DOS;
             if (results[0] == 1) {
                 return [1, "file not found"];
             }
-            // get rid of the quotes
-            data = data.split('`').join('');
             // Convert data into ascii then hex and get the array
             var hex_data = this.hexOfString(data);
             var block_data = [];

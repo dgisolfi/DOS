@@ -714,7 +714,6 @@ var DOS;
         };
         Shell.prototype.getSchedule = function (args) {
             _StdOut.putText("scheduling algorithim in use: " + _SCHED.scheduleMethod);
-            console.log(_SCHED.quantum);
         };
         Shell.prototype.createFile = function (args) {
             var params = "";
@@ -757,28 +756,26 @@ var DOS;
             }
         };
         Shell.prototype.writeFile = function (args) {
-            var params = "";
+            var file = args[0];
             var data = "";
-            args.forEach(function (arg) {
-                if (arg.includes("\"")) {
-                    data += arg;
+            args.forEach(function (arg, index) {
+                if (index == 0) {
+                    return;
                 }
-                else {
-                    params += arg;
-                }
+                data += arg.replace("\"", "") + " ";
+                console.log(data);
             });
-            params = params.trim();
-            if (!/[^a-zA-Z\s]/.test(params)) {
-                var status_3 = _krnDiskDriver.writeFile(params, data);
+            if (!/[^a-zA-Z\s]/.test(data)) {
+                var status_3 = _krnDiskDriver.writeFile(file, data);
                 if (status_3[0] == 0) {
-                    _StdOut.putText("File write successful; <file> " + params);
+                    _StdOut.putText("File write successful; <file> " + file);
                 }
                 else if (status_3[0] == 1) {
-                    _StdOut.putText("File write unsuccessful; <file> " + params + ", " + status_3[1]);
+                    _StdOut.putText("File write unsuccessful; <file> " + file + ", " + status_3[1]);
                 }
             }
             else {
-                _StdOut.putText("File write unsuccessful; <file> " + params + " not a valid file name");
+                _StdOut.putText("File write unsuccessful; <file> " + file + " Data can only contain characters and spaces");
             }
         };
         Shell.prototype.deleteFile = function (args) {

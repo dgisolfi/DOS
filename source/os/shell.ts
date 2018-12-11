@@ -853,7 +853,6 @@ module DOS {
 
         public getSchedule(args) {
             _StdOut.putText(`scheduling algorithim in use: ${_SCHED.scheduleMethod}`);
-            console.log(_SCHED.quantum)
         }
 
 
@@ -896,25 +895,26 @@ module DOS {
         }
 
         public writeFile(args) {
-            let params = ``;
+            let file = args[0];
             let data = ``
-            args.forEach(arg => {
-                if (arg.includes(`\"`)) {
-                    data += arg;
-                } else {
-                    params += arg;
+
+            args.forEach((arg, index) => {
+                if (index == 0) {
+                    return;
                 }
+                data += arg.replace(`\"`, ``) + " "
+
             });
-            params = params.trim()
-            if (!/[^a-zA-Z\s]/.test(params)) {
-                let status = _krnDiskDriver.writeFile(params, data)
+
+            if (!/[^a-zA-Z\s]/.test(data)) {
+                let status = _krnDiskDriver.writeFile(file, data)
                 if (status[0] == 0) {
-                    _StdOut.putText(`File write successful; <file> ${params}`);
+                    _StdOut.putText(`File write successful; <file> ${file}`);
                 } else if (status[0] == 1) {
-                    _StdOut.putText(`File write unsuccessful; <file> ${params}, ${status[1]}`);
+                    _StdOut.putText(`File write unsuccessful; <file> ${file}, ${status[1]}`);
                 }
             } else {
-                _StdOut.putText(`File write unsuccessful; <file> ${params} not a valid file name`);
+                _StdOut.putText(`File write unsuccessful; <file> ${file} Data can only contain characters and spaces`);
             }
         }
 

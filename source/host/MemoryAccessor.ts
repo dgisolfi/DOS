@@ -24,6 +24,7 @@ module DOS {
             let hex_code = [];
             for (let i = process.base; i < process.limit; i++) {
                 let num = (process.base + i);
+                console.log(_MEM.memory[process.base])
                 let hex = _MEM.memory[num]
                 hex_code.push(hex);
             }

@@ -21,6 +21,7 @@ var DOS;
             var hex_code = [];
             for (var i = process.base; i < process.limit; i++) {
                 var num = (process.base + i);
+                console.log(_MEM.memory[process.base]);
                 var hex = _MEM.memory[num];
                 hex_code.push(hex);
             }

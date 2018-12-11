@@ -302,8 +302,6 @@
                 return [1, `file not found`] 
             }
 
-            // get rid of the quotes
-            data = data.split('`').join('');
             // Convert data into ascii then hex and get the array
             let hex_data = this.hexOfString(data);
 
