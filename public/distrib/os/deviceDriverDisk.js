@@ -206,7 +206,6 @@ var DOS;
             // the contents of a variable so it can be garbage collected  
             fcb = null;
             _Console.updateDisk();
-            console.log("ROLL OUT", userCode);
             return [0, process_file, "data written to disk."];
         };
         // Take a process and put it on the DISK

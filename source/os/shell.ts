@@ -830,6 +830,7 @@ module DOS {
                     case `rr`:
                         _SCHED.scheduleMethod = setting;
                         _SCHED.quantum = 6;
+                        _SCHED.cycle = 0;
                         _StdOut.putText(`Scheduling algorithm updated; now using ${_SCHED.scheduleMethod}`);
                         break;
                     case `fcfs`:
@@ -852,6 +853,7 @@ module DOS {
 
         public getSchedule(args) {
             _StdOut.putText(`scheduling algorithim in use: ${_SCHED.scheduleMethod}`);
+            console.log(_SCHED.quantum)
         }
 
 

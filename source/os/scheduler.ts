@@ -38,6 +38,9 @@ module DOS {
                     }
                 }
             } else if (this.scheduleMethod == `priority`) {
+                Object.keys(_PCM.readyQueue).forEach(element => {
+                    
+                });
 
             }
             this.cycle++;

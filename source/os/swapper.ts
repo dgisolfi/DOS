@@ -39,15 +39,14 @@
                 
                 // RollOut the victim
                 let victim = _PCM.readyQueue[victimPID];
-                console.log(`${victim.pid} => Disk | ${diskPID} => Mem`)
-                console.log(victim.pid, victim.state)
+                // console.log(`${victim.pid} => Disk | ${diskPID} => Mem`)
+                // console.log(victim.pid, victim.state)
                 // get the victim's user code
                 let victimCode = _MemoryAccessor.readMemoryBlock(victim)
                 Control.hostLog(`Roll Out on process:${victimPID}`, `os`);
                 let outStatus = _krnDiskDriver.rollOut(victim.pid, victimCode);
                 _PCM.readyQueue[victimPID].location = `disk`;
                 _PCM.readyQueue[victimPID].tsb = outStatus[1];
-                console.log(_PCM.readyQueue[victimPID].pid, _PCM.readyQueue[victimPID].state)
                 // Free the memory 
                 if (victim.base == 0) {
                     _MEM.isSeg00Full = false
@@ -59,7 +58,6 @@
                     _MEM.isSeg02Full = false
                     _MemoryManager.wipeSeg02();
                 }
-                console.log(_PCM.readyQueue[victimPID].pid, _PCM.readyQueue[victimPID].state)
 
                 // get usercode from disk...
                 // Call roll in to return userCode
@@ -80,7 +78,7 @@
                 _PCM.readyQueue[diskPID].base = mem_status[1];
                 _PCM.readyQueue[diskPID].limit = mem_status[2];
                 _PCM.readyQueue[diskPID].location = mem_status[3];
-                console.log(_PCM.readyQueue[diskPID])
+                // console.log(_PCM.readyQueue[diskPID])
                 
                 return [0]
             }

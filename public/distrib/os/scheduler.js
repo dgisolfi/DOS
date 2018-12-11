@@ -36,6 +36,8 @@ var DOS;
                 }
             }
             else if (this.scheduleMethod == "priority") {
+                Object.keys(_PCM.readyQueue).forEach(function (element) {
+                });
             }
             this.cycle++;
         };
