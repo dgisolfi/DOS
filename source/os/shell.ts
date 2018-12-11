@@ -559,7 +559,7 @@ module DOS {
             }
         }
 
-        public shellLoad() {
+        public shellLoad(args) {
             try {
                 var userCode = (<HTMLInputElement> document.getElementById('taProgramInput')).value;
 
@@ -643,8 +643,19 @@ module DOS {
                         _StdOut.putText(`Program load successful; <pid> ${pid} created`);
                     }
                 } else {
+                    let priority = 0;
+                    if (args.length > 0) {
+                        if (isNaN(Number(args[0]))) {
+                            _StdOut.putText(`Program load unsuccessful; priority must be a numeric variable`);
+                            throw new Error(`Program load unsuccessful; priority must be a numeric variable`);
+                        } else {
+                            priority = Number(args[0]);
+                        }
+                    }
                     //Create a new PCB
                     var pid = _PCM.createProcces(results[1], results[2], 0, results[3], `0:0:0`);
+                   
+                    _PCM.residentQueue[pid].priority = priority;
                     _StdOut.putText(`Program load successful; <pid> ${pid} created`);
                 }
                

@@ -166,7 +166,21 @@
                 this.terminatedQueue[pid] = this.runningprocess;
 
                 if (this.runningprocess.pid == pid && Object.keys(_PCM.readyQueue).length != 0){
-                    this.execProcess();
+                    if (_SCHED.scheduleMethod == `priority`) {
+                        let highest_pid = 100
+                        Object.keys(_PCM.readyQueue).forEach((pid, index) => {
+                            if (index = 0){
+                                highest_pid = Number(pid);
+                            }
+                            let process = _PCM.readyQueue[pid];
+                            if (process.priority < highest_pid) {
+                                highest_pid = process.pid 
+                            }
+                        });
+                        this.execProcess(highest_pid);
+                    } else {
+                        this.execProcess();
+                    }
                     
                 } else if (Object.keys(_PCM.readyQueue).length == 0) {
                     _CPU.isExecuting = false;

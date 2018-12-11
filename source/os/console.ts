@@ -326,6 +326,7 @@ module DOS {
                 +`<td id="X">-</td>`
                 +`<td id="Y">-</td>`
                 +`<td id="Z">-</td>`
+                +`<td id="Loc">-</td>`
                 +`</tr>`
                 document.getElementById(`process-table`).innerHTML = out;
                
@@ -341,6 +342,7 @@ module DOS {
                         +`<td id="${process.pid}-X">${process.XReg}</td>`
                         +`<td id="${process.pid}-Y">${process.YReg}</td>`
                         +`<td id="${process.pid}-Z">${process.ZFlag}</td>`
+                        +`<td id="${process.pid}-Z">${process.location}</td>`
                     +`</tr>`
                 });
                 document.getElementById(`process-table`).innerHTML = out; 

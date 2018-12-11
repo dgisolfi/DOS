@@ -23,6 +23,7 @@ var DOS;
         };
         // 
         Scheduler.prototype.schedule = function () {
+            var _this = this;
             // Update Process Stats
             _PCM.calcProcessStats();
             if (this.scheduleMethod == "rr" || this.scheduleMethod == "fcfs") {
@@ -36,8 +37,15 @@ var DOS;
                 }
             }
             else if (this.scheduleMethod == "priority") {
-                Object.keys(_PCM.readyQueue).forEach(function (element) {
-                });
+                if (Object.keys(_PCM.readyQueue).length != 0) {
+                    Object.keys(_PCM.readyQueue).forEach(function (pid) {
+                        var process = _PCM.readyQueue[pid];
+                        if (process.priority < _PCM.runningprocess.priority) {
+                            _this.CycleQueue.enqueue(process.pid);
+                            _KernelInterruptQueue.enqueue(new DOS.Interrupt(CONTEXT_SWITCH, _this.CycleQueue.dequeue()));
+                        }
+                    });
+                }
             }
             this.cycle++;
         };

@@ -38,10 +38,15 @@ module DOS {
                     }
                 }
             } else if (this.scheduleMethod == `priority`) {
-                Object.keys(_PCM.readyQueue).forEach(element => {
-                    
-                });
-
+                if (Object.keys(_PCM.readyQueue).length != 0) {
+                    Object.keys(_PCM.readyQueue).forEach(pid => {
+                        let process = _PCM.readyQueue[pid];
+                        if (process.priority < _PCM.runningprocess.priority) {
+                            this.CycleQueue.enqueue(process.pid)
+                            _KernelInterruptQueue.enqueue(new Interrupt(CONTEXT_SWITCH, this.CycleQueue.dequeue()));
+                        }
+                    });
+                }
             }
             this.cycle++;
         }

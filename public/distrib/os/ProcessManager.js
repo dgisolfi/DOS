@@ -144,7 +144,22 @@ var DOS;
             this.runningprocess.state = "terminated";
             this.terminatedQueue[pid] = this.runningprocess;
             if (this.runningprocess.pid == pid && Object.keys(_PCM.readyQueue).length != 0) {
-                this.execProcess();
+                if (_SCHED.scheduleMethod == "priority") {
+                    var highest_pid_1 = 100;
+                    Object.keys(_PCM.readyQueue).forEach(function (pid, index) {
+                        if (index = 0) {
+                            highest_pid_1 = Number(pid);
+                        }
+                        var process = _PCM.readyQueue[pid];
+                        if (process.priority < highest_pid_1) {
+                            highest_pid_1 = process.pid;
+                        }
+                    });
+                    this.execProcess(highest_pid_1);
+                }
+                else {
+                    this.execProcess();
+                }
             }
             else if (Object.keys(_PCM.readyQueue).length == 0) {
                 _CPU.isExecuting = false;

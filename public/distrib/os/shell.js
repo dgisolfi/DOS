@@ -431,7 +431,7 @@ var DOS;
                 _StdOut.putText("Usage: darktheme <on | off>.");
             }
         };
-        Shell.prototype.shellLoad = function () {
+        Shell.prototype.shellLoad = function (args) {
             try {
                 var userCode = document.getElementById('taProgramInput').value;
                 // initial validation
@@ -512,8 +512,21 @@ var DOS;
                     }
                 }
                 else {
+                    var priority = 0;
+                    console.log(isNaN(args[0]), isNaN(Number(args[0])));
+                    if (args.length > 0) {
+                        if (isNaN(Number(args[0]))) {
+                            _StdOut.putText("Program load unsuccessful; priority must be a numeric variable");
+                            throw new Error("Program load unsuccessful; priority must be a numeric variable");
+                        }
+                        else {
+                            priority = Number(args[0]);
+                        }
+                    }
                     //Create a new PCB
                     var pid = _PCM.createProcces(results[1], results[2], 0, results[3], "0:0:0");
+                    _PCM.residentQueue[pid].priority = priority;
+                    console.log(_PCM.residentQueue[pid]);
                     _StdOut.putText("Program load successful; <pid> " + pid + " created");
                 }
             }
@@ -763,7 +776,6 @@ var DOS;
                     return;
                 }
                 data += arg.replace("\"", "") + " ";
-                console.log(data);
             });
             if (!/[^a-zA-Z\s]/.test(data)) {
                 var status_3 = _krnDiskDriver.writeFile(file, data);
