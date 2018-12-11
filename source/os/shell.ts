@@ -2,7 +2,6 @@
 ///<reference path="../utils.ts" />
 ///<reference path="shellCommand.ts" />
 ///<reference path="userCommand.ts" />
-///<reference path="apiRequests.ts" />
 ///<reference path="MemoryManager.ts" />
 
 
@@ -397,10 +396,6 @@ module DOS {
                             _StdOut.putText(`Allows the user to enable or disable sarcasm mode.`);
                         } 
                         break;
-                    
-                    // case `myip`:
-                    //     _StdOut.putText(`Returns the Client IP address.`);
-                    //     break;
 
                     case `status`:
                         _StdOut.putText(`Given a <string> the status will be assigned.`);
@@ -638,7 +633,7 @@ module DOS {
                 // If the check passes load the program to memory or disk
                 var results = _MemoryManager.loadInMem(userCodeArr);
                 if (results[0] == 1) { // memory full load into disk
-                    var status = _MemoryManager.loadOnDisk(userCodeArr);
+                    var status = _MemoryManager.loadOnDisk(_PCM.pidCounter ,userCodeArr);
                     if (status[0] == 1) {
                         _StdOut.putText(`Program not loaded, Disk and Memory Full!`);
                         throw new Error(`Program not loaded, Disk and Memory Full!`);

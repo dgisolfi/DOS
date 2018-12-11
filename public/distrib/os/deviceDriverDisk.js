@@ -57,45 +57,60 @@ var DOS;
         };
         DeviceDriverDisk.prototype.checkFileName = function (file_name) {
             // convert string to hex
-            for (var track = 0; track < _DISK.tracks; track++) {
-                for (var sector = 0; sector < _DISK.sectors; sector++) {
-                    var _loop_1 = function (block) {
-                        if (track == 0 && sector == 0 && block == 0) { // skip Master boot record
-                            return "continue";
-                        }
-                        // build the pointer and get the block
-                        var file_block = JSON.parse(sessionStorage.getItem(track + ":" + sector + ":" + block));
-                        // check blocks in use
-                        if (file_block.inUse != "0") {
-                            // Build the name from the memory and compare
-                            var hex_name_1 = "";
-                            file_block.data.forEach(function (char) {
-                                if (char != "00") {
-                                    hex_name_1 += String.fromCharCode(parseInt(char, 16));
-                                }
-                            });
-                            // Check for duplicate names
-                            if (file_name == hex_name_1) {
-                                var tsb = track + ":" + sector + ":" + block;
-                                return { value: [0, tsb] };
-                            }
-                        }
-                    };
-                    for (var block = 0; block < _DISK.blocks; block++) {
-                        var state_1 = _loop_1(block);
-                        if (typeof state_1 === "object")
-                            return state_1.value;
+            var track = 0;
+            for (var sector = 0; sector < _DISK.sectors; sector++) {
+                var _loop_1 = function (block) {
+                    if (track == 0 && sector == 0 && block == 0) { // skip Master boot record
+                        return "continue";
                     }
+                    // build the pointer and get the block
+                    var file_block = JSON.parse(sessionStorage.getItem(track + ":" + sector + ":" + block));
+                    // check blocks in use
+                    if (file_block.inUse != "0") {
+                        // Build the name from the memory and compare
+                        var hex_name_1 = "";
+                        file_block.data.forEach(function (char) {
+                            if (char != "00") {
+                                hex_name_1 += String.fromCharCode(parseInt(char, 16));
+                            }
+                        });
+                        // Check for duplicate names
+                        if (file_name == hex_name_1) {
+                            var tsb = track + ":" + sector + ":" + block;
+                            return { value: [0, tsb] };
+                        }
+                    }
+                };
+                for (var block = 0; block < _DISK.blocks; block++) {
+                    var state_1 = _loop_1(block);
+                    if (typeof state_1 === "object")
+                        return state_1.value;
                 }
             }
             return [1, "-1:-1:-1"];
+        };
+        DeviceDriverDisk.prototype.getEmptyFileBlock = function () {
+            var track = 0;
+            for (var sector = 0; sector < _DISK.sectors; sector++) {
+                for (var block = 0; block < _DISK.blocks; block++) {
+                    if (track == 0 && sector == 0 && block == 0) { // skip Master boot record
+                        continue;
+                    }
+                    // build the pointer and get the block
+                    var file_block = this.getBlock(track + ":" + sector + ":" + block);
+                    // return the first one
+                    if (file_block.inUse == "0") {
+                        return track + ":" + sector + ":" + block;
+                    }
+                }
+            }
         };
         DeviceDriverDisk.prototype.getEmptyBlock = function (skip_block) {
             var next_block = true;
             if (skip_block) {
                 next_block = false;
             }
-            for (var track = 0; track < _DISK.tracks; track++) {
+            for (var track = 1; track < _DISK.tracks; track++) {
                 for (var sector = 0; sector < _DISK.sectors; sector++) {
                     for (var block = 0; block < _DISK.blocks; block++) {
                         if (track == 0 && sector == 0 && block == 0) { // skip Master boot record
@@ -121,14 +136,24 @@ var DOS;
         };
         // Take a process and put it on the DISK
         // Autobots ROLL OUT!
-        DeviceDriverDisk.prototype.rollOut = function (userCode) {
+        DeviceDriverDisk.prototype.rollOut = function (pid, userCode) {
             var _this = this;
             // Find a free set of blocks for the file
-            var initial_block = this.getEmptyBlock(false);
-            if (initial_block == "-1:-1:-1") {
+            var process_file = this.getEmptyFileBlock();
+            if (process_file == "-1:-1:-1") {
                 return [1, "-1:-1:-1", "Disk full"];
             }
-            // 
+            var file_name = "process" + pid;
+            var initial_pointer = "0:0:0";
+            // add file name to global list
+            this.file_names.push(file_name);
+            // Write new file
+            // Convert filename to a arrary of hex values
+            var hex_name = this.hexOfString(file_name);
+            // Fill the remaning block with 00's
+            for (var i = 0; hex_name.length < (_DISK.blockSize); i++) {
+                hex_name.push("00");
+            }
             var block_data = [];
             var block = "";
             userCode.forEach(function (hex) {
@@ -145,11 +170,14 @@ var DOS;
             // block_data.reverse();
             var next_block_pointer = "";
             var file_pointer = this.getEmptyBlock(false);
-            block_data.forEach(function (block) {
-                // for first(or in reality last one block)
+            block_data.forEach(function (block, index) {
+                // for first block
                 var block_tsb = _this.getEmptyBlock(false);
                 if (block_tsb == "-1:-1:-1") {
                     return [1, "Disk full"];
+                }
+                if (index == 0) {
+                    initial_pointer = block_tsb;
                 }
                 if (block == block_data[block_data.length - 1]) {
                     next_block_pointer = "0:0:0";
@@ -171,8 +199,15 @@ var DOS;
                 sessionStorage.setItem(fcb.tsb, JSON.stringify(fcb));
                 fcb = null;
             });
+            // Write the file to the session
+            var fcb = new DOS.FCB(process_file, initial_pointer, "1", hex_name);
+            sessionStorage.setItem(fcb.tsb, JSON.stringify(fcb));
+            // Since TS is strict delete fcb will throw an error Instead, free
+            // the contents of a variable so it can be garbage collected  
+            fcb = null;
             _Console.updateDisk();
-            return [0, initial_block, "data written to disk."];
+            console.log("ROLL OUT", userCode);
+            return [0, process_file, "data written to disk."];
         };
         // Take a process and put it on the DISK
         // Autobots ROLL IN?
@@ -188,9 +223,13 @@ var DOS;
                 var hex_blocks = [];
                 var next_block = file_block.pointer;
                 while (search) {
+                    // console.log(next_block)
                     var new_block = this.getBlock(next_block);
+                    // console.log(new_block)
                     hex_blocks.push(new_block.data);
                     next_block = new_block.pointer;
+                    // turn the useBit to 0
+                    new_block.inUse = "0";
                     if (new_block.pointer == "0:0:0") {
                         search = false;
                     }
@@ -200,13 +239,15 @@ var DOS;
                         hex_code.push(hex_char);
                     });
                 });
+                if (hex_blocks.length == 0) {
+                    return [1, hex_code, "file empty"];
+                }
             }
             else {
                 hex_code = file_block.data;
             }
-            if (hex_blocks.length == 0) {
-                return [1, hex_code, "file empty"];
-            }
+            console.log("ROLL IN", hex_code);
+            _Console.updateDisk();
             return [0, hex_code, "data retrieved from disk."];
         };
         // Create a file, dont put nothin in it yet tho besides FCB stuff
@@ -216,7 +257,7 @@ var DOS;
                 return [1, "file name already in use."];
             }
             // Find a free set of blocks for the file
-            var block_tsb = this.getEmptyBlock(false);
+            var block_tsb = this.getEmptyFileBlock();
             if (block_tsb == "-1:-1:-1") {
                 return [1, "Disk full"];
             }
@@ -256,7 +297,7 @@ var DOS;
             var block = "";
             hex_data.forEach(function (hex) {
                 block += hex;
-                if (block.length == _DISK.blockSize) {
+                if ((block.length / 2) == _DISK.blockSize) {
                     block_data.push(block);
                     block = "";
                 }

@@ -9,11 +9,7 @@
 var DOS;
 (function (DOS) {
     var Memory = /** @class */ (function () {
-        function Memory(memory, isSeg00Full, isSeg01Full, isSeg02Full
-        // public isSeg00Full: boolean = true,
-        // public isSeg01Full: boolean = true,
-        // public isSeg02Full: boolean = true
-        ) {
+        function Memory(memory, isSeg00Full, isSeg01Full, isSeg02Full) {
             if (memory === void 0) { memory = []; }
             if (isSeg00Full === void 0) { isSeg00Full = false; }
             if (isSeg01Full === void 0) { isSeg01Full = false; }

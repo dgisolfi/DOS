@@ -50,46 +50,62 @@
 
         public checkFileName(file_name:string): [number, string]{ // yes i am returning a tuple, tuples are the best
             // convert string to hex
-            for (let track = 0; track < _DISK.tracks; track++) {
-                for (let sector = 0; sector < _DISK.sectors; sector++) {
-                    for (let block = 0; block < _DISK.blocks; block++) {
-                        if(track == 0 && sector == 0 && block == 0) { // skip Master boot record
-                            continue;
-                        }
-                        // build the pointer and get the block
-                        let file_block = JSON.parse(sessionStorage.getItem(`${track}:${sector}:${block}`));
-                        // check blocks in use
-                        if (file_block.inUse != `0`) {
-                            // Build the name from the memory and compare
-                            let hex_name = ``
-                           
-                            file_block.data.forEach(char => {
-                                if (char != `00`) {
-                                    hex_name +=  String.fromCharCode(parseInt(char, 16))
-                                }
-                            });
-                            // Check for duplicate names
-                            if (file_name == hex_name) {
-                                let tsb = `${track}:${sector}:${block}`
-                                return [0, tsb]; // already exists
-                            } 
-                          
-                        }
-                
+            let track = 0;
+            for (let sector = 0; sector < _DISK.sectors; sector++) {
+                for (let block = 0; block < _DISK.blocks; block++) {
+                    if(track == 0 && sector == 0 && block == 0) { // skip Master boot record
+                        continue;
                     }
-                    
+                    // build the pointer and get the block
+                    let file_block = JSON.parse(sessionStorage.getItem(`${track}:${sector}:${block}`));
+                    // check blocks in use
+                    if (file_block.inUse != `0`) {
+                        // Build the name from the memory and compare
+                        let hex_name = ``
+                        
+                        file_block.data.forEach(char => {
+                            if (char != `00`) {
+                                hex_name +=  String.fromCharCode(parseInt(char, 16))
+                            }
+                        });
+                        // Check for duplicate names
+                        if (file_name == hex_name) {
+                            let tsb = `${track}:${sector}:${block}`
+                            return [0, tsb]; // already exists
+                        } 
+                        
+                    }
+            
                 }
-
+                
             }
             return [1, `-1:-1:-1`];
-        }   
+        }
+
+        public getEmptyFileBlock():string {
+            let track = 0;
+            for (let sector = 0; sector < _DISK.sectors; sector++) {
+                for (let block = 0; block < _DISK.blocks; block++) {
+                    if(track == 0 && sector == 0 && block == 0) { // skip Master boot record
+                        continue;
+                    }
+                    // build the pointer and get the block
+                    let file_block = this.getBlock(`${track}:${sector}:${block}`);
+                    // return the first one
+                    if (file_block.inUse == `0`) {
+                        return `${track}:${sector}:${block}`;
+                    }
+                }
+            }
+
+        }
 
         public getEmptyBlock(skip_block:boolean):string {
             let next_block = true;
             if (skip_block) {
                 next_block = false;
             }
-            for (let track = 0; track < _DISK.tracks; track++) {
+            for (let track = 1; track < _DISK.tracks; track++) {
                 for (let sector = 0; sector < _DISK.sectors; sector++) {
                     for (let block = 0; block < _DISK.blocks; block++) {
                         if(track == 0 && sector == 0 && block == 0) { // skip Master boot record
@@ -115,14 +131,26 @@
 
         // Take a process and put it on the DISK
         // Autobots ROLL OUT!
-        public rollOut(userCode:Array<String>): [number, string, string] {
+        public rollOut(pid:number, userCode:Array<String>): [number, string, string] {
             // Find a free set of blocks for the file
-            let initial_block = this.getEmptyBlock(false)
-            if (initial_block == `-1:-1:-1`) {
+            let process_file = this.getEmptyFileBlock()
+            if (process_file == `-1:-1:-1`) {
                 return [1,`-1:-1:-1`, `Disk full`]
             }
+            let file_name = `process${pid}`
+            let initial_pointer = `0:0:0`
+            // add file name to global list
+            this.file_names.push(file_name);
+
+            // Write new file
+            // Convert filename to a arrary of hex values
+            let hex_name = this.hexOfString(file_name)
+            // Fill the remaning block with 00's
+            for (let i = 0; hex_name.length < (_DISK.blockSize); i++) {
+                hex_name.push(`00`)
+            }
+
            
-            // 
             let block_data = [];
             let block = ``;
             userCode.forEach(hex => {
@@ -141,11 +169,15 @@
             // block_data.reverse();
             let next_block_pointer = ``
             let file_pointer = this.getEmptyBlock(false);
-            block_data.forEach(block => {
-                // for first(or in reality last one block)
+            block_data.forEach((block,index) => {
+                // for first block
+                
                 let block_tsb = this.getEmptyBlock(false)
                 if (block_tsb == `-1:-1:-1`) {
                     return [1, `Disk full`]
+                }
+                if (index == 0) {
+                    initial_pointer = block_tsb
                 }
 
                 if (block == block_data[block_data.length-1]) {
@@ -169,9 +201,16 @@
                 sessionStorage.setItem(fcb.tsb, JSON.stringify(fcb));             
                 fcb = null;                
             });
+
+            // Write the file to the session
+            let fcb = new FCB(process_file, initial_pointer, `1`, hex_name);
+            sessionStorage.setItem(fcb.tsb, JSON.stringify(fcb));
+            // Since TS is strict delete fcb will throw an error Instead, free
+            // the contents of a variable so it can be garbage collected  
+            fcb = null;
                         
             _Console.updateDisk();
-            return [0, initial_block, `data written to disk.`]
+            return [0, process_file, `data written to disk.`]
 
         }
 
@@ -191,29 +230,33 @@
                 var hex_blocks = [];
                 let next_block = file_block.pointer;
                 while(search) {
+                    // console.log(next_block)
                     let new_block = this.getBlock(next_block);
+                    // console.log(new_block)
                     hex_blocks.push(new_block.data);
                     next_block = new_block.pointer;
+                    // turn the useBit to 0
+                    new_block.inUse = `0`;
 
                     if (new_block.pointer == `0:0:0`) {
                         search = false;
                     }
                 }
-
                 hex_blocks.forEach(block => {
                     block.forEach(hex_char => {
                         hex_code.push(hex_char);
                     });
                 });
 
+                if (hex_blocks.length == 0) {
+                    return [1, hex_code, `file empty`];
+                }    
+
             } else {
                 hex_code = file_block.data;
             }
-
-            if (hex_blocks.length == 0) {
-                return [1, hex_code, `file empty`];
-            }
-
+            console.log(`ROLL IN`, hex_code);
+            _Console.updateDisk();
             return [0, hex_code, `data retrieved from disk.`]
         }
 
@@ -224,7 +267,7 @@
                 return [1, `file name already in use.`];
             }
             // Find a free set of blocks for the file
-            let block_tsb = this.getEmptyBlock(false)
+            let block_tsb = this.getEmptyFileBlock()
             if (block_tsb == `-1:-1:-1`) {
                 return [1, `Disk full`]
             }
@@ -268,7 +311,7 @@
             let block = ``;
             hex_data.forEach(hex => {
                 block += hex
-                if (block.length == _DISK.blockSize) {
+                if ((block.length/2) == _DISK.blockSize) {
                     block_data.push(block)
                     block = ``;
                 }

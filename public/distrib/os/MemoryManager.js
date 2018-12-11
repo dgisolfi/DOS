@@ -12,7 +12,6 @@ var DOS;
         function MemoryManager() {
         }
         MemoryManager.prototype.loadInMem = function (code) {
-            var registers = [];
             var startIndex = 0;
             var endIndex = 0;
             // Find the first open segment of memory
@@ -43,8 +42,8 @@ var DOS;
             return [0, startIndex, endIndex, "memory"];
         };
         //                                      success? strReg  endReg   loc     tsb
-        MemoryManager.prototype.loadOnDisk = function (code) {
-            var status = _krnDiskDriver.rollOut(code);
+        MemoryManager.prototype.loadOnDisk = function (pid, code) {
+            var status = _krnDiskDriver.rollOut(pid, code);
             if (status[0] == 1) {
                 return [1, 0, 0, "disk", "0:0:0"];
             }

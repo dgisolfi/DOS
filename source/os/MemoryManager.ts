@@ -14,7 +14,6 @@
             constructor() {}
     
             public loadInMem(code): [number, number, number, string] {
-                var registers = [];
                 var startIndex = 0;
                 var endIndex = 0; 
                 // Find the first open segment of memory
@@ -49,8 +48,8 @@
             }
 
             //                                      success? strReg  endReg   loc     tsb
-            public loadOnDisk(code: Array<String>): [number, number, number, string, string] {
-                let status = _krnDiskDriver.rollOut(code);
+            public loadOnDisk(pid, code: Array<String>): [number, number, number, string, string] {
+                let status = _krnDiskDriver.rollOut(pid ,code);
                 if (status[0] == 1) {
                     return [1, 0, 0, `disk`, `0:0:0`];
                 }
