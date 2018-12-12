@@ -20,10 +20,13 @@ module DOS {
         public ZFlag:  number;
         public turnaroundTime: number;
         public waitTime: number;
+        public tsb: string;
         constructor(
             public pid,
             public base,
-            public limit) {      
+            public limit,
+            public priority,
+            public location) {      
         }
 
         public init() {
@@ -36,7 +39,7 @@ module DOS {
             this.ZFlag = 0;
             this.turnaroundTime = 0;
             this.waitTime = 0;
-            
+            this.tsb = `-1:-1:-1`; // location on disk
         }
     }
 }

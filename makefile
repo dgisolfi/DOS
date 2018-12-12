@@ -4,11 +4,13 @@
 image=dos
 hub_image=dgisolfi/dos
 container=dos
-version=3.0
+version=4.0
 
 all: clean build os_latest
 
 dev: clean build dev_os
+
+deploy: intro clean c build publish_os
 
 intro:
 	@echo "\n             DOS[Daniel OS] v$(version)"
@@ -38,6 +40,6 @@ build: intro c
 
 #Push Docker image to Docker Hub
 publish_os: build
-	@docker tag $(image) $(hub_image):iProject3
+	@docker tag $(image) $(hub_image):iProject4
 	@docker tag $(image) $(hub_image):latest
 	@docker push $(hub_image)

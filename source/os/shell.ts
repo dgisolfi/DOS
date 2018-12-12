@@ -2,7 +2,6 @@
 ///<reference path="../utils.ts" />
 ///<reference path="shellCommand.ts" />
 ///<reference path="userCommand.ts" />
-///<reference path="apiRequests.ts" />
 ///<reference path="MemoryManager.ts" />
 
 
@@ -152,6 +151,46 @@ module DOS {
             sc = new ShellCommand(this.setQuantum,
                 `quantum`,
                 `<int> — let the user set the Round Robin quantum.`);
+            this.commandList[this.commandList.length] = sc;
+
+            sc = new ShellCommand(this.setSchedule,
+                `setschedule`,
+                `<algorithim> — given a valid algorithim the scheduler will start using the desired one on the next cycle.`);
+            this.commandList[this.commandList.length] = sc;
+
+            sc = new ShellCommand(this.getSchedule,
+                `getschedule`,
+                `<int> — returns the scheduling algorithim currently in use.`);
+            this.commandList[this.commandList.length] = sc;
+
+            sc = new ShellCommand(this.createFile,
+                `create`,
+                `<string> — given a string a new file will be created and given that name.`);
+            this.commandList[this.commandList.length] = sc;
+
+            sc = new ShellCommand(this.readFile,
+                `read`,
+                `<string> — given a string a file will be read from the disk.`);
+            this.commandList[this.commandList.length] = sc;
+
+            sc = new ShellCommand(this.writeFile,
+                `write`,
+                `<string> <data> — given a filename and data inside of "<data>" the data will be written to file.`);
+            this.commandList[this.commandList.length] = sc;
+
+            sc = new ShellCommand(this.deleteFile,
+                `delete`,
+                `<string> — given a filename, will remove the fie from disk.`);
+            this.commandList[this.commandList.length] = sc;
+
+            sc = new ShellCommand(this.format,
+                `format`,
+                `<tag> — given a tag either quick or full, will format the tsb's of the disk.`);
+            this.commandList[this.commandList.length] = sc;
+
+            sc = new ShellCommand(this.ls,
+                `ls`,
+                `will list all files stored on the disk.`);
             this.commandList[this.commandList.length] = sc;
             
             //
@@ -357,10 +396,6 @@ module DOS {
                             _StdOut.putText(`Allows the user to enable or disable sarcasm mode.`);
                         } 
                         break;
-                    
-                    // case `myip`:
-                    //     _StdOut.putText(`Returns the Client IP address.`);
-                    //     break;
 
                     case `status`:
                         _StdOut.putText(`Given a <string> the status will be assigned.`);
@@ -524,7 +559,7 @@ module DOS {
             }
         }
 
-        public shellLoad() {
+        public shellLoad(args) {
             try {
                 var userCode = (<HTMLInputElement> document.getElementById('taProgramInput')).value;
 
@@ -595,15 +630,35 @@ module DOS {
                     throw new Error(`Program to Large, program is ${userCodeArr.length} bytes.`);
                 }
 
-                // If the check passes load the program to memory
-                var registers = _MemoryManager.loadInMem(userCodeArr);
-
-                //Create a new PCB
-                
-                var pid = _PCM.createProcces(registers[0], registers[1]);
-                _StdOut.putText(`Program load successful; <pid> ${pid} created`);
-
-             
+                // If the check passes load the program to memory or disk
+                var results = _MemoryManager.loadInMem(userCodeArr);
+                if (results[0] == 1) { // memory full load into disk
+                    var status = _MemoryManager.loadOnDisk(_PCM.pidCounter ,userCodeArr);
+                    if (status[0] == 1) {
+                        _StdOut.putText(`Program not loaded, Disk and Memory Full!`);
+                        throw new Error(`Program not loaded, Disk and Memory Full!`);
+                    } else {
+                        //Create a new PCB
+                        var pid = _PCM.createProcces(status[0], status[1], 0, status[3], status[4]);
+                        _StdOut.putText(`Program load successful; <pid> ${pid} created`);
+                    }
+                } else {
+                    let priority = 0;
+                    if (args.length > 0) {
+                        if (isNaN(Number(args[0]))) {
+                            _StdOut.putText(`Program load unsuccessful; priority must be a numeric variable`);
+                            throw new Error(`Program load unsuccessful; priority must be a numeric variable`);
+                        } else {
+                            priority = Number(args[0]);
+                        }
+                    }
+                    //Create a new PCB
+                    var pid = _PCM.createProcces(results[1], results[2], 0, results[3], `0:0:0`);
+                   
+                    _PCM.residentQueue[pid].priority = priority;
+                    _StdOut.putText(`Program load successful; <pid> ${pid} created`);
+                }
+               
                 
             } catch(e) {
                 // Log the detailed error message
@@ -746,8 +801,8 @@ module DOS {
         }
 
         public kill(args) {
-            var pid = args[0]
-            if (pid === parseInt(pid, 10)){
+            var pid = args[0];
+            if (isNaN(Number(pid))) {
                 _StdOut.putText(`not a valid PID, must be of type <int>`);
             } else {
                 Object.keys(_PCM.terminatedQueue).forEach(currPid => {
@@ -778,6 +833,164 @@ module DOS {
                 _Console.advanceLine();
                 _StdOut.putText(`quantum => ${_SCHED.quantum}`);
             }
+        }
+        public setSchedule(args) {
+            if (args.length > 0) {
+                var setting = args[0];
+                switch (setting) {
+                    case `rr`:
+                        _SCHED.scheduleMethod = setting;
+                        _SCHED.quantum = 6;
+                        _SCHED.cycle = 0;
+                        _StdOut.putText(`Scheduling algorithm updated; now using ${_SCHED.scheduleMethod}`);
+                        break;
+                    case `fcfs`:
+                        _SCHED.scheduleMethod = setting;
+                        _SCHED.quantum = 10000;
+                        _StdOut.putText(`Scheduling algorithm updated; now using ${_SCHED.scheduleMethod}`);
+                        break;
+                    case `priority`:
+                        _SCHED.scheduleMethod = setting;
+                        _StdOut.putText(`Scheduling algorithm updated; now using ${_SCHED.scheduleMethod}`);
+                        break;
+                    default:
+                        _StdOut.putText(`Invalid arguement.  Usage: setschedule <algorithim>`);
+                        _StdOut.putText(`Valid algorithims: [rr, fcfs, priority]`);
+                }
+            } else {
+                _StdOut.putText(`Usage: setschedule <algorithim>`);
+            }
+        }
+
+        public getSchedule(args) {
+            _StdOut.putText(`scheduling algorithim in use: ${_SCHED.scheduleMethod}`);
+        }
+
+
+        public createFile(args) {
+            let params = ``
+            if (args.length == 0) {
+                _StdOut.putText(`File creation unsuccessful; please provide a file name.`);
+            } else {
+                args.forEach(arg => {
+                    params +=  arg  
+                });
+                params = params.trim()
+                if (!/[^a-zA-Z\s]/.test(params)) {
+                    let status = _krnDiskDriver.createFile(params)
+                    if (status[0] == 0) {
+                        _StdOut.putText(`File creation successful; <file> ${params}, ${status[1]}`);
+                    } else {
+                        _StdOut.putText(`File creation unsuccessful; <file> ${params}, ${status[1]}`);
+                    }
+                } else {
+                    _StdOut.putText(`File creation unsuccessful; <file> ${params} not a valid file name`);
+                }
+            }
+            
+        }
+
+        public readFile(args) {
+            let params = ``;
+            args.forEach(arg => {
+                params +=  arg ;
+            });
+            params = params.trim()
+            if (!/[^a-zA-Z\d*\s]/.test(params)) {
+                let status = _krnDiskDriver.readFile(params)
+                if (status[0] == 0) {
+                    _StdOut.putText(`File read successful; <file> ${params} contents:`);
+                    _Console.advanceLine();
+                    _StdOut.putText(`${status[1]}`);
+                } else if (status[0] == 1) {
+                    _StdOut.putText(`File read unsuccessful; <file> ${params}, ${status[1]}`);
+                }
+            } else {
+                _StdOut.putText(`File read unsuccessful; <file> ${params} not a valid file name`);
+            }
+        }
+
+        public writeFile(args) {
+            let file = args[0];
+            let data = ``
+            if (args.length < 2) {
+                _StdOut.putText(`File write unsuccessful; <file> ${file}, no data provided`);
+
+            } else {
+                args.forEach((arg, index) => {
+                    if (index == 0) {
+                        return;
+                    }
+                    data += arg.replace(/"/g,``) + ` `
+    
+                });
+    
+                if (!/[^a-zA-Z\s]/.test(data)) {
+                    let status = _krnDiskDriver.writeFile(file, data)
+                    if (status[0] == 0) {
+                        _StdOut.putText(`File write successful; <file> ${file}`);
+                    } else if (status[0] == 1) {
+                        _StdOut.putText(`File write unsuccessful; <file> ${file}, ${status[1]}`);
+                    }
+                } else {
+                    _StdOut.putText(`File write unsuccessful; <file> ${file} Data can only contain characters and spaces`);
+                }
+            }
+        }
+
+        public deleteFile(args) {
+            let params = ``;
+            args.forEach(arg => {
+                params +=  arg ;
+            });
+            params = params.trim()
+            if (!/[^a-zA-Z\s]/.test(params)) {
+                let status = _krnDiskDriver.delFile(params)
+                if (status[0] == 0) {
+                    _StdOut.putText(`File deletion successful; <file> ${params} ${status[1]}`);
+                } else if (status[0] == 1) {
+                    _StdOut.putText(`File deletion unsuccessful; <file> ${params}, ${status[1]}`);
+                }
+            } else {
+                _StdOut.putText(`File deletion unsuccessful; <file> ${params} not a valid file name`);
+            }
+        }
+
+        public format(args) {
+            var setting = args[0];
+            switch (setting) {
+                case `-quick`:
+                    var status = _krnDiskDriver.formatDisk(`quick`)
+                    if (status == 0) {
+                        _StdOut.putText(`quick format successful.`);
+                    } else {
+                        _StdOut.putText(`quick format unsuccessful.`);
+                    }
+                    break;
+                case `-full`:
+                    var status = _krnDiskDriver.formatDisk(`full`)
+                    if (status == 0) {
+                        _StdOut.putText(`full format successful.`);
+                    } else {
+                        _StdOut.putText(`full format unsuccessful.`);
+                    }
+                    break;
+                default:
+                    var status = _krnDiskDriver.formatDisk(`full`)
+                    if (status == 0) {
+                        _StdOut.putText(`full format successful.`);
+                    } else {
+                        _StdOut.putText(`full format unsuccessful.`);
+                    }
+            } 
+        }
+
+        public ls() {
+            let files = _krnDiskDriver.listFiles();
+            files.forEach(file => {
+                _StdOut.putText(file);
+                _Console.advanceLine();
+            });
         }
     }
 }

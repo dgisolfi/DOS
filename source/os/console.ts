@@ -326,6 +326,7 @@ module DOS {
                 +`<td id="X">-</td>`
                 +`<td id="Y">-</td>`
                 +`<td id="Z">-</td>`
+                +`<td id="Loc">-</td>`
                 +`</tr>`
                 document.getElementById(`process-table`).innerHTML = out;
                
@@ -341,6 +342,7 @@ module DOS {
                         +`<td id="${process.pid}-X">${process.XReg}</td>`
                         +`<td id="${process.pid}-Y">${process.YReg}</td>`
                         +`<td id="${process.pid}-Z">${process.ZFlag}</td>`
+                        +`<td id="${process.pid}-Z">${process.location}</td>`
                     +`</tr>`
                 });
                 document.getElementById(`process-table`).innerHTML = out; 
@@ -385,6 +387,45 @@ module DOS {
             // update the display with cur time
             var datetime = _date + ` | ` + _time;
             document.getElementById(`datetime`).innerHTML = datetime;
+        }
+
+        public updateDisk(): void {
+            var data = `
+            <table class="table table-borderless table-hover table">
+            <thead>
+                <tr>
+                    <th>TSB</th>
+                    <th>Pointer</th>
+                    <th>Data</th>
+                </tr>
+            </thead>
+            <tbody id="disk_data">`;
+
+            for (let track = 0; track < _DISK.tracks; track++) {
+                for (let sector = 0; sector < _DISK.sectors; sector++) {
+                    for (let block = 0; block < _DISK.blocks; block++) {
+                        let tsb = `${track}:${sector}:${block}`;
+                        let file_block = _krnDiskDriver.getBlock(tsb);
+                        let arr = file_block.data
+                        let row = ``;
+                       
+                        arr.forEach(val => {
+                            row += val;
+                        });
+
+                        data += 
+                        `<tr>
+                            <td>${file_block.tsb}</td>
+                            <td>${file_block.pointer}</td>
+                            <td>${row}</td>
+                        </tr>`
+                    }
+                }
+            }                    
+
+            data += `</tbody></table>`
+            document.getElementById(`disk_table`).innerHTML = data;
+
         }
     }
  }

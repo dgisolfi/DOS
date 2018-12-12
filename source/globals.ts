@@ -13,7 +13,7 @@
 // Global CONSTANTS (TypeScript 1.5 introduced const. Very cool.)
 //
 const APP_NAME: string    = "DOS";   // 'cause Bob and I were at a loss for a better name.
-const APP_VERSION: string = "2.1";   // project 2 
+const APP_VERSION: string = "4.1";   // project 2 
 
 const CPU_CLOCK_INTERVAL: number = 100;   // This is in ms (milliseconds) so 1000 = 1 second.
 
@@ -43,8 +43,12 @@ var _MemoryManager: DOS.MemoryManager;
 //process control blocks
 var _PCB: DOS.PCB;
 var _PCM: DOS.ProcessManager;
+var _FCB: DOS.FCB;
 
-var _SCHED: DOS.Scheduler
+var _SCHED: DOS.Scheduler;
+var _SWAP: DOS.Swapper;
+
+var _DISK: DOS.Disk;
 
 var _OSclock: number = 0;  // Page 23.
 
@@ -68,9 +72,6 @@ var _KernelBuffers: any[] = null;   // when clearly 'any' is not what we want. T
 var _StdIn;    // Same "to null or not to null" issue as above.
 var _StdOut;
 
-// API Calls
-var _APIReq: DOS.APIrequests;
-
 // UI
 var _Console: DOS.Console;
 var _OsShell: DOS.Shell;
@@ -85,6 +86,8 @@ var _SarcasticMode: boolean = false;
 
 // Global Device Driver Objects - page 12
 var _krnKeyboardDriver; //  = null;
+
+var _krnDiskDriver;
 
 var _hardwareClockID: number = null;
 

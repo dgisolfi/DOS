@@ -24,14 +24,21 @@
                 this.terminatedQueue = {};
                
                 // create a initial instance to avoid errors
-                this.runningprocess =  new PCB(-1,0,0);
+                this.runningprocess =  new PCB(-1,0,0, 0, `memory`);
                 this.runningprocess.init();                    
             }
 
-            public createProcces(startIndex, memIndex): number {
+            public createProcces(startIndex, memIndex, priority, location, tsb): number {
+                if (priority == undefined) {
+                    priority = 0;
+                }
                 // Create a new process and add it to the PCB
-                let process = new PCB(this.pidCounter, startIndex, memIndex);
+                let process = new PCB(this.pidCounter, startIndex, memIndex, priority, location);
                 process.init();
+
+                if (process.location == `disk`) {
+                    process.tsb = tsb;
+                }
                 
                 this.residentQueue[this.pidCounter] = process;
                 this.residentQueue[this.pidCounter].state = `resident`;
@@ -42,7 +49,6 @@
             }
 
             public execProcess(pid?:number):void {
-
                 if (pid == undefined) {
                     pid = _SCHED.CycleQueue.dequeue()
                 }
@@ -160,11 +166,25 @@
                 this.terminatedQueue[pid] = this.runningprocess;
 
                 if (this.runningprocess.pid == pid && Object.keys(_PCM.readyQueue).length != 0){
-                    this.execProcess();
+                    if (_SCHED.scheduleMethod == `priority`) {
+                        let highest_pid = 100
+                        Object.keys(_PCM.readyQueue).forEach((pid, index) => {
+                            if (index = 0){
+                                highest_pid = Number(pid);
+                            }
+                            let process = _PCM.readyQueue[pid];
+                            if (process.priority < highest_pid) {
+                                highest_pid = process.pid 
+                            }
+                        });
+                        this.execProcess(highest_pid);
+                    } else {
+                        this.execProcess();
+                    }
                     
                 } else if (Object.keys(_PCM.readyQueue).length == 0) {
                     _CPU.isExecuting = false;
-                    this.runningprocess = new PCB(-1,0,0);
+                    this.runningprocess = new PCB(-1,0,0, 0,`memory`);
                     this.runningprocess.init();
                 }
                 
