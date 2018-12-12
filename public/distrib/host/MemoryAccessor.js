@@ -29,6 +29,12 @@ var DOS;
         MemoryAccessor.prototype.writeMemory = function (address, data) {
             var hex_location = (_PCM.runningprocess.base + address);
             this.enforceBoundaries(hex_location);
+            if (data.length < 2) {
+                var temp = data;
+                data = "0";
+                data += temp;
+                console.log(data);
+            }
             _MEM.memory[hex_location] = data;
         };
         MemoryAccessor.prototype.enforceBoundaries = function (hex_location) {

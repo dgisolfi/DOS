@@ -218,8 +218,7 @@
                  
                 // Write the data to the session
                 let fcb = new FCB(block_tsb, next_block_pointer, `1`, new_block_data);
-                sessionStorage.setItem(fcb.tsb, JSON.stringify(fcb));             
-                // console.log(`block: at ${block_tsb}: ${block}`, next_block_pointer);
+                sessionStorage.setItem(fcb.tsb, JSON.stringify(fcb));
                 fcb = null;                
             });
 
@@ -354,10 +353,7 @@
 
             let block_data = [];
             let block = ``;
-            userCode.forEach((hex, index) => {
-                if (index == 0) {
-                    console.log(hex)
-                }
+            userCode.forEach(hex => {
                 block += hex
                 if ((block.length/2) == _DISK.blockSize) {
                     block_data.push(block)
@@ -409,8 +405,6 @@
                     }
                     
                 });
-
-                console.log(block_data);
                  
                 // Write the data to the session
                 let fcb = new FCB(block_tsb, next_block_pointer, `1`, new_block_data);
@@ -450,7 +444,6 @@
                 var hex_blocks = [];
                 let next_block = file_block.pointer;
                 while(search) {
-                    // console.log(next_block)
                     let new_block = this.getBlock(next_block);
                     hex_blocks.push(new_block.data);
                     next_block = new_block.pointer;
@@ -482,7 +475,6 @@
             } else {
                 hex_code = file_block.data;
             }
-            // console.log(`ROLL IN`, hex_code);
             _Console.updateDisk();
             return [0, hex_code, `data retrieved from disk.`]
         }

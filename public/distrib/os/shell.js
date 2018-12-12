@@ -756,7 +756,6 @@ var DOS;
                 params += arg;
             });
             params = params.trim();
-            console.log(params);
             if (!/[^a-zA-Z\d*\s]/.test(params)) {
                 var status_2 = _krnDiskDriver.readFile(params);
                 if (status_2[0] == 0) {
@@ -819,39 +818,34 @@ var DOS;
             }
         };
         Shell.prototype.format = function (args) {
-            if (args.length > 0) {
-                var setting = args[0];
-                switch (setting) {
-                    case "-quick":
-                        var status = _krnDiskDriver.formatDisk("quick");
-                        if (status == 0) {
-                            _StdOut.putText("quick format successful.");
-                        }
-                        else {
-                            _StdOut.putText("quick format unsuccessful.");
-                        }
-                        break;
-                    case "-full":
-                        var status = _krnDiskDriver.formatDisk("full");
-                        if (status == 0) {
-                            _StdOut.putText("full format successful.");
-                        }
-                        else {
-                            _StdOut.putText("full format unsuccessful.");
-                        }
-                        break;
-                    default:
-                        var status = _krnDiskDriver.formatDisk("full");
-                        if (status == 0) {
-                            _StdOut.putText("full format successful.");
-                        }
-                        else {
-                            _StdOut.putText("full format unsuccessful.");
-                        }
-                }
-            }
-            else {
-                _StdOut.putText("Usage: format <method>");
+            var setting = args[0];
+            switch (setting) {
+                case "-quick":
+                    var status = _krnDiskDriver.formatDisk("quick");
+                    if (status == 0) {
+                        _StdOut.putText("quick format successful.");
+                    }
+                    else {
+                        _StdOut.putText("quick format unsuccessful.");
+                    }
+                    break;
+                case "-full":
+                    var status = _krnDiskDriver.formatDisk("full");
+                    if (status == 0) {
+                        _StdOut.putText("full format successful.");
+                    }
+                    else {
+                        _StdOut.putText("full format unsuccessful.");
+                    }
+                    break;
+                default:
+                    var status = _krnDiskDriver.formatDisk("full");
+                    if (status == 0) {
+                        _StdOut.putText("full format successful.");
+                    }
+                    else {
+                        _StdOut.putText("full format unsuccessful.");
+                    }
             }
         };
         Shell.prototype.ls = function () {

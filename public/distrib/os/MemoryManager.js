@@ -62,7 +62,7 @@ var DOS;
             }
         };
         MemoryManager.prototype.wipeSeg02 = function () {
-            for (var i = 513; i <= 768; i++) {
+            for (var i = 512; i <= 767; i++) {
                 _MEM.memory[i] = "00";
                 _MEM.isSeg02Full = false;
             }

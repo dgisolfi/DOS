@@ -34,6 +34,11 @@ module DOS {
         public writeMemory(address, data) {
             var hex_location = (_PCM.runningprocess.base + address);
             this.enforceBoundaries(hex_location);
+            if (data.length < 2) {
+                let temp = data
+                data = `0`;
+                data += temp;
+            }
             _MEM.memory[hex_location] = data;
         }
 

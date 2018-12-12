@@ -215,7 +215,6 @@ var DOS;
                 // Write the data to the session
                 var fcb = new DOS.FCB(block_tsb, next_block_pointer, "1", new_block_data);
                 sessionStorage.setItem(fcb.tsb, JSON.stringify(fcb));
-                // console.log(`block: at ${block_tsb}: ${block}`, next_block_pointer);
                 fcb = null;
             });
             // get the file name block to give it a pointer
@@ -337,10 +336,7 @@ var DOS;
             }
             var block_data = [];
             var block = "";
-            userCode.forEach(function (hex, index) {
-                if (index == 0) {
-                    console.log(hex);
-                }
+            userCode.forEach(function (hex) {
                 block += hex;
                 if ((block.length / 2) == _DISK.blockSize) {
                     block_data.push(block);
@@ -385,7 +381,6 @@ var DOS;
                         char = "";
                     }
                 });
-                console.log(block_data);
                 // Write the data to the session
                 var fcb = new DOS.FCB(block_tsb, next_block_pointer, "1", new_block_data);
                 sessionStorage.setItem(fcb.tsb, JSON.stringify(fcb));
@@ -417,7 +412,6 @@ var DOS;
                 var hex_blocks = [];
                 var next_block = file_block.pointer;
                 while (search) {
-                    // console.log(next_block)
                     var new_block = this.getBlock(next_block);
                     hex_blocks.push(new_block.data);
                     next_block = new_block.pointer;
@@ -444,7 +438,6 @@ var DOS;
             else {
                 hex_code = file_block.data;
             }
-            // console.log(`ROLL IN`, hex_code);
             _Console.updateDisk();
             return [0, hex_code, "data retrieved from disk."];
         };

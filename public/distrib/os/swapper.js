@@ -34,8 +34,6 @@ var DOS;
             }
             // RollOut the victim
             var victim = _PCM.readyQueue[victimPID];
-            // console.log(`${victim.pid} => Disk | ${diskPID} => Mem`)
-            // console.log(victim.pid, victim.state)
             // get the victim's user code
             var base = 0;
             var lim = 0;
@@ -74,13 +72,11 @@ var DOS;
             // get usercode from disk...
             // Call roll in to return userCode
             DOS.Control.hostLog("Roll In on process:" + diskPID, "os");
-            console.log(diskPID);
             var status = _krnDiskDriver.rollIn(_PCM.readyQueue[diskPID].tsb);
             if (status[0] == 1) {
                 DOS.Control.hostLog("SWAP ERROR: " + status[2], "os");
                 return [1];
             }
-            console.log("TESTIT", status[1]);
             var mem_status = _MemoryManager.loadInMem(status[1]);
             if (mem_status[0] == 1) {
                 DOS.Control.hostLog("SWAP ERROR: Memory Full!", "os");
@@ -90,7 +86,6 @@ var DOS;
             _PCM.readyQueue[diskPID].base = mem_status[1];
             _PCM.readyQueue[diskPID].limit = mem_status[2];
             _PCM.readyQueue[diskPID].location = mem_status[3];
-            // console.log(_PCM.readyQueue[diskPID])
             return [0];
         };
         return Swapper;
