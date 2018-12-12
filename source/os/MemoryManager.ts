@@ -64,14 +64,14 @@
             }
     
             public wipeSeg01() {
-                for (let i = 256; i <= 512; i++) {
+                for (let i = 256; i <= 511; i++) {
                     _MEM.memory[i] = `00`;
                     _MEM.isSeg01Full = false;
                 }
             }
     
             public wipeSeg02() {
-                for (let i = 513; i <= 768; i++) {
+                for (let i = 512; i <= 767; i++) {
                     _MEM.memory[i] = `00`;
                     _MEM.isSeg02Full = false;
                 }

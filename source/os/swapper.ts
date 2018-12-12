@@ -36,7 +36,6 @@
                     }
                 }
                
-                
                 // RollOut the victim
                 let victim = _PCM.readyQueue[victimPID];
                 // console.log(`${victim.pid} => Disk | ${diskPID} => Mem`)

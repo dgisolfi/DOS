@@ -134,136 +134,6 @@ var DOS;
             // ERROR or full
             return "-1:-1:-1";
         };
-        // Take a process and put it on the DISK
-        // Autobots ROLL OUT!
-        DeviceDriverDisk.prototype.rollOut = function (pid, userCode) {
-            var _this = this;
-            // Find a free set of blocks for the file
-            var process_file = this.getEmptyFileBlock();
-            if (process_file == "-1:-1:-1") {
-                return [1, "-1:-1:-1", "Disk full"];
-            }
-            var file_name = "process" + pid;
-            var initial_pointer = "0:0:0";
-            // add file name to global list
-            this.file_names.push(file_name);
-            // Write new file
-            // Convert filename to a arrary of hex values
-            var hex_name = this.hexOfString(file_name);
-            // Fill the remaning block with 00's
-            for (var i = 0; hex_name.length < (_DISK.blockSize); i++) {
-                hex_name.push("00");
-            }
-            var block_data = [];
-            var block = "";
-            userCode.forEach(function (hex) {
-                block += hex;
-                if ((block.length / 2) == _DISK.blockSize) {
-                    block_data.push(block);
-                    block = "";
-                }
-            });
-            for (var i = 0; (block.length / 2) < _DISK.blockSize; i++) {
-                block += "00";
-            }
-            block_data.push(block);
-            var next_block_pointer = "";
-            var file_pointer = this.getEmptyBlock(false);
-            block_data.forEach(function (block, index) {
-                // for first block
-                var block_tsb = _this.getEmptyBlock(false);
-                if (block_tsb == "-1:-1:-1") {
-                    return [1, "Disk full"];
-                }
-                if (index == 0) {
-                    initial_pointer = block_tsb;
-                }
-                // TODO: make a better fix for this...
-                if (block == "000000000000000000000000000000000000000000000000000000000000") {
-                    block_data.splice(index, 1);
-                    return;
-                }
-                if (block == block_data[block_data.length - 1]) {
-                    next_block_pointer = "0:0:0";
-                    if ((block.length / 2) > _DISK.blockSize) {
-                        block = block.substring(0, (_DISK.blockSize * 2));
-                    }
-                }
-                else {
-                    next_block_pointer = _this.getEmptyBlock(true);
-                }
-                var char = "";
-                var new_block_data = [];
-                block.split('').forEach(function (ch) {
-                    char += ch;
-                    if (char.length == 2) {
-                        new_block_data.push(char);
-                        char = "";
-                    }
-                });
-                console.log(block_data);
-                // Write the data to the session
-                var fcb = new DOS.FCB(block_tsb, next_block_pointer, "1", new_block_data);
-                sessionStorage.setItem(fcb.tsb, JSON.stringify(fcb));
-                fcb = null;
-            });
-            // Write the file to the session
-            var fcb = new DOS.FCB(process_file, initial_pointer, "1", hex_name);
-            sessionStorage.setItem(fcb.tsb, JSON.stringify(fcb));
-            // Since TS is strict delete fcb will throw an error Instead, free
-            // the contents of a variable so it can be garbage collected  
-            fcb = null;
-            _Console.updateDisk();
-            return [0, process_file, "data written to disk."];
-        };
-        // Take a process and put it on the DISK
-        // Autobots ROLL IN?
-        DeviceDriverDisk.prototype.rollIn = function (processTSB) {
-            var hex_code = [];
-            var file_block = this.getBlock(processTSB);
-            if (file_block.inUse == 0) {
-                return [1, hex_code, "given block not valid, inUse bit = 0."];
-            }
-            var fcb = new DOS.FCB(file_block.tsb, "0:0:0", "0", file_block.data);
-            sessionStorage.setItem(fcb.tsb, JSON.stringify(fcb));
-            fcb = null;
-            // theres more blocks
-            if (file_block.pointer != "0:0:0") {
-                var search = true;
-                var hex_blocks = [];
-                var next_block = file_block.pointer;
-                while (search) {
-                    // console.log(next_block)
-                    var new_block = this.getBlock(next_block);
-                    hex_blocks.push(new_block.data);
-                    next_block = new_block.pointer;
-                    // turn the useBit to 0 and remove the pointer
-                    var fcb_1 = new DOS.FCB(new_block.tsb, "0:0:0", "0", new_block.data);
-                    sessionStorage.setItem(fcb_1.tsb, JSON.stringify(fcb_1));
-                    fcb_1 = null;
-                    if (new_block.pointer == "0:0:0") {
-                        search = false;
-                    }
-                }
-                hex_blocks.forEach(function (block) {
-                    block.forEach(function (hex_char) {
-                        hex_code.push(hex_char);
-                    });
-                });
-                if (hex_blocks.length == 0) {
-                    return [1, hex_code, "file empty"];
-                }
-                for (var i = 0; hex_code.length <= 255; i++) {
-                    hex_code.push("00");
-                }
-            }
-            else {
-                hex_code = file_block.data;
-            }
-            // console.log(`ROLL IN`, hex_code);
-            _Console.updateDisk();
-            return [0, hex_code, "data retrieved from disk."];
-        };
         // Create a file, dont put nothin in it yet tho besides FCB stuff
         DeviceDriverDisk.prototype.createFile = function (file_name) {
             // Check if that file is already in use
@@ -444,6 +314,139 @@ var DOS;
             else {
                 return 1;
             }
+        };
+        // Take a process and put it on the DISK
+        // Autobots ROLL OUT!
+        DeviceDriverDisk.prototype.rollOut = function (pid, userCode) {
+            var _this = this;
+            // Find a free set of blocks for the file
+            var process_file = this.getEmptyFileBlock();
+            if (process_file == "-1:-1:-1") {
+                return [1, "-1:-1:-1", "Disk full"];
+            }
+            var file_name = "process" + pid;
+            var initial_pointer = "0:0:0";
+            // add file name to global list
+            this.file_names.push(file_name);
+            // Write new file
+            // Convert filename to a arrary of hex values
+            var hex_name = this.hexOfString(file_name);
+            // Fill the remaning block with 00's
+            for (var i = 0; hex_name.length < (_DISK.blockSize); i++) {
+                hex_name.push("00");
+            }
+            var block_data = [];
+            var block = "";
+            userCode.forEach(function (hex, index) {
+                if (index == 0) {
+                    console.log(hex);
+                }
+                block += hex;
+                if ((block.length / 2) == _DISK.blockSize) {
+                    block_data.push(block);
+                    block = "";
+                }
+            });
+            for (var i = 0; (block.length / 2) < _DISK.blockSize; i++) {
+                block += "00";
+            }
+            block_data.push(block);
+            var next_block_pointer = "";
+            var file_pointer = this.getEmptyBlock(false);
+            block_data.forEach(function (block, index) {
+                // for first block
+                var block_tsb = _this.getEmptyBlock(false);
+                if (block_tsb == "-1:-1:-1") {
+                    return [1, "Disk full"];
+                }
+                if (index == 0) {
+                    initial_pointer = block_tsb;
+                }
+                // TODO: make a better fix for this...
+                if (block == "000000000000000000000000000000000000000000000000000000000000") {
+                    block_data.splice(index, 1);
+                    return;
+                }
+                if (block == block_data[block_data.length - 1]) {
+                    next_block_pointer = "0:0:0";
+                    if ((block.length / 2) > _DISK.blockSize) {
+                        block = block.substring(0, (_DISK.blockSize * 2));
+                    }
+                }
+                else {
+                    next_block_pointer = _this.getEmptyBlock(true);
+                }
+                var char = "";
+                var new_block_data = [];
+                block.split('').forEach(function (ch) {
+                    char += ch;
+                    if (char.length == 2) {
+                        new_block_data.push(char);
+                        char = "";
+                    }
+                });
+                console.log(block_data);
+                // Write the data to the session
+                var fcb = new DOS.FCB(block_tsb, next_block_pointer, "1", new_block_data);
+                sessionStorage.setItem(fcb.tsb, JSON.stringify(fcb));
+                fcb = null;
+            });
+            // Write the file to the session
+            var fcb = new DOS.FCB(process_file, initial_pointer, "1", hex_name);
+            sessionStorage.setItem(fcb.tsb, JSON.stringify(fcb));
+            // Since TS is strict delete fcb will throw an error Instead, free
+            // the contents of a variable so it can be garbage collected  
+            fcb = null;
+            _Console.updateDisk();
+            return [0, process_file, "data written to disk."];
+        };
+        // Take a process and put it on the DISK
+        // Autobots ROLL IN?
+        DeviceDriverDisk.prototype.rollIn = function (processTSB) {
+            var hex_code = [];
+            var file_block = this.getBlock(processTSB);
+            if (file_block.inUse == 0) {
+                return [1, hex_code, "given block not valid, inUse bit = 0."];
+            }
+            var fcb = new DOS.FCB(file_block.tsb, "0:0:0", "0", file_block.data);
+            sessionStorage.setItem(fcb.tsb, JSON.stringify(fcb));
+            fcb = null;
+            // theres more blocks
+            if (file_block.pointer != "0:0:0") {
+                var search = true;
+                var hex_blocks = [];
+                var next_block = file_block.pointer;
+                while (search) {
+                    // console.log(next_block)
+                    var new_block = this.getBlock(next_block);
+                    hex_blocks.push(new_block.data);
+                    next_block = new_block.pointer;
+                    // turn the useBit to 0 and remove the pointer
+                    var fcb_1 = new DOS.FCB(new_block.tsb, "0:0:0", "0", new_block.data);
+                    sessionStorage.setItem(fcb_1.tsb, JSON.stringify(fcb_1));
+                    fcb_1 = null;
+                    if (new_block.pointer == "0:0:0") {
+                        search = false;
+                    }
+                }
+                hex_blocks.forEach(function (block) {
+                    block.forEach(function (hex_char) {
+                        hex_code.push(hex_char);
+                    });
+                });
+                if (hex_blocks.length == 0) {
+                    return [1, hex_code, "file empty"];
+                }
+                for (var i = 0; hex_code.length <= 255; i++) {
+                    hex_code.push("00");
+                }
+            }
+            else {
+                hex_code = file_block.data;
+            }
+            // console.log(`ROLL IN`, hex_code);
+            _Console.updateDisk();
+            return [0, hex_code, "data retrieved from disk."];
         };
         return DeviceDriverDisk;
     }(DOS.DeviceDriver));
