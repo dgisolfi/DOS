@@ -12,7 +12,7 @@ A Typescript OS created for Fall 2018 Operating Systems class. The boilerplate f
 
 [iProject 4](https://github.com/dgisolfi/DOS/tree/iProject4)
 
-Additionally the latest release of DOS can be found running on [www.dgisolfi.xyz](http://www.dgisolfi.xyz:48000/)(port 48000)
+Additionally the latest release of DOS can be found running on [www.dgisolfi.xyz/os](http://www.dgisolfi.xyz/os)
 
 ## Deployment
 

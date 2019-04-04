@@ -7,10 +7,10 @@ const HOST = '0.0.0.0';
 
 // DOS
 const DOS = express();
-DOS.use(express.static(path.join(__dirname, 'public')));
-DOS.get('/', (req, res) => {
+DOS.use('/os', express.static(path.join(__dirname, 'public')));
+
+DOS.all('*', function(req, res) {
     res.sendFile('index.html');
-    
 });
 
 DOS.listen(PORT, HOST);
